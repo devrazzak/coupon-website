@@ -7,12 +7,21 @@ export default function Footer() {
                 <div className="grid grid-cols-1 gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
                     {/* Company Info */}
                     <div>
-                        <h3 className="flex items-center gap-2 text-xl font-black tracking-[-0.04em] text-white"><span className="grid h-8 w-8 place-items-center rounded-lg bg-[#d7ed65] text-sm text-[#18352b]">%</span>savewise</h3>
+                        <h3 className="flex items-center gap-2 text-xl font-black tracking-[-0.04em] text-white">
+                            <span className="grid h-8 w-8 place-items-center rounded-lg bg-[#d7ed65] text-sm text-[#18352b]">
+                                %
+                            </span>
+                            savewise
+                        </h3>
                         <p className="mb-4 mt-5 max-w-xs text-sm leading-6 text-[#9eb2a3]">
-                            A calmer way to find useful offers from stores you already love.
+                            A calmer way to find useful offers from stores you
+                            already love.
                         </p>
                         <div className="flex gap-4">
-                            <a href="#" className="text-sm font-bold text-[#d7ed65] hover:text-white">
+                            <a
+                                href="#"
+                                className="text-sm font-bold text-[#d7ed65] hover:text-white"
+                            >
                                 <svg
                                     className="w-6 h-6"
                                     fill="currentColor"
@@ -26,7 +35,11 @@ export default function Footer() {
                     </div>
 
                     {/* Quick Links */}
-                    <div><h3 className="mb-4 text-sm font-bold uppercase tracking-[0.16em] text-[#d7ed65]">Explore</h3><ul className="space-y-3 text-sm">
+                    <div>
+                        <h3 className="mb-4 text-sm font-bold uppercase tracking-[0.16em] text-[#d7ed65]">
+                            Explore
+                        </h3>
+                        <ul className="space-y-3 text-sm">
                             <li>
                                 <Link
                                     href="#about"
@@ -55,7 +68,11 @@ export default function Footer() {
                     </div>
 
                     {/* Services */}
-                    <div><h3 className="mb-4 text-sm font-bold uppercase tracking-[0.16em] text-[#d7ed65]">Categories</h3><ul className="space-y-3 text-sm">
+                    <div>
+                        <h3 className="mb-4 text-sm font-bold uppercase tracking-[0.16em] text-[#d7ed65]">
+                            Categories
+                        </h3>
+                        <ul className="space-y-3 text-sm">
                             <li>
                                 <Link
                                     href="#services"
@@ -84,14 +101,23 @@ export default function Footer() {
                     </div>
 
                     {/* Contact */}
-                    <div><h3 className="mb-4 text-sm font-bold uppercase tracking-[0.16em] text-[#d7ed65]">Keep in touch</h3>
-                        <ul className="space-y-3 text-sm text-[#c3d0c5]"><li>hello@savewise.example</li><li>New deals, no noise.</li><li>Made for better browsing.</li>
+                    <div>
+                        <h3 className="mb-4 text-sm font-bold uppercase tracking-[0.16em] text-[#d7ed65]">
+                            Keep in touch
+                        </h3>
+                        <ul className="space-y-3 text-sm text-[#c3d0c5]">
+                            <li>hello@savewise.example</li>
+                            <li>New deals, no noise.</li>
+                            <li>Made for better browsing.</li>
                         </ul>
                     </div>
                 </div>
 
                 <div className="mt-12 border-t border-[#365548] pt-8 text-sm text-[#91a99a]">
-                    <p>&copy; {new Date().getFullYear()} Savewise. Better choices, lighter checkout.</p>
+                    <p>
+                        &copy; {new Date().getFullYear()} Savewise. Better
+                        choices, lighter checkout.
+                    </p>
                 </div>
             </div>
         </footer>

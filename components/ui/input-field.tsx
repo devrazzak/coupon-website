@@ -4,8 +4,7 @@ import { cn } from '@/utils/cn';
 import { Eye, EyeOff } from 'lucide-react';
 import * as React from 'react';
 
-export interface InputFieldProps
-    extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
     textAlign?: 'left' | 'right';
     isError?: string;
     isDisabled?: boolean;

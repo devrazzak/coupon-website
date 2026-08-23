@@ -87,7 +87,9 @@ export default function AdminHeader({
                                 key={lang.code}
                                 onClick={() => switchLanguage(lang.code)}
                                 className={
-                                    selectedLocale === lang.code ? 'bg-gray-100' : ''
+                                    selectedLocale === lang.code
+                                        ? 'bg-gray-100'
+                                        : ''
                                 }
                             >
                                 {lang.name}
