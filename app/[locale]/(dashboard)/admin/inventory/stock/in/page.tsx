@@ -2,14 +2,9 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardContent,
-    CardFooter,
-} from '@/components/ui/card';
+
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
 type StockInForm = {
     productId: string;
@@ -57,9 +52,7 @@ export default function StockInPage() {
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">
-                                    Product ID
-                                </label>
+                                <label className="text-sm font-medium">Product ID</label>
                                 <input
                                     {...register('productId', {
                                         required: true,
@@ -76,9 +69,7 @@ export default function StockInPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">
-                                    Quantity
-                                </label>
+                                <label className="text-sm font-medium">Quantity</label>
                                 <input
                                     {...register('quantity', {
                                         required: true,
@@ -97,9 +88,7 @@ export default function StockInPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">
-                                    Unit Price
-                                </label>
+                                <label className="text-sm font-medium">Unit Price</label>
                                 <input
                                     {...register('unitPrice', {
                                         required: true,
@@ -119,9 +108,7 @@ export default function StockInPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">
-                                    Supplier
-                                </label>
+                                <label className="text-sm font-medium">Supplier</label>
                                 <input
                                     {...register('supplier', {
                                         required: true,
@@ -138,9 +125,7 @@ export default function StockInPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">
-                                    Batch Number
-                                </label>
+                                <label className="text-sm font-medium">Batch Number</label>
                                 <input
                                     {...register('batchNumber', {
                                         required: true,
@@ -157,27 +142,19 @@ export default function StockInPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">
-                                    Date
-                                </label>
+                                <label className="text-sm font-medium">Date</label>
                                 <input
                                     {...register('date', { required: true })}
                                     type="date"
                                     className="w-full p-2 border rounded-md"
                                 />
                                 {errors.date && (
-                                    <span className="text-red-500 text-sm">
-                                        Date is required
-                                    </span>
+                                    <span className="text-red-500 text-sm">Date is required</span>
                                 )}
                             </div>
                         </CardContent>
                         <CardFooter>
-                            <Button
-                                type="submit"
-                                disabled={isLoading}
-                                className="w-full"
-                            >
+                            <Button type="submit" disabled={isLoading} className="w-full">
                                 {isLoading ? 'Adding Stock...' : 'Add Stock'}
                             </Button>
                         </CardFooter>
@@ -191,22 +168,14 @@ export default function StockInPage() {
                     <CardContent>
                         <div className="space-y-4">
                             {/* Mock data - replace with actual data */}
-                            {[1, 2, 3].map((item) => (
-                                <div
-                                    key={item}
-                                    className="p-4 border rounded-md hover:bg-gray-50"
-                                >
+                            {[1, 2, 3].map(item => (
+                                <div key={item} className="p-4 border rounded-md hover:bg-gray-50">
                                     <div className="flex justify-between">
-                                        <span className="font-medium">
-                                            Product #{item}
-                                        </span>
-                                        <span className="text-gray-600">
-                                            10 units
-                                        </span>
+                                        <span className="font-medium">Product #{item}</span>
+                                        <span className="text-gray-600">10 units</span>
                                     </div>
                                     <div className="text-sm text-gray-600 mt-1">
-                                        Added on{' '}
-                                        {new Date().toLocaleDateString()}
+                                        Added on {new Date().toLocaleDateString()}
                                     </div>
                                 </div>
                             ))}

@@ -1,9 +1,11 @@
 'use client';
 
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { Menu, Search, X } from 'lucide-react';
 import Link from 'next/link';
+
+import { Menu, Search, X } from 'lucide-react';
 import { useState } from 'react';
+
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export default function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -22,28 +24,16 @@ export default function Header() {
                 </Link>
 
                 <nav className="hidden items-center gap-8 text-sm font-semibold text-[#d3dfd5] md:flex">
-                    <Link
-                        href="#about"
-                        className="transition hover:text-[#d7ed65]"
-                    >
+                    <Link href="#about" className="transition hover:text-[#d7ed65]">
                         About
                     </Link>
-                    <Link
-                        href="#services"
-                        className="transition hover:text-[#d7ed65]"
-                    >
+                    <Link href="#services" className="transition hover:text-[#d7ed65]">
                         Services
                     </Link>
-                    <Link
-                        href="#testimonials"
-                        className="transition hover:text-[#d7ed65]"
-                    >
+                    <Link href="#testimonials" className="transition hover:text-[#d7ed65]">
                         Testimonials
                     </Link>
-                    <Link
-                        href="#contact"
-                        className="transition hover:text-[#d7ed65]"
-                    >
+                    <Link href="#contact" className="transition hover:text-[#d7ed65]">
                         Contact
                     </Link>
                 </nav>
@@ -62,11 +52,7 @@ export default function Header() {
                         onClick={() => setMenuOpen(!menuOpen)}
                         className="grid h-9 w-9 place-items-center rounded-lg border border-white/20 text-white md:hidden"
                     >
-                        {menuOpen ? (
-                            <X className="h-5 w-5" />
-                        ) : (
-                            <Menu className="h-5 w-5" />
-                        )}
+                        {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                     </button>
                 </div>
             </div>

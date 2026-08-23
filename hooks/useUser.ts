@@ -1,6 +1,7 @@
+import { useQuery } from '@tanstack/react-query';
+
 import api from '@/services/api';
 import type { User } from '@/types/auth';
-import { useQuery } from '@tanstack/react-query';
 
 export function useUser(userId: string) {
     return useQuery({

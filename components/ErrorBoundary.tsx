@@ -32,12 +32,9 @@ export class ErrorBoundary extends React.Component<Props, State> {
                 this.props.fallback || (
                     <div className="min-h-screen flex items-center justify-center bg-gray-50">
                         <div className="max-w-md w-full space-y-4 p-6 bg-white rounded-lg shadow-lg">
-                            <h2 className="text-xl font-bold text-red-600">
-                                Something went wrong
-                            </h2>
+                            <h2 className="text-xl font-bold text-red-600">Something went wrong</h2>
                             <p className="text-gray-600">
-                                {this.state.error?.message ||
-                                    'An unexpected error occurred'}
+                                {this.state.error?.message || 'An unexpected error occurred'}
                             </p>
                             <button
                                 onClick={() => window.location.reload()}

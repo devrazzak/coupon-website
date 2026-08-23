@@ -1,7 +1,9 @@
 'use client';
 
-import { useLocale } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
+
+import { useLocale } from 'next-intl';
+
 import { locales } from '@/i18n';
 
 export function LanguageSwitcher() {
@@ -9,9 +11,7 @@ export function LanguageSwitcher() {
     const pathname = usePathname();
     const router = useRouter();
     const pathnameLocale = pathname.split('/')[1];
-    const selectedLocale = locales.includes(pathnameLocale)
-        ? pathnameLocale
-        : locale;
+    const selectedLocale = locales.includes(pathnameLocale) ? pathnameLocale : locale;
 
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newLocale = e.target.value;
@@ -21,11 +21,7 @@ export function LanguageSwitcher() {
             : pathname;
         const normalizedPath = currentPath === '//' ? '/' : currentPath;
 
-        router.push(
-            normalizedPath === '/'
-                ? `/${newLocale}`
-                : `/${newLocale}${normalizedPath}`
-        );
+        router.push(normalizedPath === '/' ? `/${newLocale}` : `/${newLocale}${normalizedPath}`);
     };
 
     return (
@@ -34,7 +30,7 @@ export function LanguageSwitcher() {
             onChange={handleChange}
             className="bg-white border border-gray-300 rounded-md px-2 py-1 text-sm"
         >
-            {locales.map((loc) => (
+            {locales.map(loc => (
                 <option key={loc} value={loc}>
                     {loc.toUpperCase()}
                 </option>

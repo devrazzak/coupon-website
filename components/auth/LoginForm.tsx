@@ -1,10 +1,12 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { loginSchema } from '@/schemas/auth';
-import { useAuth } from '@/hooks/useAuth';
+
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+
+import { useAuth } from '@/hooks/useAuth';
+import { loginSchema } from '@/schemas/auth';
 import { UserRole } from '@/types/auth';
 
 type LoginFormProps = {
@@ -45,10 +47,7 @@ export function LoginForm({ type = 'user' }: LoginFormProps) {
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-                <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                     Email
                 </label>
                 <input
@@ -57,17 +56,12 @@ export function LoginForm({ type = 'user' }: LoginFormProps) {
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
                 {errors.email && (
-                    <p className="mt-1 text-sm text-red-600">
-                        {errors.email.message}
-                    </p>
+                    <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
                 )}
             </div>
 
             <div>
-                <label
-                    htmlFor="password"
-                    className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                     Password
                 </label>
                 <input
@@ -76,9 +70,7 @@ export function LoginForm({ type = 'user' }: LoginFormProps) {
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
                 {errors.password && (
-                    <p className="mt-1 text-sm text-red-600">
-                        {errors.password.message}
-                    </p>
+                    <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
                 )}
             </div>
 

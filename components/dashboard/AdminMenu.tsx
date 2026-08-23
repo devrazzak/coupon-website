@@ -1,12 +1,15 @@
 'use client';
 
-import { cn } from '@/utils/cn';
-import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+
+import { ChevronDown } from 'lucide-react';
 import { useLocale } from 'next-intl';
-import { locales } from '@/i18n';
 import { useEffect, useState } from 'react';
+
+import { locales } from '@/i18n';
+import { cn } from '@/utils/cn';
+
 import { menuItems } from './menuItems';
 
 type MenuItem = {
@@ -28,17 +31,14 @@ interface MenuDropdownProps {
 const findParentIds = (
     items: MenuItem[],
     targetId: string,
-    path: string[] = []
+    path: string[] = [],
 ): string[] | null => {
     for (const item of items) {
         if (item.id === targetId) {
             return path;
         }
         if (item.submenu) {
-            const found = findParentIds(item.submenu, targetId, [
-                ...path,
-                item.id,
-            ]);
+            const found = findParentIds(item.submenu, targetId, [...path, item.id]);
             if (found) {
                 return found;
             }
@@ -67,9 +67,9 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
         if (menuItem.path && normalizedPathname === menuItem.path) return true;
         if (menuItem.submenu) {
             return menuItem.submenu.some(
-                (subItem) =>
+                subItem =>
                     (subItem.path && normalizedPathname === subItem.path) ||
-                    (subItem.submenu && checkActive(subItem))
+                    (subItem.submenu && checkActive(subItem)),
             );
         }
         return false;
@@ -95,7 +95,7 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
     const handleToggle = () => {
         if (isOpen) {
             const activeChildMenus = isActive ? findActiveChildMenus(item) : [];
-            const menusToKeep = openMenus.filter((id) => {
+            const menusToKeep = openMenus.filter(id => {
                 if (parentIds.includes(id)) return true;
                 if (activeChildMenus.includes(id)) return true;
                 const itemParents = findParentIds(menuItems, id) || [];
@@ -109,14 +109,14 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
         } else {
             let newOpenMenus = [...openMenus];
 
-            parentIds.forEach((id) => {
+            parentIds.forEach(id => {
                 if (!newOpenMenus.includes(id)) {
                     newOpenMenus.push(id);
                 }
             });
 
             if (level === 0) {
-                newOpenMenus = newOpenMenus.filter((id) => {
+                newOpenMenus = newOpenMenus.filter(id => {
                     const itemParents = findParentIds(menuItems, id);
                     return itemParents !== null;
                 });
@@ -128,7 +128,7 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
 
             if (isActive) {
                 const activeChildMenus = findActiveChildMenus(item);
-                activeChildMenus.forEach((id) => {
+                activeChildMenus.forEach(id => {
                     if (!newOpenMenus.includes(id)) {
                         newOpenMenus.push(id);
                     }
@@ -142,39 +142,30 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
         }
     };
 
-    const menuItemClasses = cn(
-        'relative flex items-center w-full transition-all duration-200',
-        {
-            'text-slate-600': !isActive,
-            'text-indigo-600 font-medium': isActive,
-            'pl-4': level === 0,
-            'pl-12': level === 1,
-            'pl-16': level === 2,
-            'pl-20': level === 3,
-        }
-    );
+    const menuItemClasses = cn('relative flex items-center w-full transition-all duration-200', {
+        'text-slate-600': !isActive,
+        'text-indigo-600 font-medium': isActive,
+        'pl-4': level === 0,
+        'pl-12': level === 1,
+        'pl-16': level === 2,
+        'pl-20': level === 3,
+    });
 
     return (
         <div className="relative">
             {item.path ? (
                 <Link
                     href={`/${locale}${item.path}`}
-                    className={cn(
-                        menuItemClasses,
-                        'py-2.5 hover:bg-slate-50 rounded-lg',
-                        {
-                            'bg-indigo-50 font-medium': isActive,
-                        }
-                    )}
+                    className={cn(menuItemClasses, 'py-2.5 hover:bg-slate-50 rounded-lg', {
+                        'bg-indigo-50 font-medium': isActive,
+                    })}
                 >
                     {level === 0 && (
                         <span className="text-slate-400 mr-3 [&>svg]:w-5 [&>svg]:h-5">
                             {item.icon}
                         </span>
                     )}
-                    <span className="text-sm whitespace-nowrap">
-                        {item.title}
-                    </span>
+                    <span className="text-sm whitespace-nowrap">{item.title}</span>
                     {isActive && (
                         <span className="absolute inset-y-0 left-0 w-1 bg-indigo-600 rounded-r-full" />
                     )}
@@ -182,28 +173,22 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
             ) : (
                 <button
                     onClick={handleToggle}
-                    className={cn(
-                        menuItemClasses,
-                        'py-2.5 pr-4 hover:bg-slate-50 rounded-lg',
-                        {
-                            'bg-slate-50 font-medium': isOpen,
-                        }
-                    )}
+                    className={cn(menuItemClasses, 'py-2.5 pr-4 hover:bg-slate-50 rounded-lg', {
+                        'bg-slate-50 font-medium': isOpen,
+                    })}
                 >
                     {level === 0 && (
                         <span className="text-slate-400 mr-3 [&>svg]:w-5 [&>svg]:h-5">
                             {item.icon}
                         </span>
                     )}
-                    <span className="text-sm whitespace-nowrap">
-                        {item.title}
-                    </span>
+                    <span className="text-sm whitespace-nowrap">{item.title}</span>
                     <ChevronDown
                         className={cn(
                             'ml-auto w-4 h-4 text-slate-400 transition-transform duration-200',
                             {
                                 'rotate-180': isOpen,
-                            }
+                            },
                         )}
                     />
                     {isActive && (
@@ -214,16 +199,13 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
 
             {item.submenu && (
                 <div
-                    className={cn(
-                        'overflow-hidden transition-all duration-200',
-                        {
-                            'max-h-[1000px] opacity-100': isOpen,
-                            'max-h-0 opacity-0': !isOpen,
-                        }
-                    )}
+                    className={cn('overflow-hidden transition-all duration-200', {
+                        'max-h-[1000px] opacity-100': isOpen,
+                        'max-h-0 opacity-0': !isOpen,
+                    })}
                 >
                     <div className="pt-1 pb-1">
-                        {item.submenu.map((subItem) => (
+                        {item.submenu.map(subItem => (
                             <MenuDropdown
                                 key={subItem.id}
                                 item={subItem}
@@ -240,10 +222,7 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
     );
 };
 
-const findActiveMenuPath = (
-    items: MenuItem[],
-    targetPath: string
-): string[] => {
+const findActiveMenuPath = (items: MenuItem[], targetPath: string): string[] => {
     for (const item of items) {
         if (item.path === targetPath) {
             return [item.id];
@@ -262,9 +241,7 @@ function getInitialOpenMenus(currentNormalizedPath: string): string[] {
     if (typeof window === 'undefined') return [];
     try {
         const savedOpenMenus = localStorage.getItem('openMenus');
-        const initialMenus: string[] = savedOpenMenus
-            ? JSON.parse(savedOpenMenus)
-            : [];
+        const initialMenus: string[] = savedOpenMenus ? JSON.parse(savedOpenMenus) : [];
         const activePath = findActiveMenuPath(menuItems, currentNormalizedPath);
         return [...new Set([...initialMenus, ...activePath])];
     } catch {
@@ -281,13 +258,13 @@ export default function AdminMenu() {
         : pathname;
 
     const [openMenus, setOpenMenus] = useState<string[]>(() =>
-        getInitialOpenMenus(normalizedPathname)
+        getInitialOpenMenus(normalizedPathname),
     );
 
     return (
         <nav className="w-64 bg-white h-full border-r border-slate-200">
             <div className="p-4 space-y-0.5 max-h-[calc(100vh-4rem)] overflow-y-auto custom-scrollbar">
-                {menuItems.map((item) => (
+                {menuItems.map(item => (
                     <MenuDropdown
                         key={item.id}
                         item={item}

@@ -1,8 +1,9 @@
 'use client';
 
+import { createContext, useContext, useEffect, useState } from 'react';
+
 import PATHS from '@/routes/path';
 import { AuthState, LoginCredentials, User } from '@/types/auth';
-import { createContext, useContext, useEffect, useState } from 'react';
 
 interface AuthContextType extends AuthState {
     login: (credentials: LoginCredentials) => Promise<void>;
@@ -18,8 +19,7 @@ function setAuthCookies(token: string, role: string) {
 
 function removeAuthCookies() {
     document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
-    document.cookie =
-        'userRole=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+    document.cookie = 'userRole=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
 }
 
 function getAuthCookie(name: string) {
@@ -77,7 +77,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     userId: mockUser.id,
                     role: mockUser.role,
                     timestamp: Date.now(),
-                })
+                }),
             );
 
             localStorage.setItem('user', JSON.stringify(mockUser));
@@ -116,9 +116,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ ...state, login, logout }}>
-            {children}
-        </AuthContext.Provider>
+        <AuthContext.Provider value={{ ...state, login, logout }}>{children}</AuthContext.Provider>
     );
 }
 

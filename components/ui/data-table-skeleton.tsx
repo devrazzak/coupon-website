@@ -3,10 +3,7 @@ interface DataTableSkeletonProps {
     rows?: number;
 }
 
-export function DataTableSkeleton({
-    columns,
-    rows = 5,
-}: DataTableSkeletonProps) {
+export function DataTableSkeleton({ columns, rows = 5 }: DataTableSkeletonProps) {
     return (
         <div className="w-full">
             {/* Header */}

@@ -1,15 +1,13 @@
 'use client';
 
-import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
+
 import { useLocale } from 'next-intl';
 import { useEffect } from 'react';
 
-export default function AuthLayout({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
+import { useAuth } from '@/hooks/useAuth';
+
+export default function AuthLayout({ children }: { children: React.ReactNode }) {
     const { isAuthenticated, user } = useAuth();
     const router = useRouter();
     const locale = useLocale();

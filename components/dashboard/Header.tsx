@@ -1,7 +1,7 @@
 'use client';
 
-import { useAuth } from '@/hooks/useAuth';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useAuth } from '@/hooks/useAuth';
 
 export function Header() {
     const { user, logout } = useAuth();

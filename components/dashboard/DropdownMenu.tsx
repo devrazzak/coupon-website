@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+
 import { cn } from '@/utils/cn';
 
 interface DropdownMenuProps {
@@ -21,10 +22,7 @@ export default function DropdownMenu({
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
-            if (
-                dropdownRef.current &&
-                !dropdownRef.current.contains(event.target as Node)
-            ) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
                 setIsOpen(false);
             }
         }
@@ -51,7 +49,7 @@ export default function DropdownMenu({
                             'right-0': align === 'right',
                             'left-0': align === 'left',
                         },
-                        className
+                        className,
                     )}
                 >
                     {children}
@@ -75,9 +73,9 @@ export function DropdownItem({
             role="button"
             className={cn(
                 'px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer flex items-center w-full',
-                className
+                className,
             )}
-            onClick={(e) => {
+            onClick={e => {
                 // Only prevent default if it's a direct click handler
                 if (onClick) {
                     e.preventDefault();

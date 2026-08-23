@@ -1,7 +1,8 @@
 'use client';
 
+import { BarChart2, DollarSign, ShoppingCart, Users } from 'lucide-react';
+
 import { Card } from '@/components/ui/card';
-import { BarChart2, Users, ShoppingCart, DollarSign } from 'lucide-react';
 
 export default function DashboardPage() {
     return (

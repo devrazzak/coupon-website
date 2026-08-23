@@ -1,22 +1,16 @@
 'use client';
 
-import AdminMenu from '@/components/dashboard/AdminMenu';
-import AdminHeader from '@/components/dashboard/AdminHeader';
 import { useState } from 'react';
 
-export default function AdminLayout({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
+import AdminHeader from '@/components/dashboard/AdminHeader';
+import AdminMenu from '@/components/dashboard/AdminMenu';
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const [sidebarOpen, setSidebarOpen] = useState(true);
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <AdminHeader
-                sidebarOpen={sidebarOpen}
-                setSidebarOpen={setSidebarOpen}
-            />
+            <AdminHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
             {/* Sidebar */}
             <div

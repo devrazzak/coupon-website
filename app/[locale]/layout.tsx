@@ -1,11 +1,8 @@
-import { NextIntlClientProvider } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 
-export async function generateMetadata({
-    params,
-}: {
-    params: Promise<{ locale: string }>;
-}) {
+import { NextIntlClientProvider } from 'next-intl';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
     const { locale } = await params;
     const t = await getTranslations({ locale, namespace: 'Metadata' });
 
@@ -25,9 +22,5 @@ export default async function LocaleLayout({
     const { locale } = await params;
     const messages = (await import(`../../messages/${locale}.json`)).default;
 
-    return (
-        <NextIntlClientProvider messages={messages}>
-            {children}
-        </NextIntlClientProvider>
-    );
+    return <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>;
 }

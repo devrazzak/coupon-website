@@ -15,8 +15,7 @@ export function handleApiError(error: unknown): ErrorResponse {
             };
         }
         return {
-            message:
-                error.message || 'An error occurred while making the request',
+            message: error.message || 'An error occurred while making the request',
         };
     }
 

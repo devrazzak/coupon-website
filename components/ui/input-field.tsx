@@ -1,8 +1,9 @@
 'use client';
 
-import { cn } from '@/utils/cn';
 import { Eye, EyeOff } from 'lucide-react';
 import * as React from 'react';
+
+import { cn } from '@/utils/cn';
 
 export interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
     textAlign?: 'left' | 'right';
@@ -55,7 +56,7 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
             onChange,
             ...props
         },
-        ref
+        ref,
     ) => {
         const [inputType, setInputType] = React.useState<string>(type || '');
 
@@ -88,15 +89,12 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
                             htmlFor={id}
                             className="block text-sm font-medium text-gray-700 capitalize"
                         >
-                            {label}{' '}
-                            {asterisk && (
-                                <span className="text-red-500 ml-0.5">*</span>
-                            )}
+                            {label} {asterisk && <span className="text-red-500 ml-0.5">*</span>}
                         </label>
                         {labelOnChangeCallback && !showChangeField && (
                             <a
                                 href="#"
-                                onClick={(e) => {
+                                onClick={e => {
                                     e.preventDefault();
                                     labelOnChangeCallback(e);
                                 }}
@@ -124,12 +122,10 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
                             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
                             'disabled:cursor-not-allowed disabled:opacity-50',
                             textAlign === 'right' ? 'text-right' : 'text-left',
-                            isError
-                                ? 'border-red-500 focus-visible:ring-red-500'
-                                : '',
+                            isError ? 'border-red-500 focus-visible:ring-red-500' : '',
                             groupIcon ? 'pl-10' : '',
                             type === 'password' ? 'pr-10' : '',
-                            inputClassName
+                            inputClassName,
                         )}
                         placeholder={placeholder}
                         accept={accept}
@@ -165,15 +161,13 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
                 </div>
 
                 {requiredMessage && requiredMessageLabel ? (
-                    <p className="mt-1 text-sm text-red-500">
-                        {requiredMessageLabel}
-                    </p>
+                    <p className="mt-1 text-sm text-red-500">{requiredMessageLabel}</p>
                 ) : whiteSpace ? (
                     <div className="h-5"></div>
                 ) : null}
             </div>
         );
-    }
+    },
 );
 
 InputField.displayName = 'InputField';

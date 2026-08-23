@@ -1,7 +1,8 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { Bell, Globe, Lock, Moon, Shield, User } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
 
 const settingsGroups = [
     {
@@ -57,9 +58,7 @@ export default function SettingsPage() {
             <div className="space-y-8">
                 {settingsGroups.map((group, index) => (
                     <div key={index} className="bg-white rounded-lg shadow p-6">
-                        <h2 className="text-xl font-semibold mb-4">
-                            {group.title}
-                        </h2>
+                        <h2 className="text-xl font-semibold mb-4">{group.title}</h2>
                         <div className="space-y-4">
                             {group.items.map((item, itemIndex) => (
                                 <div
@@ -67,13 +66,9 @@ export default function SettingsPage() {
                                     className="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg transition-colors"
                                 >
                                     <div className="flex items-center gap-4">
-                                        <div className="text-gray-500">
-                                            {item.icon}
-                                        </div>
+                                        <div className="text-gray-500">{item.icon}</div>
                                         <div>
-                                            <h3 className="font-medium">
-                                                {item.title}
-                                            </h3>
+                                            <h3 className="font-medium">{item.title}</h3>
                                             <p className="text-sm text-gray-600">
                                                 {item.description}
                                             </p>

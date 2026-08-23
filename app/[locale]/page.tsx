@@ -1,16 +1,10 @@
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import {
-    Tag,
-    Sparkles,
-    ShieldCheck,
-    Zap,
-    ArrowRight,
-    Percent,
-    ArrowUpRight,
-} from 'lucide-react';
+
+import { ArrowRight, ArrowUpRight, Percent, ShieldCheck, Sparkles, Tag, Zap } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+
+import Footer from '@/components/layout/Footer';
+import Header from '@/components/layout/Header';
 
 export default function Home() {
     const t = useTranslations('LandingPage');
@@ -108,7 +102,7 @@ export default function Home() {
                     </div>
 
                     <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
-                        {featuredDeals.map((deal) => (
+                        {featuredDeals.map(deal => (
                             <div
                                 key={deal.id}
                                 className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-gray-200/80 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
@@ -122,15 +116,11 @@ export default function Home() {
                                             {deal.expires}
                                         </span>
                                     </div>
-                                    <h3 className="mt-4 text-xl font-bold">
-                                        {deal.brand}
-                                    </h3>
+                                    <h3 className="mt-4 text-xl font-bold">{deal.brand}</h3>
                                     <div className="mt-2 text-3xl font-black text-emerald-600">
                                         {deal.discount}
                                     </div>
-                                    <p className="mt-3 text-sm text-gray-600">
-                                        {deal.description}
-                                    </p>
+                                    <p className="mt-3 text-sm text-gray-600">{deal.description}</p>
                                 </div>
 
                                 <div className="mt-6 pt-4 border-t border-dashed border-gray-200">

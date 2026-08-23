@@ -1,6 +1,7 @@
 import createMiddleware from 'next-intl/middleware';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+
 import { defaultLocale, locales } from './i18n';
 import PATHS from './routes/path';
 
@@ -19,10 +20,7 @@ const AUTH_PATHS = {
 
 // Helper function to check if a path is public
 function isPublicPath(pathname: string): boolean {
-    return (
-        PUBLIC_PATHS.some((path) => pathname.startsWith(path)) ||
-        pathname.includes('.')
-    );
+    return PUBLIC_PATHS.some(path => pathname.startsWith(path)) || pathname.includes('.');
 }
 
 // Helper function to extract user role from cookies
@@ -63,16 +61,12 @@ export async function middleware(request: NextRequest) {
     }
 
     if (routePathname === '/register') {
-        return NextResponse.redirect(
-            localizedUrl(AUTH_PATHS.user, locale, request)
-        );
+        return NextResponse.redirect(localizedUrl(AUTH_PATHS.user, locale, request));
     }
 
     const isAdminRoute = routePathname.startsWith('/admin');
     const isUserRoute = routePathname.startsWith('/user');
-    const currentAuthPath = Object.values(AUTH_PATHS).find(
-        (path) => routePathname === path
-    );
+    const currentAuthPath = Object.values(AUTH_PATHS).find(path => routePathname === path);
 
     // Allow unauthenticated users to access auth pages
     if (!token && currentAuthPath) {
@@ -82,38 +76,25 @@ export async function middleware(request: NextRequest) {
     // Redirect unauthenticated users to their respective login pages
     if (!token) {
         if (isAdminRoute)
-            return NextResponse.redirect(
-                localizedUrl(AUTH_PATHS.admin, locale, request)
-            );
+            return NextResponse.redirect(localizedUrl(AUTH_PATHS.admin, locale, request));
         if (isUserRoute)
-            return NextResponse.redirect(
-                localizedUrl(AUTH_PATHS.user, locale, request)
-            );
+            return NextResponse.redirect(localizedUrl(AUTH_PATHS.user, locale, request));
         return i18nMiddleware(request);
     }
 
     // If token exists but userRole is missing, redirect to default login
     if (!userRole) {
-        return NextResponse.redirect(
-            localizedUrl(AUTH_PATHS.user, locale, request)
-        );
+        return NextResponse.redirect(localizedUrl(AUTH_PATHS.user, locale, request));
     }
 
     // Redirect authenticated users from login pages to their respective dashboard
     if (currentAuthPath) {
-        return NextResponse.redirect(
-            localizedUrl(`/${userRole}`, locale, request)
-        );
+        return NextResponse.redirect(localizedUrl(`/${userRole}`, locale, request));
     }
 
     // Prevent users from accessing other roles' pages
-    if (
-        (isAdminRoute && userRole !== 'admin') ||
-        (isUserRoute && userRole !== 'user')
-    ) {
-        return NextResponse.redirect(
-            localizedUrl(`/${userRole}`, locale, request)
-        );
+    if ((isAdminRoute && userRole !== 'admin') || (isUserRoute && userRole !== 'user')) {
+        return NextResponse.redirect(localizedUrl(`/${userRole}`, locale, request));
     }
 
     return i18nMiddleware(request);

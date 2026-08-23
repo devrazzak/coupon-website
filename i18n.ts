@@ -12,14 +12,10 @@ export default getRequestConfig(async ({ locale }) => {
     }
 
     try {
-        const messages = (await import(`./messages/${resolvedLocale}.json`))
-            .default;
+        const messages = (await import(`./messages/${resolvedLocale}.json`)).default;
         return { locale: resolvedLocale, messages };
     } catch (error) {
-        console.error(
-            `Error loading messages for locale: ${resolvedLocale}`,
-            error
-        );
+        console.error(`Error loading messages for locale: ${resolvedLocale}`, error);
         notFound(); // Handle missing locale files gracefully
     }
 });

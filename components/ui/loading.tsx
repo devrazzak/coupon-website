@@ -15,7 +15,7 @@ export function Loading({ size = 'md', className }: LoadingProps) {
                     'h-8 w-8': size === 'md',
                     'h-12 w-12': size === 'lg',
                 },
-                className
+                className,
             )}
             role="status"
         >

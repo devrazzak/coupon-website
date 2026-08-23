@@ -8,9 +8,7 @@ export default function UserDashboard() {
                     <p className="text-3xl font-bold">12</p>
                 </div>
                 <div className="bg-white p-6 rounded-lg shadow">
-                    <h2 className="text-lg font-semibold mb-2">
-                        Wishlist Items
-                    </h2>
+                    <h2 className="text-lg font-semibold mb-2">Wishlist Items</h2>
                     <p className="text-3xl font-bold">8</p>
                 </div>
                 <div className="bg-white p-6 rounded-lg shadow">

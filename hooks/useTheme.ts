@@ -8,9 +8,7 @@ function getThemeSnapshot(): Theme {
     if (typeof window === 'undefined') return 'light';
     const stored = localStorage.getItem('theme') as Theme | null;
     if (stored) return stored;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
 function getServerSnapshot(): Theme {
@@ -29,11 +27,7 @@ function subscribe(callback: () => void) {
 }
 
 export function useTheme() {
-    const theme = useSyncExternalStore(
-        subscribe,
-        getThemeSnapshot,
-        getServerSnapshot
-    );
+    const theme = useSyncExternalStore(subscribe, getThemeSnapshot, getServerSnapshot);
 
     const toggleTheme = () => {
         const newTheme = theme === 'light' ? 'dark' : 'light';

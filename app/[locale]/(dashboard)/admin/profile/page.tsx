@@ -1,9 +1,10 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { useAuth } from '@/hooks/useAuth';
 import { User } from 'lucide-react';
 import { useEffect, useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/useAuth';
 
 interface UserProfile {
     name: string;
@@ -55,9 +56,7 @@ export default function ProfilePage() {
 
                 <div className="grid gap-6">
                     <section>
-                        <h2 className="text-lg font-semibold mb-4">
-                            Personal Information
-                        </h2>
+                        <h2 className="text-lg font-semibold mb-4">Personal Information</h2>
                         <div className="grid gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">
