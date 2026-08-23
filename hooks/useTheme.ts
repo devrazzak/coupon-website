@@ -17,6 +17,7 @@ export function useTheme() {
         ).matches
             ? 'dark'
             : 'light';
+        console.log('System preference:', systemPreference);
 
         const initialTheme = storedTheme || systemPreference;
         // setTheme(initialTheme);
