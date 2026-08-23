@@ -19,7 +19,7 @@ export function useTheme() {
             : 'light';
 
         const initialTheme = storedTheme || systemPreference;
-        setTheme(initialTheme);
+        // setTheme(initialTheme);
         document.documentElement.classList.toggle(
             'dark',
             initialTheme === 'dark'

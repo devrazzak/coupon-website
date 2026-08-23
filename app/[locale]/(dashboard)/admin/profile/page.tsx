@@ -1,9 +1,9 @@
 'use client';
 
-import { useAuth } from '@/hooks/useAuth';
-import { useEffect, useState } from 'react';
-import { User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/useAuth';
+import { User } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface UserProfile {
     name: string;
@@ -20,11 +20,11 @@ export default function ProfilePage() {
         // In a real app, you would fetch the full profile from an API
         // For now, we'll use the user data from auth
         if (user) {
-            setProfile({
-                name: user.name,
-                email: user.email,
-                role: user.role,
-            });
+            // setProfile({
+            //     name: user.name,
+            //     email: user.email,
+            //     role: user.role,
+            // });
         }
     }, [user]);
 
