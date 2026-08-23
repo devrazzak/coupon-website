@@ -27,24 +27,47 @@ export default function DropdownMenu({
             }
         }
 
+        function handleKeyDown(event: KeyboardEvent) {
+            if (event.key === 'Escape' && isOpen) {
+                setIsOpen(false);
+            }
+        }
+
         if (isOpen) {
             document.addEventListener('mousedown', handleClickOutside);
+            document.addEventListener('keydown', handleKeyDown);
         }
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('keydown', handleKeyDown);
         };
     }, [isOpen]);
 
     return (
         <div className="relative inline-block" ref={dropdownRef}>
-            <div onClick={() => setIsOpen(!isOpen)} className="cursor-pointer">
+            <div
+                onClick={() => setIsOpen(!isOpen)}
+                onKeyDown={e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setIsOpen(!isOpen);
+                    }
+                }}
+                role="button"
+                tabIndex={0}
+                aria-haspopup="menu"
+                aria-expanded={isOpen}
+                className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-indigo-500 rounded-md"
+            >
                 {trigger}
             </div>
             {isOpen && (
                 <div
+                    role="menu"
+                    aria-orientation="vertical"
                     className={cn(
-                        'absolute top-full mt-1 py-1 bg-white rounded-lg shadow-lg border border-gray-100 min-w-[8rem] z-50',
+                        'absolute top-full mt-1 py-1 bg-white rounded-lg shadow-lg border border-gray-100 min-w-[8rem] z-50 focus:outline-none',
                         {
                             'right-0': align === 'right',
                             'left-0': align === 'left',
@@ -70,17 +93,26 @@ export function DropdownItem({
 }) {
     return (
         <div
-            role="button"
+            role="menuitem"
+            tabIndex={0}
             className={cn(
-                'px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer flex items-center w-full',
+                'px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none cursor-pointer flex items-center w-full transition-colors',
                 className,
             )}
             onClick={e => {
-                // Only prevent default if it's a direct click handler
                 if (onClick) {
                     e.preventDefault();
                     e.stopPropagation();
                     onClick();
+                }
+            }}
+            onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    if (onClick) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onClick();
+                    }
                 }
             }}
         >
@@ -90,5 +122,5 @@ export function DropdownItem({
 }
 
 export function DropdownSeparator() {
-    return <div className="my-1 border-t border-gray-100" />;
+    return <div className="my-1 border-t border-gray-100" role="separator" />;
 }

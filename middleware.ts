@@ -11,7 +11,7 @@ const i18nMiddleware = createMiddleware({
     localePrefix: 'as-needed',
 });
 
-const PUBLIC_PATHS = ['/_next', '/api', '/assets', '/favicon.ico'];
+const PUBLIC_PATHS = ['/_next', '/api', '/assets', '/favicon.ico', '/robots.txt', '/sitemap.xml'];
 
 const AUTH_PATHS = {
     admin: PATHS.AUTH.ADMIN_LOGIN,
