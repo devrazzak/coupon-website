@@ -1,0 +1,111 @@
+{
+    "Metadata": {
+        "title": "ব্যবসার জন্য স্মার্ট সমাধান",
+        "description": "উদ্ভাবনী টুল ও অন্তর্দৃষ্টির মাধ্যমে আপনার ব্যবসা রূপান্তর করুন"
+    },
+    "LandingPage": {
+        "hero": {
+            "title": "আপনার ব্যবসাকে রূপান্তর করুন",
+            "subtitle": "আধুনিক চ্যালেঞ্জের জন্য উদ্ভাবনী সমাধান",
+            "cta": "শুরু করুন"
+        },
+        "about": {
+            "title": "আমাদের সম্পর্কে",
+            "description": "আমরা একদল উদ্যমী ডেভেলপার ও ডিজাইনার, যারা ভবিষ্যতের ডিজিটাল সমাধান তৈরি করছি।"
+        }
+    },
+    "auth": {
+        "login": "লগইন",
+        "logout": "লগআউট",
+        "signUp": "নিবন্ধন",
+        "email": "ইমেইল",
+        "password": "পাসওয়ার্ড",
+        "forgotPassword": "পাসওয়ার্ড ভুলে গেছেন?",
+        "rememberMe": "মনে রাখুন"
+    },
+    "common": {
+        "loading": "লোড হচ্ছে...",
+        "error": "ত্রুটি!",
+        "success": "সফল!",
+        "save": "সংরক্ষণ করুন",
+        "cancel": "বাতিল",
+        "edit": "সম্পাদনা",
+        "delete": "মুছে ফেলুন",
+        "view": "দেখুন",
+        "search": "খুঁজুন",
+        "filter": "ফিল্টার",
+        "sort": "সাজানো",
+        "back": "পিছনে",
+        "next": "পরবর্তী",
+        "submit": "জমা দিন"
+    },
+    "dashboard": {
+        "title": "ড্যাশবোর্ড",
+        "welcome": "স্বাগতম",
+        "menu": {
+            "dashboard": "ড্যাশবোর্ড",
+            "profile": "প্রোফাইল",
+            "settings": "সেটিংস",
+            "inventory": "ইনভেন্টরি",
+            "stockManagement": "স্টক ম্যানেজমেন্ট",
+            "operations": "অপারেশন",
+            "stockIn": "স্টক ইন",
+            "stockOut": "স্টক আউট",
+            "stockTransfer": "স্টক ট্রান্সফার",
+            "warehouse": "গুদাম",
+            "warehouseList": "গুদাম তালিকা",
+            "capacityPlanning": "ক্যাপাসিটি প্ল্যানিং",
+            "vendors": "ভেন্ডর",
+            "vendorList": "ভেন্ডর তালিকা",
+            "addVendor": "ভেন্ডর যোগ করুন",
+            "vendorVerification": "ভেন্ডর যাচাইকরণ",
+            "support": "সাপোর্ট",
+            "tickets": "টিকেট",
+            "pendingTickets": "পেন্ডিং টিকেট",
+            "escalatedTickets": "এস্কালেটেড টিকেট"
+        }
+    },
+    "profile": {
+        "personalInfo": "ব্যক্তিগত তথ্য",
+        "changePassword": "পাসওয়ার্ড পরিবর্তন",
+        "notifications": "নোটিফিকেশন",
+        "security": "নিরাপত্তা"
+    },
+    "inventory": {
+        "addItem": "আইটেম যোগ করুন",
+        "updateStock": "স্টক আপডেট করুন",
+        "lowStock": "লো স্টক",
+        "outOfStock": "স্টক শেষ",
+        "category": "ক্যাটাগরি",
+        "supplier": "সাপ্লায়ার",
+        "quantity": "পরিমাণ",
+        "price": "মূল্য",
+        "status": "স্ট্যাটাস"
+    },
+    "warehouse": {
+        "name": "গুদামের নাম",
+        "location": "অবস্থান",
+        "capacity": "ধারণক্ষমতা",
+        "utilized": "ব্যবহৃত",
+        "available": "উপলব্ধ"
+    },
+    "vendor": {
+        "name": "ভেন্ডরের নাম",
+        "company": "কোম্পানি",
+        "contact": "যোগাযোগ",
+        "address": "ঠিকানা",
+        "status": "স্ট্যাটাস",
+        "documents": "ডকুমেন্টস",
+        "rating": "রেটিং"
+    },
+    "settings": {
+        "general": "সাধারণ",
+        "account": "একাউন্ট",
+        "privacy": "গোপনীয়তা",
+        "notification": "নোটিফিকেশন",
+        "language": "ভাষা",
+        "theme": "থিম",
+        "backup": "ব্যাকআপ",
+        "restore": "রিস্টোর"
+    }
+}

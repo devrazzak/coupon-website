@@ -1,0 +1,66 @@
+@import 'tailwindcss';
+@config '../tailwind.config.ts';
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Swiper custom styles */
+.swiper-button-next,
+.swiper-button-prev {
+    width: 50px !important;
+    height: 50px !important;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    backdrop-filter: blur(4px);
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+    font-size: 20px !important;
+    font-weight: bold;
+}
+
+.swiper-pagination-bullet {
+    width: 10px !important;
+    height: 10px !important;
+    background: rgba(255, 255, 255, 0.5) !important;
+    opacity: 1 !important;
+}
+
+.swiper-pagination-bullet-active {
+    background: #fff !important;
+}
+
+/* Testimonial slider custom styles */
+.testimonial-next,
+.testimonial-prev {
+    transition: all 0.3s ease;
+}
+
+.testimonial-next:hover,
+.testimonial-prev:hover {
+    transform: scale(1.1);
+}
+
+.testimonial-pagination .swiper-pagination-bullet {
+    background: rgba(59, 130, 246, 0.5) !important;
+}
+
+.testimonial-pagination .swiper-pagination-bullet-active {
+    background: rgb(59, 130, 246) !important;
+}

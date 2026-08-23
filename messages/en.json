@@ -1,0 +1,32 @@
+{
+    "Metadata": {
+        "title": "Smart Solutions for Businesses",
+        "description": "Transform your business with innovative tools and insights"
+    },
+    "LandingPage": {
+        "hero": {
+            "title": "Transform Your Business",
+            "subtitle": "Innovative solutions for modern challenges",
+            "cta": "Get Started"
+        },
+        "about": {
+            "title": "About Us",
+            "description": "We are a team of passionate developers and designers building the future of digital solutions."
+        },
+        "features": {
+            "title": "Our Features",
+            "feature1": {
+                "title": "Feature 1",
+                "description": "Description of feature 1"
+            },
+            "feature2": {
+                "title": "Feature 2",
+                "description": "Description of feature 2"
+            },
+            "feature3": {
+                "title": "Feature 3",
+                "description": "Description of feature 3"
+            }
+        }
+    }
+}

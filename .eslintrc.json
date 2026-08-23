@@ -1,0 +1,25 @@
+{
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "extends": [
+        "eslint:recommended",
+        "next/core-web-vitals",
+        "plugin:@typescript-eslint/recommended",
+        "prettier"
+    ],
+    "plugins": ["@typescript-eslint"],
+    "parserOptions": {
+        "project": "./tsconfig.json"
+    },
+    "ignorePatterns": [
+        "next.config.js",
+        "postcss.config.js",
+        ".eslintrc.js",
+        "lint-staged.config.js"
+    ],
+    "rules": {
+        "react/no-unescaped-entities": "off",
+        "@next/next/no-img-element": "off",
+        "react-hooks/exhaustive-deps": "off"
+    }
+}

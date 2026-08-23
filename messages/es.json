@@ -1,0 +1,37 @@
+{
+    "Metadata": {
+        "title": "Soluciones Inteligentes para Negocios",
+        "description": "Transforme su negocio con herramientas e insights innovadores"
+    },
+    "LandingPage": {
+        "hero": {
+            "title": "Transforme su Negocio con Soluciones Inteligentes",
+            "subtitle": "Herramientas innovadoras para impulsar el crecimiento y la eficiencia",
+            "cta": "Comenzar"
+        },
+        "features": {
+            "title": "Por qué Elegirnos",
+            "feature1": {
+                "title": "Análisis Avanzado",
+                "description": "Obtenga insights profundos con nuestras potentes herramientas de análisis de datos"
+            },
+            "feature2": {
+                "title": "Integración Perfecta",
+                "description": "Conecte sus herramientas y flujos de trabajo sin esfuerzo"
+            },
+            "feature3": {
+                "title": "Soporte 24/7",
+                "description": "Ayuda experta cuando la necesite"
+            }
+        },
+        "about": {
+            "title": "Nuestra Misión",
+            "description": "Estamos dedicados a proporcionar soluciones de vanguardia que empoderan a las empresas para alcanzar su máximo potencial."
+        },
+        "cta": {
+            "title": "¿Listo para Comenzar?",
+            "subtitle": "Únase a miles de empresas que transforman sus operaciones",
+            "button": "Inicie su Prueba Gratuita"
+        }
+    }
+}
