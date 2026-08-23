@@ -4,6 +4,8 @@ import { cn } from '@/utils/cn';
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useLocale } from 'next-intl';
+import { locales } from '@/i18n';
 import { useEffect, useState } from 'react';
 import { menuItems } from './menuItems';
 
@@ -53,8 +55,13 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
     parentIds = [],
 }) => {
     const pathname = usePathname();
+    const locale = useLocale();
     const isOpen = openMenus.includes(item.id);
-    const normalizedPathname = pathname.replace(/^\/[^/]+/, '');
+
+    const segments = pathname.split('/');
+    const normalizedPathname = locales.includes(segments[1])
+        ? `/${segments.slice(2).join('/')}`
+        : pathname;
 
     const checkActive = (menuItem: MenuItem): boolean => {
         if (menuItem.path && normalizedPathname === menuItem.path) return true;
@@ -96,7 +103,9 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
             });
 
             setOpenMenus(menusToKeep);
-            localStorage.setItem('openMenus', JSON.stringify(menusToKeep));
+            try {
+                localStorage.setItem('openMenus', JSON.stringify(menusToKeep));
+            } catch {}
         } else {
             let newOpenMenus = [...openMenus];
 
@@ -127,24 +136,11 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
             }
 
             setOpenMenus(newOpenMenus);
-            localStorage.setItem('openMenus', JSON.stringify(newOpenMenus));
+            try {
+                localStorage.setItem('openMenus', JSON.stringify(newOpenMenus));
+            } catch {}
         }
     };
-
-    useEffect(() => {
-        if (isActive && !isOpen) {
-            const parents = findParentIds(menuItems, item.id) || [];
-            if (parents.length > 0 || isActive) {
-                const newOpenMenus = [
-                    ...new Set([...openMenus, ...parents, item.id]),
-                ];
-                setOpenMenus(newOpenMenus);
-                localStorage.setItem('openMenus', JSON.stringify(newOpenMenus));
-            }
-        }
-    }, [isActive, pathname]);
-
-    const locale = pathname.split('/')[1];
 
     const menuItemClasses = cn(
         'relative flex items-center w-full transition-all duration-200',
@@ -244,45 +240,49 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
     );
 };
 
-export default function AdminMenu() {
-    const [openMenus, setOpenMenus] = useState<string[]>([]);
-    const pathname = usePathname();
-    const normalizedPathname = pathname.replace(/^\/[^/]+/, '');
-
-    useEffect(() => {
-        const savedOpenMenus = localStorage.getItem('openMenus');
-        if (savedOpenMenus) {
-            setOpenMenus(JSON.parse(savedOpenMenus));
+const findActiveMenuPath = (
+    items: MenuItem[],
+    targetPath: string
+): string[] => {
+    for (const item of items) {
+        if (item.path === targetPath) {
+            return [item.id];
         }
-    }, []);
-
-    useEffect(() => {
-        const findActiveMenuPath = (items: MenuItem[]): string[] => {
-            for (const item of items) {
-                if (item.path === normalizedPathname) {
-                    return [item.id];
-                }
-                if (item.submenu) {
-                    const foundPath = findActiveMenuPath(item.submenu);
-                    if (foundPath.length > 0) {
-                        return [item.id, ...foundPath];
-                    }
-                }
+        if (item.submenu) {
+            const foundPath = findActiveMenuPath(item.submenu, targetPath);
+            if (foundPath.length > 0) {
+                return [item.id, ...foundPath];
             }
-            return [];
-        };
-
-        const activePath = findActiveMenuPath(menuItems);
-        if (activePath.length > 0) {
-            setOpenMenus((prevOpenMenus) => {
-                const newOpenMenus = [
-                    ...new Set([...prevOpenMenus, ...activePath]),
-                ];
-                localStorage.setItem('openMenus', JSON.stringify(newOpenMenus));
-                return newOpenMenus;
-            });
         }
-    }, [pathname]);
+    }
+    return [];
+};
+
+function getInitialOpenMenus(currentNormalizedPath: string): string[] {
+    if (typeof window === 'undefined') return [];
+    try {
+        const savedOpenMenus = localStorage.getItem('openMenus');
+        const initialMenus: string[] = savedOpenMenus
+            ? JSON.parse(savedOpenMenus)
+            : [];
+        const activePath = findActiveMenuPath(menuItems, currentNormalizedPath);
+        return [...new Set([...initialMenus, ...activePath])];
+    } catch {
+        return findActiveMenuPath(menuItems, currentNormalizedPath);
+    }
+}
+
+export default function AdminMenu() {
+    const pathname = usePathname();
+
+    const segments = pathname.split('/');
+    const normalizedPathname = locales.includes(segments[1])
+        ? `/${segments.slice(2).join('/')}`
+        : pathname;
+
+    const [openMenus, setOpenMenus] = useState<string[]>(() =>
+        getInitialOpenMenus(normalizedPathname)
+    );
 
     return (
         <nav className="w-64 bg-white h-full border-r border-slate-200">

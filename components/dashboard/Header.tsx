@@ -2,19 +2,9 @@
 
 import { useAuth } from '@/hooks/useAuth';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { useState, useEffect } from 'react';
 
 export function Header() {
     const { user, logout } = useAuth();
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    if (!mounted) {
-        return null;
-    }
 
     return (
         <header className="bg-white shadow">

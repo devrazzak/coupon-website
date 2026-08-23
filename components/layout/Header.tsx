@@ -1,3 +1,5 @@
+'use client';
+
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Menu, Search, X } from 'lucide-react';
 import Link from 'next/link';

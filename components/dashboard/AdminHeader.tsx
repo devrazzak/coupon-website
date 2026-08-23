@@ -41,12 +41,20 @@ export default function AdminHeader({
         { code: 'bn', name: 'বাংলা' },
     ];
 
-    const switchLanguage = (lang: string) => {
-        if (lang === selectedLocale) return;
+    const switchLanguage = (newLocale: string) => {
+        if (newLocale === selectedLocale) return;
 
         const segments = pathname.split('/');
-        segments[1] = lang;
-        router.push(segments.join('/'));
+        const currentPath = locales.includes(segments[1])
+            ? `/${segments.slice(2).join('/')}`
+            : pathname;
+        const normalizedPath = currentPath === '//' ? '/' : currentPath;
+
+        router.push(
+            normalizedPath === '/'
+                ? `/${newLocale}`
+                : `/${newLocale}${normalizedPath}`
+        );
     };
 
     const handleLogout = () => {

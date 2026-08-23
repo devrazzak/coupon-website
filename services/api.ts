@@ -21,9 +21,16 @@ api.interceptors.response.use(
     (response) => response,
     async (error) => {
         if (error.response?.status === 401) {
-            // Handle unauthorized access
-            localStorage.removeItem('token');
-            window.location.href = '/login';
+            if (typeof window !== 'undefined') {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                document.cookie =
+                    'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+                document.cookie =
+                    'userRole=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+                // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+                window.location.href = '/auth/login';
+            }
         }
         return Promise.reject(error);
     }

@@ -16,17 +16,116 @@
         "features": {
             "title": "Our Features",
             "feature1": {
-                "title": "Feature 1",
-                "description": "Description of feature 1"
+                "title": "Advanced Analytics",
+                "description": "Gain deep insights with our powerful analytics suite."
             },
             "feature2": {
-                "title": "Feature 2",
-                "description": "Description of feature 2"
+                "title": "Seamless Integration",
+                "description": "Effortlessly connect your workflow and services."
             },
             "feature3": {
-                "title": "Feature 3",
-                "description": "Description of feature 3"
+                "title": "24/7 Support",
+                "description": "Expert assistance anytime you need it."
             }
+        },
+        "cta": {
+            "title": "Ready to get started?",
+            "subtitle": "Join thousands of businesses streamlining their operations today.",
+            "button": "Start Free Trial"
         }
+    },
+    "auth": {
+        "login": "Login",
+        "logout": "Logout",
+        "signUp": "Sign Up",
+        "email": "Email",
+        "password": "Password",
+        "forgotPassword": "Forgot Password?",
+        "rememberMe": "Remember Me"
+    },
+    "common": {
+        "loading": "Loading...",
+        "error": "Error!",
+        "success": "Success!",
+        "save": "Save",
+        "cancel": "Cancel",
+        "edit": "Edit",
+        "delete": "Delete",
+        "view": "View",
+        "search": "Search",
+        "filter": "Filter",
+        "sort": "Sort",
+        "back": "Back",
+        "next": "Next",
+        "submit": "Submit"
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "welcome": "Welcome",
+        "menu": {
+            "dashboard": "Dashboard",
+            "profile": "Profile",
+            "settings": "Settings",
+            "inventory": "Inventory",
+            "stockManagement": "Stock Management",
+            "operations": "Operations",
+            "stockIn": "Stock In",
+            "stockOut": "Stock Out",
+            "stockTransfer": "Stock Transfer",
+            "warehouse": "Warehouse",
+            "warehouseList": "Warehouse List",
+            "capacityPlanning": "Capacity Planning",
+            "vendors": "Vendors",
+            "vendorList": "Vendor List",
+            "addVendor": "Add Vendor",
+            "vendorVerification": "Vendor Verification",
+            "support": "Support",
+            "tickets": "Tickets",
+            "pendingTickets": "Pending Tickets",
+            "escalatedTickets": "Escalated Tickets"
+        }
+    },
+    "profile": {
+        "personalInfo": "Personal Information",
+        "changePassword": "Change Password",
+        "notifications": "Notifications",
+        "security": "Security"
+    },
+    "inventory": {
+        "addItem": "Add Item",
+        "updateStock": "Update Stock",
+        "lowStock": "Low Stock",
+        "outOfStock": "Out of Stock",
+        "category": "Category",
+        "supplier": "Supplier",
+        "quantity": "Quantity",
+        "price": "Price",
+        "status": "Status"
+    },
+    "warehouse": {
+        "name": "Warehouse Name",
+        "location": "Location",
+        "capacity": "Capacity",
+        "utilized": "Utilized",
+        "available": "Available"
+    },
+    "vendor": {
+        "name": "Vendor Name",
+        "company": "Company",
+        "contact": "Contact",
+        "address": "Address",
+        "status": "Status",
+        "documents": "Documents",
+        "rating": "Rating"
+    },
+    "settings": {
+        "general": "General",
+        "account": "Account",
+        "privacy": "Privacy",
+        "notification": "Notification",
+        "language": "Language",
+        "theme": "Theme",
+        "backup": "Backup",
+        "restore": "Restore"
     }
 }

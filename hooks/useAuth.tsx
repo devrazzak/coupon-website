@@ -33,31 +33,35 @@ function getAuthCookie(name: string) {
     return null;
 }
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [mounted, setMounted] = useState(false);
-    const [state, setState] = useState<AuthState>({
-        user: null,
-        isAuthenticated: false,
-        isLoading: true,
-    });
-
-    useEffect(() => {
-        setMounted(true);
+function getInitialAuthState(): AuthState {
+    if (typeof window === 'undefined') {
+        return { user: null, isAuthenticated: false, isLoading: false };
+    }
+    try {
         const storedUser = localStorage.getItem('user');
         const token = getAuthCookie('token');
-
         if (storedUser && token) {
-            const user = JSON.parse(storedUser);
-            setState({
-                user,
+            return {
+                user: JSON.parse(storedUser),
                 isAuthenticated: true,
                 isLoading: false,
-            });
-            setAuthCookies(token, user.role);
-        } else {
-            setState((prev) => ({ ...prev, isLoading: false }));
+            };
         }
-    }, []);
+    } catch {}
+    return { user: null, isAuthenticated: false, isLoading: false };
+}
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+    const [state, setState] = useState<AuthState>(getInitialAuthState);
+
+    useEffect(() => {
+        if (state.user) {
+            const token = getAuthCookie('token');
+            if (token) {
+                setAuthCookies(token, state.user.role);
+            }
+        }
+    }, [state.user]);
 
     const login = async (credentials: LoginCredentials) => {
         try {
@@ -93,15 +97,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const logout = () => {
         const userRole = getAuthCookie('userRole');
-        console.log('userRole', userRole);
-
-        if (userRole === 'admin') {
-            window.location.href = PATHS.AUTH.ADMIN_LOGIN;
-        } else if (userRole === 'partner') {
-            window.location.href = PATHS.AUTH.PARTNER_LOGIN;
-        } else if (userRole === 'user') {
-            window.location.href = PATHS.AUTH.LOGIN;
-        }
 
         localStorage.removeItem('user');
         removeAuthCookies();
@@ -110,11 +105,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             isAuthenticated: false,
             isLoading: false,
         });
-    };
 
-    if (!mounted) {
-        return null;
-    }
+        if (userRole === 'admin') {
+            window.location.href = PATHS.AUTH.ADMIN_LOGIN;
+        } else if (userRole === 'partner') {
+            window.location.href = PATHS.AUTH.PARTNER_LOGIN;
+        } else {
+            window.location.href = PATHS.AUTH.LOGIN;
+        }
+    };
 
     return (
         <AuthContext.Provider value={{ ...state, login, logout }}>

@@ -5,33 +5,127 @@
     },
     "LandingPage": {
         "hero": {
-            "title": "Transforme su Negocio con Soluciones Inteligentes",
+            "title": "Transforme su Negocio",
             "subtitle": "Herramientas innovadoras para impulsar el crecimiento y la eficiencia",
             "cta": "Comenzar"
         },
+        "about": {
+            "title": "Sobre Nosotros",
+            "description": "Somos un equipo apasionado de desarrolladores y diseñadores creando el futuro de las soluciones digitales."
+        },
         "features": {
-            "title": "Por qué Elegirnos",
+            "title": "Nuestras Características",
             "feature1": {
                 "title": "Análisis Avanzado",
-                "description": "Obtenga insights profundos con nuestras potentes herramientas de análisis de datos"
+                "description": "Obtenga insights profundos con nuestras herramientas potentes."
             },
             "feature2": {
                 "title": "Integración Perfecta",
-                "description": "Conecte sus herramientas y flujos de trabajo sin esfuerzo"
+                "description": "Conecte sus flujos de trabajo sin esfuerzo."
             },
             "feature3": {
                 "title": "Soporte 24/7",
-                "description": "Ayuda experta cuando la necesite"
+                "description": "Ayuda experta cuando la necesite."
             }
-        },
-        "about": {
-            "title": "Nuestra Misión",
-            "description": "Estamos dedicados a proporcionar soluciones de vanguardia que empoderan a las empresas para alcanzar su máximo potencial."
         },
         "cta": {
             "title": "¿Listo para Comenzar?",
-            "subtitle": "Únase a miles de empresas que transforman sus operaciones",
+            "subtitle": "Únase a miles de empresas que transforman sus operaciones.",
             "button": "Inicie su Prueba Gratuita"
         }
+    },
+    "auth": {
+        "login": "Iniciar Sesión",
+        "logout": "Cerrar Sesión",
+        "signUp": "Registrarse",
+        "email": "Correo Electrónico",
+        "password": "Contraseña",
+        "forgotPassword": "¿Olvidó su Contraseña?",
+        "rememberMe": "Recordarme"
+    },
+    "common": {
+        "loading": "Cargando...",
+        "error": "¡Error!",
+        "success": "¡Éxito!",
+        "save": "Guardar",
+        "cancel": "Cancelar",
+        "edit": "Editar",
+        "delete": "Eliminar",
+        "view": "Ver",
+        "search": "Buscar",
+        "filter": "Filtrar",
+        "sort": "Ordenar",
+        "back": "Atrás",
+        "next": "Siguiente",
+        "submit": "Enviar"
+    },
+    "dashboard": {
+        "title": "Panel de Control",
+        "welcome": "Bienvenido",
+        "menu": {
+            "dashboard": "Panel de Control",
+            "profile": "Perfil",
+            "settings": "Configuración",
+            "inventory": "Inventario",
+            "stockManagement": "Gestión de Stock",
+            "operations": "Operaciones",
+            "stockIn": "Entrada de Stock",
+            "stockOut": "Salida de Stock",
+            "stockTransfer": "Transferencia de Stock",
+            "warehouse": "Almacén",
+            "warehouseList": "Lista de Almacenes",
+            "capacityPlanning": "Planificación de Capacidad",
+            "vendors": "Proveedores",
+            "vendorList": "Lista de Proveedores",
+            "addVendor": "Agregar Proveedor",
+            "vendorVerification": "Verificación de Proveedores",
+            "support": "Soporte",
+            "tickets": "Tickets",
+            "pendingTickets": "Tickets Pendientes",
+            "escalatedTickets": "Tickets Escalados"
+        }
+    },
+    "profile": {
+        "personalInfo": "Información Personal",
+        "changePassword": "Cambiar Contraseña",
+        "notifications": "Notificaciones",
+        "security": "Seguridad"
+    },
+    "inventory": {
+        "addItem": "Agregar Artículo",
+        "updateStock": "Actualizar Stock",
+        "lowStock": "Stock Bajo",
+        "outOfStock": "Agotado",
+        "category": "Categoría",
+        "supplier": "Proveedor",
+        "quantity": "Cantidad",
+        "price": "Precio",
+        "status": "Estado"
+    },
+    "warehouse": {
+        "name": "Nombre del Almacén",
+        "location": "Ubicación",
+        "capacity": "Capacidad",
+        "utilized": "Utilizado",
+        "available": "Disponible"
+    },
+    "vendor": {
+        "name": "Nombre del Proveedor",
+        "company": "Empresa",
+        "contact": "Contacto",
+        "address": "Dirección",
+        "status": "Estado",
+        "documents": "Documentos",
+        "rating": "Calificación"
+    },
+    "settings": {
+        "general": "General",
+        "account": "Cuenta",
+        "privacy": "Privacidad",
+        "notification": "Notificación",
+        "language": "Idioma",
+        "theme": "Tema",
+        "backup": "Copia de Seguridad",
+        "restore": "Restaurar"
     }
 }

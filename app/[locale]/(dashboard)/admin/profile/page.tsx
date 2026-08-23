@@ -13,44 +13,41 @@ interface UserProfile {
 }
 
 export default function ProfilePage() {
-    const { user } = useAuth();
-    const [profile, setProfile] = useState<UserProfile | null>(null);
+    const { user, isLoading } = useAuth();
 
-    useEffect(() => {
-        // In a real app, you would fetch the full profile from an API
-        // For now, we'll use the user data from auth
-        if (user) {
-            // setProfile({
-            //     name: user.name,
-            //     email: user.email,
-            //     role: user.role,
-            // });
-        }
-    }, [user]);
-
-    if (!profile) {
-        return <div>Loading...</div>;
+    if (isLoading) {
+        return (
+            <div className="max-w-3xl mx-auto p-6 text-center text-gray-500">
+                Loading profile...
+            </div>
+        );
     }
+
+    if (!user) {
+        return (
+            <div className="max-w-3xl mx-auto p-6 text-center text-gray-500">
+                No user profile found.
+            </div>
+        );
+    }
+
+    const profile: UserProfile = {
+        name: user.name,
+        email: user.email,
+        role: user.role,
+    };
 
     return (
         <div className="max-w-3xl mx-auto">
             <div className="bg-white rounded-lg shadow p-6">
                 <div className="flex items-center gap-4 mb-6">
-                    <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
-                        {profile.avatar ? (
-                            <img
-                                src={profile.avatar}
-                                alt={profile.name}
-                                className="w-full h-full rounded-full object-cover"
-                            />
-                        ) : (
-                            <User className="w-10 h-10 text-gray-400" />
-                        )}
+                    <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden">
+                        <User className="w-10 h-10 text-gray-400" />
                     </div>
                     <div>
                         <h1 className="text-2xl font-bold">{profile.name}</h1>
                         <p className="text-gray-600">{profile.email}</p>
-                        <span className="inline-block px-2 py-1 text-sm bg-indigo-50 text-indigo-700 rounded-full mt-1">
+                        <span className="inline-block px-2 py-1 text-sm bg-indigo-50 text-indigo-700 rounded-full mt-1 capitalize">
                             {profile.role}
                         </span>
                     </div>
