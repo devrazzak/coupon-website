@@ -1,5 +1,5 @@
-import CouponLandingPage from '@/components/landing/CouponLandingPage';
+const Home = () => {
+    return <div>hello world</div>;
+};
 
-export default function LandingPage() {
-    return <CouponLandingPage />;
-}
+export default Home;

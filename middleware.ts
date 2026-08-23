@@ -14,7 +14,6 @@ const PUBLIC_PATHS = ['/_next', '/api', '/assets', '/favicon.ico'];
 
 const AUTH_PATHS = {
     admin: PATHS.AUTH.ADMIN_LOGIN,
-    partner: PATHS.AUTH.PARTNER_LOGIN,
     user: PATHS.AUTH.LOGIN,
 };
 
@@ -70,10 +69,9 @@ export async function middleware(request: NextRequest) {
     }
 
     const isAdminRoute = routePathname.startsWith('/admin');
-    const isPartnerRoute = routePathname.startsWith('/partner');
     const isUserRoute = routePathname.startsWith('/user');
-    const currentAuthPath = Object.values(AUTH_PATHS).find((path) =>
-        routePathname === path
+    const currentAuthPath = Object.values(AUTH_PATHS).find(
+        (path) => routePathname === path
     );
 
     // Allow unauthenticated users to access auth pages
@@ -86,10 +84,6 @@ export async function middleware(request: NextRequest) {
         if (isAdminRoute)
             return NextResponse.redirect(
                 localizedUrl(AUTH_PATHS.admin, locale, request)
-            );
-        if (isPartnerRoute)
-            return NextResponse.redirect(
-                localizedUrl(AUTH_PATHS.partner, locale, request)
             );
         if (isUserRoute)
             return NextResponse.redirect(
@@ -115,7 +109,6 @@ export async function middleware(request: NextRequest) {
     // Prevent users from accessing other roles' pages
     if (
         (isAdminRoute && userRole !== 'admin') ||
-        (isPartnerRoute && userRole !== 'partner') ||
         (isUserRoute && userRole !== 'user')
     ) {
         return NextResponse.redirect(
