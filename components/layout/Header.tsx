@@ -5,65 +5,138 @@ import Link from 'next/link';
 import { Menu, Search, X } from 'lucide-react';
 import { useState } from 'react';
 
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { Logo } from '../Logo';
 
-export default function Header() {
-    const [menuOpen, setMenuOpen] = useState(false);
+const navItems = ['Home', 'Stores', 'Categories', 'Top Coupons', 'Blog'];
+
+export function Header() {
+    const [open, setOpen] = useState(false);
 
     return (
-        <header className="absolute left-0 right-0 top-0 z-50 px-5 pt-5 sm:px-8 lg:px-12">
-            <div className="mx-auto flex max-w-7xl items-center justify-between">
-                <Link
-                    href="/"
-                    className="flex items-center gap-2 text-xl font-black tracking-[-0.04em] text-white"
-                >
-                    <span className="grid h-8 w-8 place-items-center rounded-lg bg-[#d7ed65] text-sm text-[#18352b]">
-                        %
-                    </span>
-                    savewise
-                </Link>
+        <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
+            <div className="container-page flex h-16 items-center gap-4 md:h-[68px]">
+                <Logo />
 
-                <nav className="hidden items-center gap-8 text-sm font-semibold text-[#d3dfd5] md:flex">
-                    <Link href="#about" className="transition hover:text-[#d7ed65]">
-                        About
-                    </Link>
-                    <Link href="#services" className="transition hover:text-[#d7ed65]">
-                        Services
-                    </Link>
-                    <Link href="#testimonials" className="transition hover:text-[#d7ed65]">
-                        Testimonials
-                    </Link>
-                    <Link href="#contact" className="transition hover:text-[#d7ed65]">
-                        Contact
-                    </Link>
+                <nav aria-label="Main" className="hidden flex-1 lg:block">
+                    <ul className="flex items-center gap-6 xl:gap-7">
+                        {navItems.map(item => {
+                            const active = item === 'Home';
+                            return (
+                                <li key={item}>
+                                    <Link
+                                        href="#"
+                                        aria-current={active ? 'page' : undefined}
+                                        className={`relative block py-5 text-[14px] font-medium transition-colors ${
+                                            active
+                                                ? 'text-primary'
+                                                : 'text-muted-foreground hover:text-foreground'
+                                        }`}
+                                    >
+                                        {item}
+                                        {active && (
+                                            <span className="absolute bottom-0 left-0 h-[3px] w-full rounded-t bg-primary" />
+                                        )}
+                                    </Link>
+                                </li>
+                            );
+                        })}
+                    </ul>
                 </nav>
 
-                <div className="flex items-center gap-3">
-                    <Search className="hidden h-5 w-5 text-[#d3dfd5] sm:block" />
-                    <LanguageSwitcher />
+                <div className="ml-auto flex items-center gap-2 md:gap-3">
+                    <div className="relative hidden xl:block">
+                        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-subtle-foreground" />
+                        <input
+                            type="search"
+                            aria-label="Search coupons and stores"
+                            placeholder="Search 50,000+ stores & coupons..."
+                            className="h-9 w-[220px] rounded-full border border-border bg-muted/50 pl-9 pr-3 text-[13px] text-foreground outline-none transition-all placeholder:text-subtle-foreground focus:border-primary focus:bg-background focus:ring-2 focus:ring-primary/15 2xl:w-[260px]"
+                        />
+                    </div>
+
+                    <Link
+                        href="#extension"
+                        className="hidden items-center gap-1.5 rounded-full border border-secondary-brand/40 bg-secondary-brand-light px-3.5 py-1.5 text-[12.5px] font-bold text-secondary-brand-strong transition-all hover:border-secondary-brand hover:shadow-sm sm:inline-flex"
+                    >
+                        <span className="h-2 w-2 rounded-full bg-secondary-brand animate-pulse" />
+                        Get Extension{' '}
+                        <span className="text-[11px] font-normal text-muted-foreground">
+                            • Free
+                        </span>
+                    </Link>
+
                     <Link
                         href="/auth/login"
-                        className="hidden text-sm font-bold text-white sm:block"
+                        className="hidden h-9 items-center rounded-full border border-border px-4 text-[13px] font-medium text-foreground transition-colors hover:bg-muted sm:inline-flex"
                     >
                         Sign in
                     </Link>
-                    <button
-                        aria-label="Toggle navigation"
-                        onClick={() => setMenuOpen(!menuOpen)}
-                        className="grid h-9 w-9 place-items-center rounded-lg border border-white/20 text-white md:hidden"
+                    <Link
+                        href="/register"
+                        className="hidden h-9 items-center rounded-full bg-primary px-4 text-[13px] font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary-hover hover:shadow-primary sm:inline-flex"
                     >
-                        {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                        Join Free
+                    </Link>
+
+                    <button
+                        type="button"
+                        onClick={() => setOpen(v => !v)}
+                        aria-label={open ? 'Close menu' : 'Open menu'}
+                        aria-expanded={open}
+                        className="grid h-9 w-9 place-items-center rounded-lg border border-border text-foreground transition-colors hover:bg-muted lg:hidden"
+                    >
+                        {open ? <X className="h-4.5 w-4.5" /> : <Menu className="h-4.5 w-4.5" />}
                     </button>
                 </div>
             </div>
-            {menuOpen && (
-                <nav className="mt-4 grid gap-3 rounded-2xl bg-[#f7f5f0] p-5 text-sm font-bold text-[#18352b] shadow-xl md:hidden">
-                    <Link href="#about">About</Link>
-                    <Link href="#services">Services</Link>
-                    <Link href="#testimonials">Testimonials</Link>
-                    <Link href="#contact">Contact</Link>
-                </nav>
+
+            {open && (
+                <div className="border-t border-border bg-background lg:hidden">
+                    <div className="container-page py-4">
+                        <div className="relative mb-4 md:hidden">
+                            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-accent" />
+                            <input
+                                type="search"
+                                aria-label="Search coupons and stores"
+                                placeholder="Search coupons, stores..."
+                                className="h-10 w-full rounded-md border border-border bg-background pl-9 pr-3 text-sm outline-none placeholder:text-accent focus:border-primary"
+                            />
+                        </div>
+                        <ul className="grid gap-1">
+                            {navItems.map(item => (
+                                <li key={item}>
+                                    <Link
+                                        href="#"
+                                        className={`block rounded-md px-3 py-2.5 text-sm font-medium ${
+                                            item === 'Home'
+                                                ? 'bg-primary-light text-primary'
+                                                : 'text-muted-foreground'
+                                        }`}
+                                    >
+                                        {item}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                        <div className="mt-4 grid grid-cols-2 gap-3 sm:hidden">
+                            <Link
+                                href="#"
+                                className="inline-flex h-10 items-center justify-center rounded-md border border-border text-sm font-medium"
+                            >
+                                Login
+                            </Link>
+                            <Link
+                                href="#"
+                                className="inline-flex h-10 items-center justify-center rounded-md bg-primary text-sm font-semibold text-primary-foreground"
+                            >
+                                Sign Up
+                            </Link>
+                        </div>
+                    </div>
+                </div>
             )}
         </header>
     );
 }
+
+export default Header;

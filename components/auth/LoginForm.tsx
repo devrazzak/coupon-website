@@ -6,8 +6,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useAuth } from '@/hooks/useAuth';
+import { UserRole } from '@/models/auth';
 import { loginSchema } from '@/schemas/auth';
-import { UserRole } from '@/types/auth';
 
 type LoginFormProps = {
     type?: UserRole;

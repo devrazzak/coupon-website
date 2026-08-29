@@ -2,8 +2,8 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 
+import { AuthState, LoginCredentials, User } from '@/models/auth';
 import PATHS from '@/routes/path';
-import { AuthState, LoginCredentials, User } from '@/types/auth';
 
 interface AuthContextType extends AuthState {
     login: (credentials: LoginCredentials) => Promise<void>;
