@@ -7,19 +7,43 @@ import { BrandMark } from '../Logo';
 const columns = [
     {
         title: 'Company',
-        links: ['About Us', 'Contact Us', 'Careers', 'Privacy Policy', 'Terms & Conditions'],
+        links: [
+            { label: 'About Us', href: '/about' },
+            { label: 'Contact Us', href: '/contact' },
+            { label: 'Privacy Policy', href: '/privacy-policy' },
+            { label: 'Terms & Conditions', href: '/terms-and-conditions' },
+            { label: 'Affiliate Disclosure', href: '/affiliate-disclosure' },
+        ],
     },
     {
         title: 'Help & Support',
-        links: ['How It Works', 'FAQ', 'Shipping Policy', 'Return Policy', 'Store Directory'],
+        links: [
+            { label: 'How It Works', href: '/how-it-works' },
+            { label: 'FAQs', href: '/contact' },
+            { label: 'Coupon Directory', href: '/coupons' },
+            { label: 'Store Directory', href: '/shops' },
+            { label: 'Blog', href: '/blog' },
+        ],
     },
     {
         title: 'Popular Stores',
-        links: ['Amazon', 'Nike', 'Target', 'ASOS', 'Sephora', 'Booking.com'],
+        links: [
+            { label: 'Amazon', href: '/shops/amazon' },
+            { label: 'Nike', href: '/shops/nike' },
+            { label: 'Target', href: '/shops/target' },
+            { label: 'ASOS', href: '/shops/asos' },
+            { label: 'Sephora', href: '/shops/sephora' },
+        ],
     },
     {
         title: 'Categories',
-        links: ['Fashion', 'Electronics', 'Travel', 'Beauty', 'Home & Living', 'All Categories'],
+        links: [
+            { label: 'Fashion', href: '/categories/fashion' },
+            { label: 'Electronics', href: '/categories/electronics' },
+            { label: 'Travel', href: '/categories/travel' },
+            { label: 'Beauty', href: '/categories/beauty' },
+            { label: 'All Categories', href: '/categories' },
+        ],
     },
 ];
 
@@ -61,12 +85,12 @@ const Footer = () => {
                             <h3 className="font-display text-[13.5px] font-bold">{column.title}</h3>
                             <ul className="mt-4 grid gap-2.5">
                                 {column.links.map(link => (
-                                    <li key={link}>
+                                    <li key={link.label}>
                                         <a
-                                            href="#"
+                                            href={link.href}
                                             className="text-[13px] text-primary-foreground/60 transition-colors hover:text-primary-foreground"
                                         >
-                                            {link}
+                                            {link.label}
                                         </a>
                                     </li>
                                 ))}

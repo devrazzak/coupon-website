@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 
 import { ChevronDown } from 'lucide-react';
 import { useLocale } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { locales } from '@/i18n';
 import { cn } from '@/utils/cn';
@@ -143,8 +143,8 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
     };
 
     const menuItemClasses = cn('relative flex items-center w-full transition-all duration-200', {
-        'text-slate-600': !isActive,
-        'text-indigo-600 font-medium': isActive,
+        'text-muted-foreground': !isActive,
+        'text-primary font-medium': isActive,
         'pl-4': level === 0,
         'pl-12': level === 1,
         'pl-16': level === 2,
@@ -156,43 +156,43 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
             {item.path ? (
                 <Link
                     href={`/${locale}${item.path}`}
-                    className={cn(menuItemClasses, 'py-2.5 hover:bg-slate-50 rounded-lg', {
-                        'bg-indigo-50 font-medium': isActive,
+                    className={cn(menuItemClasses, 'rounded-xl py-2.5 hover:bg-primary-light', {
+                        'bg-primary-light font-medium': isActive,
                     })}
                 >
                     {level === 0 && (
-                        <span className="text-slate-400 mr-3 [&>svg]:w-5 [&>svg]:h-5">
-                            {item.icon}
-                        </span>
+                        <span className="mr-3 [&>svg]:h-5 [&>svg]:w-5">{item.icon}</span>
                     )}
-                    <span className="text-sm whitespace-nowrap">{item.title}</span>
+                    <span className="whitespace-nowrap text-[14px]">{item.title}</span>
                     {isActive && (
-                        <span className="absolute inset-y-0 left-0 w-1 bg-indigo-600 rounded-r-full" />
+                        <span className="absolute inset-y-0 left-0 w-1 rounded-r-full bg-primary" />
                     )}
                 </Link>
             ) : (
                 <button
                     onClick={handleToggle}
-                    className={cn(menuItemClasses, 'py-2.5 pr-4 hover:bg-slate-50 rounded-lg', {
-                        'bg-slate-50 font-medium': isOpen,
-                    })}
+                    className={cn(
+                        menuItemClasses,
+                        'rounded-xl py-2.5 pr-4 hover:bg-primary-light',
+                        {
+                            'bg-primary-light font-medium': isOpen,
+                        },
+                    )}
                 >
                     {level === 0 && (
-                        <span className="text-slate-400 mr-3 [&>svg]:w-5 [&>svg]:h-5">
-                            {item.icon}
-                        </span>
+                        <span className="mr-3 [&>svg]:h-5 [&>svg]:w-5">{item.icon}</span>
                     )}
-                    <span className="text-sm whitespace-nowrap">{item.title}</span>
+                    <span className="whitespace-nowrap text-[14px]">{item.title}</span>
                     <ChevronDown
                         className={cn(
-                            'ml-auto w-4 h-4 text-slate-400 transition-transform duration-200',
+                            'ml-auto h-4 w-4 text-muted-foreground transition-transform duration-200',
                             {
                                 'rotate-180': isOpen,
                             },
                         )}
                     />
                     {isActive && (
-                        <span className="absolute inset-y-0 left-0 w-1 bg-indigo-600 rounded-r-full" />
+                        <span className="absolute inset-y-0 left-0 w-1 rounded-r-full bg-primary" />
                     )}
                 </button>
             )}

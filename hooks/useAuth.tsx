@@ -34,25 +34,36 @@ function getAuthCookie(name: string) {
 }
 
 function getInitialAuthState(): AuthState {
-    if (typeof window === 'undefined') {
-        return { user: null, isAuthenticated: false, isLoading: false };
-    }
-    try {
-        const storedUser = localStorage.getItem('user');
-        const token = getAuthCookie('token');
-        if (storedUser && token) {
-            return {
-                user: JSON.parse(storedUser),
-                isAuthenticated: true,
-                isLoading: false,
-            };
-        }
-    } catch {}
     return { user: null, isAuthenticated: false, isLoading: false };
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [state, setState] = useState<AuthState>(getInitialAuthState);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+
+        const hydrateAuthState = () => {
+            try {
+                const storedUser = localStorage.getItem('user');
+                const token = getAuthCookie('token');
+
+                if (storedUser && token) {
+                    setState({
+                        user: JSON.parse(storedUser),
+                        isAuthenticated: true,
+                        isLoading: false,
+                    });
+                    return;
+                }
+            } catch {}
+
+            setState({ user: null, isAuthenticated: false, isLoading: false });
+        };
+
+        const frameId = requestAnimationFrame(hydrateAuthState);
+        return () => cancelAnimationFrame(frameId);
+    }, []);
 
     useEffect(() => {
         if (state.user) {

@@ -72,6 +72,8 @@ export function StoreLogo({
             ref={ref}
             src={`https://logo.clearbit.com/${domain}`}
             alt={`${name} logo`}
+            width={size === 'sm' ? 64 : 104}
+            height={size === 'sm' ? 32 : 40}
             onError={() => setFailed(true)}
             className={`object-contain ${size === 'sm' ? 'max-h-8 max-w-[64px]' : 'max-h-10 max-w-[104px]'}`}
         />

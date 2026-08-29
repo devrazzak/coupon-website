@@ -9,25 +9,23 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const [sidebarOpen, setSidebarOpen] = useState(true);
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-background text-foreground">
             <AdminHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-            {/* Sidebar */}
             <div
-                className={`fixed left-0 top-16 h-[calc(100vh-4rem)] transition-transform duration-300 ease-in-out z-20 ${
+                className={`fixed left-0 top-16 z-30 h-[calc(100vh-4rem)] border-r border-border bg-card shadow-soft transition-transform duration-200 ease-in-out ${
                     sidebarOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}
             >
                 <AdminMenu />
             </div>
 
-            {/* Main Content */}
             <main
-                className={`pt-16 transition-all duration-300 ease-in-out ${
-                    sidebarOpen ? 'pl-64' : 'pl-0'
+                className={`min-h-[calc(100vh-4rem)] pt-16 transition-all duration-200 ease-in-out ${
+                    sidebarOpen ? 'md:pl-72' : 'pl-0'
                 }`}
             >
-                <div className="p-8">{children}</div>
+                <div className="container-page py-6 md:py-8">{children}</div>
             </main>
         </div>
     );

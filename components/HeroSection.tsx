@@ -55,7 +55,13 @@ export function HeroSection() {
                         {/* Background glow and decorative framing */}
                         <div className="relative mx-auto max-w-115">
                             <div className="overflow-hidden rounded-xl">
-                                <Image alt="Hero Image" className="" src={HeroImage.src} />
+                                <Image
+                                    alt="Hero Image"
+                                    src={HeroImage}
+                                    width={HeroImage.width}
+                                    height={HeroImage.height}
+                                    className="h-auto w-full object-cover"
+                                />
                             </div>
 
                             <div className="absolute -bottom-5 -right-6 max-w-[350px] flex items-center gap-2.5 rounded-2xl border border-border bg-card p-3 shadow-lift">

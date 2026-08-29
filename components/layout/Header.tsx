@@ -7,7 +7,13 @@ import { useState } from 'react';
 
 import { Logo } from '../Logo';
 
-const navItems = ['Home', 'Stores', 'Categories', 'Top Coupons', 'Blog'];
+const navItems = [
+    { label: 'Home', href: '/' },
+    { label: 'Stores', href: '/shops' },
+    { label: 'Categories', href: '/categories' },
+    { label: 'Top Coupons', href: '/coupons' },
+    { label: 'Blog', href: '/blog' },
+];
 
 export function Header() {
     const [open, setOpen] = useState(false);
@@ -20,11 +26,11 @@ export function Header() {
                 <nav aria-label="Main" className="hidden flex-1 lg:block">
                     <ul className="flex items-center gap-6 xl:gap-7">
                         {navItems.map(item => {
-                            const active = item === 'Home';
+                            const active = item.href === '/';
                             return (
-                                <li key={item}>
+                                <li key={item.label}>
                                     <Link
-                                        href="#"
+                                        href={item.href}
                                         aria-current={active ? 'page' : undefined}
                                         className={`relative block py-5 text-[14px] font-medium transition-colors ${
                                             active
@@ -32,7 +38,7 @@ export function Header() {
                                                 : 'text-muted-foreground hover:text-foreground'
                                         }`}
                                     >
-                                        {item}
+                                        {item.label}
                                         {active && (
                                             <span className="absolute bottom-0 left-0 h-[3px] w-full rounded-t bg-primary" />
                                         )}
@@ -104,16 +110,16 @@ export function Header() {
                         </div>
                         <ul className="grid gap-1">
                             {navItems.map(item => (
-                                <li key={item}>
+                                <li key={item.label}>
                                     <Link
-                                        href="#"
+                                        href={item.href}
                                         className={`block rounded-md px-3 py-2.5 text-sm font-medium ${
-                                            item === 'Home'
+                                            item.href === '/'
                                                 ? 'bg-primary-light text-primary'
                                                 : 'text-muted-foreground'
                                         }`}
                                     >
-                                        {item}
+                                        {item.label}
                                     </Link>
                                 </li>
                             ))}
