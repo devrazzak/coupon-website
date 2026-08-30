@@ -1,5 +1,7 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
+import PATHS from '@/routes/path';
 import { posts } from '@/utils/coupello';
 
 import { SectionHeading } from './SectionHeading';
@@ -12,12 +14,13 @@ export function BlogSection() {
                     title="Savings Guides & Tips"
                     subtitle="Short reads that help you spend less."
                     action="View All Posts"
+                    actionHref={PATHS.blog}
                 />
                 <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                    {posts.map(post => (
-                        <li key={post.title}>
-                            <a
-                                href="#"
+                    {posts.slice(0, 4).map((post, index) => (
+                        <li key={index}>
+                            <Link
+                                href={PATHS.blogDetails.replace(':id', post.id)}
                                 className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:border-primary/40"
                             >
                                 <Image
@@ -40,7 +43,7 @@ export function BlogSection() {
                                         {post.read}
                                     </p>
                                 </div>
-                            </a>
+                            </Link>
                         </li>
                     ))}
                 </ul>

@@ -7,6 +7,7 @@ import { ArrowRight, BadgeCheck, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useRef, useState } from 'react';
 
 import Nike from '@/public/images/shops/nike.jpg';
+import PATH from '@/routes/path';
 import { stores } from '@/utils/coupello';
 
 const filterCategories = ['All Stores', 'Hot Cash Back', 'Fashion', 'Electronics', 'Travel'];
@@ -29,7 +30,7 @@ export function PopularStores() {
                         </h2>
                     </div>
                     <Link
-                        href="#"
+                        href={PATH.stores}
                         className="inline-flex shrink-0 items-center gap-1.5 text-[13px] font-bold text-primary transition-colors hover:text-primary-hover"
                     >
                         View All Stores
@@ -43,7 +44,7 @@ export function PopularStores() {
                     >
                         {stores.map(store => (
                             <li key={store.name} className="w-42 shrink-0 snap-start sm:w-46">
-                                <a
+                                <Link
                                     href={`https://www.${store.domain}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -66,7 +67,7 @@ export function PopularStores() {
                                             {store.coupons}
                                         </span>
                                     </div>
-                                </a>
+                                </Link>
                             </li>
                         ))}
                     </ul>

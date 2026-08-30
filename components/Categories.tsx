@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import {
     HeartPulse,
     Laptop,
@@ -10,6 +12,7 @@ import {
     UtensilsCrossed,
 } from 'lucide-react';
 
+import PATHS from '@/routes/path';
 import { categories } from '@/utils/coupello';
 
 import { SectionHeading } from './SectionHeading';
@@ -44,6 +47,7 @@ export function Categories() {
                     title="Browse Top Categories"
                     subtitle="Explore discounts, cash back & coupons across popular shopping departments."
                     action="View All Categories"
+                    actionHref={PATHS.categories}
                 />
                 <ul className="grid grid-cols-2 gap-3.5 sm:grid-cols-4 lg:grid-cols-8">
                     {categories.map(category => {
@@ -55,7 +59,7 @@ export function Categories() {
 
                         return (
                             <li key={category.name}>
-                                <a
+                                <Link
                                     href="#coupons"
                                     className="group flex h-full flex-col items-center justify-center gap-3 rounded-2xl border border-border bg-card px-3 py-6 text-center transition-all duration-200 hover:-translate-y-1.5 hover:border-primary/50"
                                 >
@@ -72,7 +76,7 @@ export function Categories() {
                                             {category.count}
                                         </p>
                                     </div>
-                                </a>
+                                </Link>
                             </li>
                         );
                     })}

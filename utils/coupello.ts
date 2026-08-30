@@ -229,6 +229,7 @@ export const categories = [
 
 export const posts = [
     {
+        id: 'smart-ways-to-save',
         title: '10 Smart Ways to Save Money While Shopping Online',
         category: 'Shopping Tips',
         date: 'May 15, 2026',
@@ -236,6 +237,7 @@ export const posts = [
         image: blog1,
     },
     {
+        id: 'smart-ways-to-save',
         title: 'How to Find and Use Coupons Like a Pro',
         category: 'Deals Guide',
         date: 'May 10, 2026',
@@ -243,6 +245,7 @@ export const posts = [
         image: blog2,
     },
     {
+        id: 'smart-ways-to-save',
         title: "Best Summer Deals & Discounts You Shouldn't Miss",
         category: 'Seasonal Deals',
         date: 'May 5, 2026',
@@ -250,11 +253,44 @@ export const posts = [
         image: blog3,
     },
     {
+        id: 'smart-ways-to-save',
         title: "Top Trending Coupons This Week – Don't Miss Out!",
         category: 'Coupon News',
         date: 'Apr 28, 2026',
         read: '3 min read',
         image: blog4,
+    },
+    {
+        id: 'smart-ways-to-save',
+        title: 'How to Find and Use Coupons Like a Pro',
+        category: 'Deals Guide',
+        date: 'May 10, 2026',
+        read: '4 min read',
+        image: blog2,
+    },
+    {
+        id: 'smart-ways-to-save',
+        title: "Best Summer Deals & Discounts You Shouldn't Miss",
+        category: 'Seasonal Deals',
+        date: 'May 5, 2026',
+        read: '6 min read',
+        image: blog3,
+    },
+    {
+        id: 'smart-ways-to-save',
+        title: '10 Smart Ways to Save Money While Shopping Online',
+        category: 'Shopping Tips',
+        date: 'May 15, 2026',
+        read: '5 min read',
+        image: blog1,
+    },
+    {
+        id: 'smart-ways-to-save',
+        title: 'How to Find and Use Coupons Like a Pro',
+        category: 'Deals Guide',
+        date: 'May 10, 2026',
+        read: '4 min read',
+        image: blog2,
     },
 ];
 

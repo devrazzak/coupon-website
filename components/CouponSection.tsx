@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 import {
     ArrowRight,
@@ -24,6 +25,7 @@ import {
     DialogTitle,
 } from '@/components/dialog';
 import Nike from '@/public/images/shops/nike.jpg';
+import PATHS from '@/routes/path';
 import { type Coupon, couponTabs, coupons } from '@/utils/coupello';
 
 function CouponRow({ coupon, onShow }: { coupon: Coupon; onShow: (c: Coupon) => void }) {
@@ -112,7 +114,7 @@ function CouponRow({ coupon, onShow }: { coupon: Coupon; onShow: (c: Coupon) => 
     );
 }
 
-function CouponModal({ coupon, onClose }: { coupon: Coupon | null; onClose: () => void }) {
+export function CouponModal({ coupon, onClose }: { coupon: Coupon | null; onClose: () => void }) {
     const [copied, setCopied] = useState(false);
 
     const copy = async () => {
@@ -172,7 +174,7 @@ function CouponModal({ coupon, onClose }: { coupon: Coupon | null; onClose: () =
                         </div>
 
                         {/* Interactive Coupon Box */}
-                        <div className="relative overflow-hidden rounded-2xl border-2 border-dashed border-primary/50 bg-primary-light/60 p-4 text-center">
+                        <div className="relative overflow-hidden rounded-2xl border border-primary bg-primary-light/60 p-4 text-center">
                             <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
                                 Promo Code
                             </p>
@@ -288,13 +290,13 @@ export function CouponSection() {
 
                 {/* View All Button */}
                 <div className="mt-9 flex justify-center">
-                    <a
-                        href="#"
+                    <Link
+                        href={PATHS.coupons}
                         className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-7 py-3 text-[14px] font-bold text-foreground transition-all hover:border-primary hover:bg-primary-light hover:text-primary"
                     >
                         <span>Explore All Coupons</span>
                         <ArrowRight className="h-4 w-4" />
-                    </a>
+                    </Link>
                 </div>
             </div>
 
