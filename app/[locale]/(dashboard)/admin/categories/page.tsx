@@ -15,6 +15,7 @@ import {
 import { MediaPicker } from '@/components/admin/media-picker';
 import { Button } from '@/components/ui/button';
 import { type CategoryRecord, type MediaRecord, categoryData, mediaData } from '@/utils/admin-data';
+import { useGetCategory } from '@/utils/hooks/category';
 
 const pageSize = 6;
 
@@ -245,6 +246,10 @@ export default function CategoriesAdminPage() {
     const [editing, setEditing] = useState<CategoryRecord | null>(null);
     const [deleteTarget, setDeleteTarget] = useState<CategoryRecord | null>(null);
     const [toast, setToast] = useState('');
+
+    const { data } = useGetCategory();
+
+    console.log('Category data:', data);
 
     const filteredCategories = useMemo(() => {
         return categories.filter(category => {

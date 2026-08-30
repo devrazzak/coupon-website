@@ -119,8 +119,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (userRole === 'admin') {
             window.location.href = PATHS.AUTH.ADMIN_LOGIN;
-        } else if (userRole === 'partner') {
-            window.location.href = PATHS.AUTH.PARTNER_LOGIN;
         } else {
             window.location.href = PATHS.AUTH.LOGIN;
         }
