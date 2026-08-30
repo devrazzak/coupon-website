@@ -7,5 +7,5 @@ export const API_END_POINTS = {
         RESET_PASSWORD: '/auth/reset-password',
         ADMIN_SIGN_IN: '/auth/admin-login',
     },
-    GET_CATEGORY: '/api/v1/categories',
+    GET_CATEGORY: '/api/v1/admin/categories',
 };

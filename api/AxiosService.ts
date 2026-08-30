@@ -31,7 +31,7 @@ function getIRequestProp(
     const userData = JSON.parse(localStorage.getItem('userData') || '{}');
 
     // Extract idToken from userData, or set it to an empty string if not found
-    const idToken = userData ? userData['token'] : '';
+    const idToken = '6|QOy2JVv1wwAV7hITNljzsaLklSqJBsRN0ijB1UeKa8feed47';
 
     // Determine content type based on whether it's a social request or a multipart form request
     let content_type;
@@ -47,7 +47,7 @@ function getIRequestProp(
         requestHeader: {
             'Content-Type': content_type, // Content type header
             'Accept-Language': DEFAULT_LANGUAGE, // Language preference for the request
-            Authorization: idToken ? `Token ${idToken}` : '', // Authorization header with a Bearer token
+            Authorization: idToken ? `Bearer ${idToken}` : '', // Authorization header with a Bearer token
         },
     };
 }
