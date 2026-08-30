@@ -1,21 +1,32 @@
 'use client';
 
-import { Edit3, Trash2 } from 'lucide-react';
+import { Eye, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import type { MediaRecord } from '@/utils/admin-data';
 
+function formatMediaDate(value: string): string {
+    if (!value) return '';
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = String(date.getFullYear()).slice(-2);
+
+    return `${day}/${month}/${year}`;
+}
+
 export function MediaCard({
     media,
     onSelect,
-    onEdit,
     onDelete,
     selectable = false,
     selected = false,
 }: {
     media: MediaRecord;
     onSelect?: (media: MediaRecord) => void;
-    onEdit?: (media: MediaRecord) => void;
     onDelete?: (media: MediaRecord) => void;
     selectable?: boolean;
     selected?: boolean;
@@ -33,6 +44,7 @@ export function MediaCard({
         >
             {/* Image Container */}
             <div className="relative aspect-square w-full overflow-hidden bg-surface">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                     src={media.url}
                     alt={media.altText || media.fileName}
@@ -45,49 +57,47 @@ export function MediaCard({
                         </div>
                     </div>
                 )}
-            </div>
 
-            {/* Info Overlay */}
-            <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/60 via-transparent to-transparent p-3 opacity-0 transition-opacity group-hover:opacity-100">
-                <div className="flex items-center justify-between gap-2">
-                    <div className="min-w-0 flex-1">
-                        <p className="truncate text-[12px] font-semibold text-white">
+                {/* Info Overlay */}
+                <div className="absolute inset-0 flex flex-col justify-between bg-linear-to-t from-black/75 via-black/20 to-transparent p-3 opacity-0 transition-opacity group-hover:opacity-100">
+                    <div className="flex items-start justify-between gap-2">
+                        <span className="max-w-[70%] truncate rounded-full border border-white/20 bg-black/35 px-2 py-1 text-[10px] font-medium text-white backdrop-blur-sm">
                             {media.fileName}
-                        </p>
-                        <p className="text-[11px] text-slate-200">
-                            {(media.fileSize / 1024).toFixed(1)} KB
-                        </p>
+                        </span>
+                        {!selectable && (
+                            <div className="flex gap-1">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={e => {
+                                        e.stopPropagation();
+                                        if (media.url) {
+                                            window.open(media.url, '_blank', 'noopener,noreferrer');
+                                        }
+                                    }}
+                                    className="h-8 w-8 bg-black text-white"
+                                    aria-label="View image"
+                                >
+                                    <Eye className="h-3.5 w-3.5" />
+                                </Button>
+                                {onDelete && (
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={e => {
+                                            e.stopPropagation();
+                                            onDelete(media);
+                                        }}
+                                        className="h-8 w-8 bg-white text-black"
+                                        aria-label="Delete image"
+                                    >
+                                        <Trash2 className="h-3.5 w-3.5" />
+                                    </Button>
+                                )}
+                            </div>
+                        )}
                     </div>
-                    {!selectable && (
-                        <div className="flex gap-1">
-                            {onEdit && (
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={e => {
-                                        e.stopPropagation();
-                                        onEdit(media);
-                                    }}
-                                    className="h-8 w-8 bg-white/10 text-white hover:bg-white/20"
-                                >
-                                    <Edit3 className="h-3.5 w-3.5" />
-                                </Button>
-                            )}
-                            {onDelete && (
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={e => {
-                                        e.stopPropagation();
-                                        onDelete(media);
-                                    }}
-                                    className="h-8 w-8 bg-rose-500/20 text-rose-300 hover:bg-rose-500/40"
-                                >
-                                    <Trash2 className="h-3.5 w-3.5" />
-                                </Button>
-                            )}
-                        </div>
-                    )}
+                    <div className="h-2" />
                 </div>
             </div>
 
@@ -96,9 +106,9 @@ export function MediaCard({
                 <p className="truncate text-[12px] font-medium text-foreground">{media.fileName}</p>
                 <div className="mt-1 flex items-center justify-between text-[11px] text-muted-foreground">
                     <span>
-                        {media.width}×{media.height}
+                        {media.width && media.height ? `${media.width}×${media.height}` : 'Image'}
                     </span>
-                    <span>{media.createdAt}</span>
+                    <span>{formatMediaDate(media.createdAt)}</span>
                 </div>
             </div>
         </div>
@@ -108,14 +118,12 @@ export function MediaCard({
 export function MediaGrid({
     media,
     onSelect,
-    onEdit,
     onDelete,
     selectable = false,
     selectedId = null,
 }: {
     media: MediaRecord[];
     onSelect?: (media: MediaRecord) => void;
-    onEdit?: (media: MediaRecord) => void;
     onDelete?: (media: MediaRecord) => void;
     selectable?: boolean;
     selectedId?: string | null;
@@ -143,7 +151,6 @@ export function MediaGrid({
                     key={item.id}
                     media={item}
                     onSelect={onSelect}
-                    onEdit={onEdit}
                     onDelete={onDelete}
                     selectable={selectable}
                     selected={selectedId === item.id}

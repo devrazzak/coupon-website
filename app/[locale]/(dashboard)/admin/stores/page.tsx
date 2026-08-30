@@ -476,6 +476,7 @@ export default function StoresAdminPage() {
                                         className="border-t border-border text-[14px] text-foreground"
                                     >
                                         <td className="px-4 py-3">
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
                                             <img
                                                 src={store.logo}
                                                 alt={store.name}

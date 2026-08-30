@@ -41,7 +41,7 @@ const environmentConfigs: Record<Environment, EnvironmentConfig> = {
         booking_api_base_url: '',
         business_base_url: '',
         social_api_base_url: '',
-        bucket_base_url: '',
+        bucket_base_url: 'https://coupon-finder-api-dev.assetvila.com/public/storage/',
         cognitoUserPoolId: '',
         identityPoolId: '',
         bucket: '',
@@ -107,6 +107,7 @@ export const booking_api_base_url = currentConfig.booking_api_base_url;
 export const business_base_url = currentConfig.business_base_url;
 export const social_api_base_url = currentConfig.social_api_base_url;
 export const bucket_base_url = currentConfig.bucket_base_url;
+export const file_base_url = currentConfig.bucket_base_url;
 export const cognitoUserPoolId = currentConfig.cognitoUserPoolId;
 export const identityPoolId = currentConfig.identityPoolId;
 export const bucket = currentConfig.bucket;

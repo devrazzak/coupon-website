@@ -33,6 +33,8 @@ export function MediaPicker({
                 {selectedMedia ? (
                     <div className="relative w-full">
                         <div className="group relative overflow-hidden rounded-xl border border-border bg-surface">
+                            {' '}
+                            {}{' '}
                             <img
                                 src={selectedMedia.url}
                                 alt={selectedMedia.altText}

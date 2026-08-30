@@ -5,6 +5,7 @@ import { useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import type { MediaRecord } from '@/utils/admin-data';
+import { useUploadMedia } from '@/utils/hooks/media';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -19,11 +20,13 @@ export function MediaUploadModal({
     onUpload: (media: MediaRecord[]) => void;
 }) {
     const [files, setFiles] = useState<File[]>([]);
+    const [altText, setAltText] = useState('');
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState('');
     const [progress, setProgress] = useState(0);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const dragRef = useRef<HTMLDivElement>(null);
+    const { mutateAsync } = useUploadMedia();
 
     const validateFile = (file: File): string | null => {
         if (!ALLOWED_TYPES.includes(file.type)) {
@@ -80,44 +83,59 @@ export function MediaUploadModal({
         }
 
         setUploading(true);
+        setError('');
         setProgress(0);
 
-        // Simulate upload with delay
-        const uploadedMedia: MediaRecord[] = [];
+        try {
+            const uploadedMedia: MediaRecord[] = [];
 
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                setProgress(Math.round(((i + 1) / files.length) * 100));
 
-            // Simulate progress
-            setProgress(Math.round(((i + 1) / files.length) * 100));
+                const response = await mutateAsync({ file, altText: altText || undefined });
+                const uploadedItem = ((response as { data?: unknown })?.data ??
+                    response ??
+                    {}) as Record<string, any>;
 
-            // Simulate image dimensions (in real world, you'd read them from the file)
-            const newMedia: MediaRecord = {
-                id: `media-${Date.now()}-${i}`,
-                fileName: file.name,
-                url: URL.createObjectURL(file),
-                mimeType: file.type,
-                fileSize: file.size,
-                width: 1200,
-                height: 800,
-                altText: '',
-                uploadedBy: 'admin',
-                createdAt: new Date().toISOString().slice(0, 10),
-                updatedAt: new Date().toISOString().slice(0, 10),
-                usedBy: [],
-            };
+                const newMedia: MediaRecord = {
+                    id: String(uploadedItem?.id ?? `media-${Date.now()}-${i}`),
+                    fileName: String(uploadedItem?.name ?? file.name),
+                    url: String(
+                        uploadedItem?.file_path
+                            ? uploadedItem.file_path
+                            : (uploadedItem?.url ?? URL.createObjectURL(file)),
+                    ),
+                    mimeType: String(uploadedItem?.mime_type ?? file.type),
+                    fileSize: Number(uploadedItem?.file_size ?? file.size),
+                    width: Number(uploadedItem?.width ?? 0),
+                    height: Number(uploadedItem?.height ?? 0),
+                    altText: String(uploadedItem?.alt_text ?? altText ?? ''),
+                    uploadedBy: String(uploadedItem?.uploaded_by ?? 'admin'),
+                    createdAt: String(uploadedItem?.created_at ?? new Date().toISOString()),
+                    updatedAt: String(uploadedItem?.updated_at ?? new Date().toISOString()),
+                    usedBy: Array.isArray(uploadedItem?.used_by) ? uploadedItem.used_by : [],
+                };
 
-            uploadedMedia.push(newMedia);
+                uploadedMedia.push(newMedia);
+            }
 
-            // Simulate network delay
-            await new Promise(resolve => setTimeout(resolve, 500));
+            setUploading(false);
+            onUpload(uploadedMedia);
+            setFiles([]);
+            setAltText('');
+            setProgress(0);
+            onClose();
+        } catch (uploadError) {
+            setUploading(false);
+            setProgress(0);
+            const message =
+                uploadError && typeof uploadError === 'object' && 'response' in uploadError
+                    ? (uploadError as { response?: { data?: { message?: string } } }).response?.data
+                          ?.message || 'Upload failed.'
+                    : 'Upload failed.';
+            setError(String(message));
         }
-
-        setUploading(false);
-        onUpload(uploadedMedia);
-        setFiles([]);
-        setProgress(0);
-        onClose();
     };
 
     const removeFile = (index: number) => {
@@ -180,6 +198,18 @@ export function MediaUploadModal({
                         onChange={e => handleFiles(e.target.files!)}
                         className="hidden"
                     />
+                </div>
+
+                <div className="mt-5">
+                    <label className="block text-[13px] font-semibold text-foreground">
+                        <span className="mb-2 block">Alt text (optional)</span>
+                        <input
+                            value={altText}
+                            onChange={event => setAltText(event.target.value)}
+                            placeholder="e.g. Product image"
+                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                        />
+                    </label>
                 </div>
 
                 {/* Error Message */}
