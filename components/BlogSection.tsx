@@ -29,7 +29,7 @@ export function BlogSection() {
                                     width={800}
                                     height={560}
                                     loading="lazy"
-                                    className="aspect-[16/11] w-full object-cover"
+                                    className="aspect-16/11 w-full object-cover"
                                 />
                                 <div className="flex flex-1 flex-col p-4">
                                     <span className="inline-flex w-fit rounded bg-primary-light px-2.5 py-1 text-[10.5px] font-semibold text-primary">
