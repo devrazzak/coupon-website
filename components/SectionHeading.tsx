@@ -1,13 +1,17 @@
+import Link from 'next/link';
+
 import { ArrowRight } from 'lucide-react';
 
 export function SectionHeading({
     title,
     subtitle,
     action,
+    actionHref = '#',
 }: {
     title: string;
     subtitle?: string;
     action?: string;
+    actionHref?: string;
 }) {
     return (
         <div className="mb-6 flex items-end justify-between gap-4">
@@ -18,13 +22,13 @@ export function SectionHeading({
                 {subtitle && <p className="mt-1.5 text-[14px] text-muted-foreground">{subtitle}</p>}
             </div>
             {action && (
-                <a
-                    href="#"
+                <Link
+                    href={actionHref}
                     className="inline-flex shrink-0 items-center gap-1.5 text-[13px] font-bold text-primary transition-colors hover:text-primary-hover"
                 >
                     {action}
                     <ArrowRight className="h-3.5 w-3.5" />
-                </a>
+                </Link>
             )}
         </div>
     );

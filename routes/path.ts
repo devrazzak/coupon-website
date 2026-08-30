@@ -6,10 +6,14 @@ const PATHS = {
         REGISTRATION: '/auth/registration',
         PARTNER_REGISTRATION: '/auth/partner-registration',
     },
-    PUBLIC: {
-        HOME: '/',
-        BECOME_A_PARTNER: '/become-a-partner',
-    },
+    home: '/',
+    stores: '/shops',
+    shopDetails: '/shops/:slug',
+    categories: '/categories',
+    categoryDetails: '/categories/:slug',
+    coupons: '/coupons',
+    blog: '/blog',
+    blogDetails: '/blog/:id',
 };
 
 export default PATHS;
