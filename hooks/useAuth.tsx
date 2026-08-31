@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 
 import { AuthState, LoginCredentials, User } from '@/models/auth';
 import PATHS from '@/routes/path';
+import { Login } from '@/utils/api/auth';
 
 interface AuthContextType extends AuthState {
     login: (credentials: LoginCredentials) => Promise<void>;
@@ -46,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const hydrateAuthState = () => {
             try {
                 const storedUser = localStorage.getItem('user');
-                const token = getAuthCookie('token');
+                const token = localStorage.getItem('token') || getAuthCookie('token');
 
                 if (storedUser && token) {
                     setState({
@@ -67,7 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         if (state.user) {
-            const token = getAuthCookie('token');
+            const token = localStorage.getItem('token') || getAuthCookie('token');
             if (token) {
                 setAuthCookies(token, state.user.role);
             }
@@ -76,27 +77,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const login = async (credentials: LoginCredentials) => {
         try {
-            const mockUser: User = {
-                id: '1',
+            const response = await Login({
                 email: credentials.email,
-                name: 'John Doe',
-                role: credentials.role || 'user',
+                password: credentials.password,
+            });
+
+            const resData = response?.data as {
+                success?: boolean;
+                message?: string;
+                data?: {
+                    user: {
+                        id: number | string;
+                        name: string;
+                        email: string;
+                        role: string;
+                    };
+                    token: string;
+                };
             };
 
-            const mockToken = btoa(
-                JSON.stringify({
-                    userId: mockUser.id,
-                    role: mockUser.role,
-                    timestamp: Date.now(),
-                }),
+            const user = resData?.data?.user;
+            const token = resData?.data?.token;
+
+            if (!token || !user) {
+                throw new Error(resData?.message || 'Invalid email or password');
+            }
+
+            const formattedUser: User = {
+                id: String(user.id),
+                email: user.email,
+                name: user.name,
+                role: (user.role as any) || credentials.role || 'admin',
+            };
+
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(formattedUser));
+            localStorage.setItem(
+                'userData',
+                JSON.stringify({ token, user: formattedUser, idToken: token }),
             );
 
-            localStorage.setItem('user', JSON.stringify(mockUser));
-
-            setAuthCookies(mockToken, mockUser.role);
+            setAuthCookies(token, formattedUser.role);
 
             setState({
-                user: mockUser,
+                user: formattedUser,
                 isAuthenticated: true,
                 isLoading: false,
             });
@@ -109,7 +133,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const logout = () => {
         const userRole = getAuthCookie('userRole');
 
+        localStorage.removeItem('token');
         localStorage.removeItem('user');
+        localStorage.removeItem('userData');
         removeAuthCookies();
         setState({
             user: null,

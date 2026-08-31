@@ -27,11 +27,15 @@ function getIRequestProp(
     // Choose the server URL based on whether it's a social server or not
     const serverUrl = severType ? social_api_base_url : api_base_url;
 
-    // Retrieve user data (which includes the idToken) from localStorage
-    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-
-    // Extract idToken from userData, or set it to an empty string if not found
-    const idToken = '6|QOy2JVv1wwAV7hITNljzsaLklSqJBsRN0ijB1UeKa8feed47';
+    // Retrieve user data / token from localStorage
+    let idToken = '';
+    if (typeof window !== 'undefined') {
+        try {
+            const token = localStorage.getItem('token');
+            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+            idToken = token || userData?.idToken || userData?.token || '';
+        } catch {}
+    }
 
     // Determine content type based on whether it's a social request or a multipart form request
     let content_type;

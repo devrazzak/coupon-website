@@ -38,8 +38,10 @@ export function LoginForm({ type = 'user' }: LoginFormProps) {
                 password: data.password,
                 role: type,
             });
-        } catch (error) {
-            setError('Invalid email or password');
+        } catch (error: any) {
+            const message =
+                error?.response?.data?.message || error?.message || 'Invalid email or password';
+            setError(message);
             console.error('Login failed:', error);
         }
     };
