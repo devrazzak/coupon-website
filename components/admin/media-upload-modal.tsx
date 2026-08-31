@@ -5,7 +5,18 @@ import { useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import type { MediaRecord } from '@/utils/admin-data';
+import { file_base_url } from '@/utils/config';
 import { useUploadMedia } from '@/utils/hooks/media';
+
+function normalizeMediaUrl(value: string | null | undefined): string {
+    const normalized = String(value ?? '').trim();
+    if (!normalized || normalized.startsWith('blob:')) return '';
+    if (/^https?:\/\//i.test(normalized)) return normalized;
+
+    const base = file_base_url.replace(/\/$/, '');
+    const path = normalized.replace(/^\/+/, '');
+    return `${base}/${path}`;
+}
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -98,14 +109,14 @@ export function MediaUploadModal({
                     response ??
                     {}) as Record<string, any>;
 
+                const resolvedUrl = normalizeMediaUrl(
+                    uploadedItem?.file_path ?? uploadedItem?.url ?? '',
+                );
+
                 const newMedia: MediaRecord = {
                     id: String(uploadedItem?.id ?? (uploadedItem?.file_path || 'media-upload')),
                     fileName: String(uploadedItem?.name ?? file.name),
-                    url: String(
-                        uploadedItem?.file_path
-                            ? uploadedItem.file_path
-                            : (uploadedItem?.url ?? URL.createObjectURL(file)),
-                    ),
+                    url: resolvedUrl,
                     mimeType: String(uploadedItem?.mime_type ?? file.type),
                     fileSize: Number(uploadedItem?.file_size ?? file.size),
                     width: Number(uploadedItem?.width ?? 0),

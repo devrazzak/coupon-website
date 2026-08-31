@@ -1,7 +1,7 @@
 'use client';
 
 import { Edit3, Eye, EyeOff, Plus, Sparkles, Trash2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
     AdminPageHeader,
@@ -15,13 +15,15 @@ import {
 import { CreateCategoryModal } from '@/components/admin/category-modal';
 import { MediaPicker } from '@/components/admin/media-picker';
 import { Button } from '@/components/ui/button';
-import { type CategoryRecord, type MediaRecord, mediaData } from '@/utils/admin-data';
+import { type CategoryRecord, type MediaRecord } from '@/utils/admin-data';
+import { file_base_url } from '@/utils/config';
 import {
     useCreateCategory,
     useDeleteCategory,
     useGetCategories,
     useUpdateCategory,
 } from '@/utils/hooks/category';
+import { useGetMedia } from '@/utils/hooks/media';
 
 export interface CategoryApiItem {
     id: number;
@@ -62,6 +64,52 @@ function getCategoriesResponse(response: unknown): CategoriesResponse | null {
     }
 
     return null;
+}
+
+function normalizeMediaUrl(value: string | null | undefined): string {
+    const normalized = String(value ?? '').trim();
+    if (!normalized || normalized.startsWith('blob:')) return '';
+    if (/^https?:\/\//i.test(normalized)) return normalized;
+
+    const base = file_base_url.replace(/\/$/, '');
+    const path = normalized.replace(/^\/+/, '');
+    return `${base}/${path}`;
+}
+
+function normalizeMediaItem(item: Record<string, any>): MediaRecord {
+    const filePath = String(item?.file_path ?? item?.url ?? item?.filePath ?? '');
+    const fileName = String(item?.name ?? item?.fileName ?? filePath.split('/').pop() ?? 'media');
+    const safeId = String(item?.id ?? (filePath || 'media-default'));
+
+    return {
+        id: safeId,
+        fileName,
+        url: normalizeMediaUrl(filePath),
+        mimeType: String(item?.mime_type ?? item?.mimeType ?? 'image/jpeg'),
+        fileSize: Number(item?.file_size ?? item?.fileSize ?? 0),
+        width: Number(item?.width ?? 0),
+        height: Number(item?.height ?? 0),
+        altText: String(item?.alt_text ?? item?.altText ?? ''),
+        uploadedBy: String(item?.uploaded_by ?? item?.uploadedBy ?? 'admin'),
+        createdAt: String(item?.created_at ?? item?.createdAt ?? new Date().toISOString()),
+        updatedAt: String(item?.updated_at ?? item?.updatedAt ?? new Date().toISOString()),
+        usedBy: Array.isArray(item?.used_by) ? item.used_by : [],
+    };
+}
+
+function getMediaItems(response: unknown): MediaRecord[] {
+    if (!response || typeof response !== 'object') return [];
+
+    const payload = (response as { data?: unknown }).data;
+    const list = Array.isArray(payload)
+        ? payload
+        : payload &&
+            typeof payload === 'object' &&
+            Array.isArray((payload as { data?: unknown }).data)
+          ? ((payload as { data?: unknown[] }).data ?? [])
+          : [];
+
+    return list.map(item => normalizeMediaItem((item || {}) as Record<string, any>));
 }
 
 function slugify(value: string) {
@@ -273,7 +321,7 @@ export default function CategoriesAdminPage() {
     const [categoryOverrides, setCategoryOverrides] = useState<
         Record<string, CategoryRecord | null>
     >({});
-    const [allMedia, setAllMedia] = useState(mediaData);
+    const [uploadedMedia, setUploadedMedia] = useState<MediaRecord[]>([]);
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [featuredFilter, setFeaturedFilter] = useState('all');
@@ -287,10 +335,13 @@ export default function CategoriesAdminPage() {
 
     // API hooks
     const { data: apiData, isFetching } = useGetCategories(page, pageSize);
+    const { data: mediaApiData } = useGetMedia(1, 100);
     const { mutateAsync: createCategoryMutation } = useCreateCategory();
     const { mutateAsync: updateCategoryMutation } = useUpdateCategory();
     const { mutateAsync: deleteCategoryMutation } = useDeleteCategory();
     const categoriesResponse = useMemo(() => getCategoriesResponse(apiData), [apiData]);
+    const mediaItems = useMemo(() => getMediaItems(mediaApiData), [mediaApiData]);
+    const allMedia = useMemo(() => [...uploadedMedia, ...mediaItems], [uploadedMedia, mediaItems]);
 
     const categories = useMemo(() => {
         const items =
@@ -652,14 +703,14 @@ export default function CategoriesAdminPage() {
                         }}
                         onSave={handleSave}
                         allMedia={allMedia}
-                        onUploadMedia={newMedia => setAllMedia(prev => [...newMedia, ...prev])}
+                        onUploadMedia={newMedia => setUploadedMedia(prev => [...newMedia, ...prev])}
                     />
                 ) : (
                     <CreateCategoryModal
                         onClose={() => setModalOpen(false)}
                         onSave={handleSave}
                         allMedia={allMedia}
-                        onUploadMedia={newMedia => setAllMedia(prev => [...newMedia, ...prev])}
+                        onUploadMedia={newMedia => setUploadedMedia(prev => [...newMedia, ...prev])}
                     />
                 ))}
 

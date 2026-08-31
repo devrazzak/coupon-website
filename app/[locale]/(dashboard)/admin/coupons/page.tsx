@@ -13,9 +13,119 @@ import {
     Toast,
 } from '@/components/admin/admin-shared';
 import { Button } from '@/components/ui/button';
-import { type CouponRecord, couponData } from '@/utils/admin-data';
+import { type CouponCreatePayload } from '@/utils/api/coupon';
+import { useGetCategories } from '@/utils/hooks/category';
+import {
+    useCreateCoupon,
+    useDeleteCoupon,
+    useGetCoupons,
+    useUpdateCoupon,
+} from '@/utils/hooks/coupon';
+import { useGetStores } from '@/utils/hooks/store';
 
-const pageSize = 6;
+export interface CouponApiItem {
+    id: number;
+    store_id: number;
+    store?:
+        | {
+              id: number;
+              name: string;
+              slug?: string;
+              logo?: string;
+          }
+        | string
+        | null;
+    category_id: number | null;
+    category?:
+        | {
+              id: number;
+              name: string;
+              slug?: string;
+          }
+        | string
+        | null;
+    title: string;
+    slug: string;
+    code: string | null;
+    coupon_type: string;
+    discount_type: string;
+    discount_value: number | string;
+    currency: string | null;
+    short_description: string | null;
+    terms_conditions: string | null;
+    minimum_order_amount: number | string | null;
+    affiliate_url: string | null;
+    start_at: string | null;
+    expires_at: string | null;
+    is_featured: boolean;
+    is_verified: boolean;
+    status: string;
+    seo_title: string | null;
+    meta_description: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface CouponsResponse {
+    success: boolean;
+    message: string;
+    data: CouponApiItem[];
+    meta: {
+        currentPage: number;
+        totalCount: number;
+    };
+}
+
+function getCouponsResponse(response: unknown): CouponsResponse | null {
+    if (!response || typeof response !== 'object') return null;
+
+    const payload = (response as { data?: unknown }).data;
+    if (
+        payload &&
+        typeof payload === 'object' &&
+        Array.isArray((payload as CouponsResponse).data)
+    ) {
+        return payload as CouponsResponse;
+    }
+
+    return null;
+}
+
+function getStoresList(response: unknown): { id: number; name: string }[] {
+    if (!response || typeof response !== 'object') return [];
+    const payload = (response as { data?: unknown }).data;
+    const list = Array.isArray(payload)
+        ? payload
+        : payload &&
+            typeof payload === 'object' &&
+            Array.isArray((payload as { data?: unknown }).data)
+          ? ((payload as { data?: unknown[] }).data ?? [])
+          : [];
+
+    return list.map((item: any) => ({
+        id: Number(item.id),
+        name: String(item.name || `Store #${item.id}`),
+    }));
+}
+
+function getCategoriesList(response: unknown): { id: number; name: string }[] {
+    if (!response || typeof response !== 'object') return [];
+    const payload = (response as { data?: unknown }).data;
+    const list = Array.isArray(payload)
+        ? payload
+        : payload &&
+            typeof payload === 'object' &&
+            Array.isArray((payload as { data?: unknown }).data)
+          ? ((payload as { data?: unknown[] }).data ?? [])
+          : [];
+
+    return list.map((item: any) => ({
+        id: Number(item.id),
+        name: String(item.name || `Category #${item.id}`),
+    }));
+}
+
+const pageSize = 10;
 
 function slugify(value: string) {
     return (
@@ -27,57 +137,132 @@ function slugify(value: string) {
     );
 }
 
-function getDefaultCouponForm(): CouponRecord {
+export type CouponUiRecord = {
+    id: string;
+    storeId: number;
+    storeName: string;
+    categoryId: number | null;
+    categoryName: string;
+    title: string;
+    slug: string;
+    code: string;
+    couponType: string;
+    discountType: string;
+    discountValue: number | string;
+    currency: string;
+    shortDescription: string;
+    termsConditions: string;
+    minimumOrderAmount: number | string;
+    affiliateUrl: string;
+    startAt: string;
+    expiresAt: string;
+    isFeatured: boolean;
+    isVerified: boolean;
+    status: string;
+    seoTitle: string;
+    metaDescription: string;
+    createdAt: string;
+};
+
+type CouponFormState = {
+    id: string | number;
+    storeId: number | string;
+    categoryId: number | string;
+    title: string;
+    slug: string;
+    code: string;
+    couponType: string;
+    discountType: string;
+    discountValue: number | string;
+    currency: string;
+    shortDescription: string;
+    termsConditions: string;
+    minimumOrderAmount: number | string;
+    affiliateUrl: string;
+    startAt: string;
+    expiresAt: string;
+    isFeatured: boolean;
+    isVerified: boolean;
+    status: string;
+    seoTitle: string;
+    metaDescription: string;
+};
+
+function getDefaultCouponForm(): CouponFormState {
     const today = new Date();
     const thirtyDaysOut = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
     return {
         id: '',
-        store: '',
+        storeId: '',
+        categoryId: '',
         title: '',
         slug: '',
-        shortDescription: '',
-        description: '',
-        type: 'Code',
         code: '',
-        discountType: 'Percent',
-        discountValue: '',
-        minimumPurchase: '',
-        maximumDiscount: '',
-        membershipRequirement: '',
-        restrictions: '',
-        terms: '',
-        startDate: today.toISOString().slice(0, 10),
-        expirationDate: thirtyDaysOut.toISOString().slice(0, 10),
-        alwaysActive: false,
-        verified: false,
-        verificationDate: '',
-        lastTestedDate: '',
-        verificationNotes: '',
-        featured: false,
-        popular: false,
-        trending: false,
-        displayOrder: 1,
+        couponType: 'coupon',
+        discountType: 'percentage',
+        discountValue: 20,
+        currency: 'BDT',
+        shortDescription: '',
+        termsConditions: '',
+        minimumOrderAmount: 0,
         affiliateUrl: '',
-        destinationUrl: '',
-        metaTitle: '',
-        metaDescription: '',
+        startAt: today.toISOString().slice(0, 10),
+        expiresAt: thirtyDaysOut.toISOString().slice(0, 10),
+        isFeatured: false,
+        isVerified: true,
         status: 'active',
+        seoTitle: '',
+        metaDescription: '',
     };
 }
 
 function CouponModal({
     initialData,
+    stores,
+    categories,
     onClose,
     onSave,
 }: {
-    initialData: CouponRecord | null;
+    initialData: CouponUiRecord | null;
+    stores: { id: number; name: string }[];
+    categories: { id: number; name: string }[];
     onClose: () => void;
-    onSave: (payload: CouponRecord) => void;
+    onSave: (payload: CouponFormState) => void;
 }) {
-    const [form, setForm] = useState<CouponRecord>(initialData ?? getDefaultCouponForm());
+    const [form, setForm] = useState<CouponFormState>(
+        initialData
+            ? {
+                  id: initialData.id,
+                  storeId: initialData.storeId,
+                  categoryId: initialData.categoryId ?? '',
+                  title: initialData.title,
+                  slug: initialData.slug,
+                  code: initialData.code,
+                  couponType: initialData.couponType,
+                  discountType: initialData.discountType,
+                  discountValue: initialData.discountValue,
+                  currency: initialData.currency,
+                  shortDescription: initialData.shortDescription,
+                  termsConditions: initialData.termsConditions,
+                  minimumOrderAmount: initialData.minimumOrderAmount,
+                  affiliateUrl: initialData.affiliateUrl,
+                  startAt: initialData.startAt
+                      ? initialData.startAt.slice(0, 10)
+                      : new Date().toISOString().slice(0, 10),
+                  expiresAt: initialData.expiresAt
+                      ? initialData.expiresAt.slice(0, 10)
+                      : new Date().toISOString().slice(0, 10),
+                  isFeatured: initialData.isFeatured,
+                  isVerified: initialData.isVerified,
+                  status: initialData.status,
+                  seoTitle: initialData.seoTitle,
+                  metaDescription: initialData.metaDescription,
+              }
+            : getDefaultCouponForm(),
+    );
     const [error, setError] = useState('');
 
-    const updateField = <K extends keyof CouponRecord>(key: K, value: CouponRecord[K]) => {
+    const updateField = <K extends keyof CouponFormState>(key: K, value: CouponFormState[K]) => {
         setForm(current => ({ ...current, [key]: value }));
     };
 
@@ -86,23 +271,21 @@ function CouponModal({
             setError('Coupon title is required.');
             return;
         }
-        if (!form.store.trim()) {
-            setError('Store name is required.');
+        if (!form.storeId) {
+            setError('Please select a store.');
             return;
         }
-        if (!form.code.trim()) {
-            setError('Coupon code is required.');
+        if (form.couponType === 'coupon' && !form.code.trim()) {
+            setError('Coupon code is required for coupon type.');
             return;
         }
 
         onSave({
             ...form,
-            id: form.id || form.code || 'new-coupon',
             title: form.title.trim(),
-            store: form.store.trim(),
             slug: form.slug.trim() || slugify(form.title),
             code: form.code.trim().toUpperCase(),
-            metaTitle: form.metaTitle || form.title,
+            seoTitle: form.seoTitle || form.title.trim(),
             metaDescription: form.metaDescription || form.shortDescription,
         });
     };
@@ -139,41 +322,80 @@ function CouponModal({
                                     ...current,
                                     title,
                                     slug: current.slug || slugify(title),
+                                    seoTitle: current.seoTitle || title,
                                 }));
                             }}
+                            placeholder="e.g. 20% off Summer sale"
+                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                        />
+                    </label>
+
+                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                        <span className="mb-2 block">Slug</span>
+                        <input
+                            value={form.slug}
+                            onChange={event => updateField('slug', event.target.value)}
+                            placeholder="e.g. 20-off-summer-sale"
                             className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
                     </label>
 
                     <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
                         <span className="mb-2 block">Store</span>
-                        <input
-                            value={form.store}
-                            onChange={event => updateField('store', event.target.value)}
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Type</span>
                         <select
-                            value={form.type}
-                            onChange={event =>
-                                updateField('type', event.target.value as CouponRecord['type'])
-                            }
+                            value={form.storeId}
+                            onChange={event => updateField('storeId', Number(event.target.value))}
                             className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         >
-                            <option value="Code">Code</option>
-                            <option value="Deal">Deal</option>
+                            <option value="">Select a store</option>
+                            {stores.map(store => (
+                                <option key={store.id} value={store.id}>
+                                    {store.name} (ID: {store.id})
+                                </option>
+                            ))}
                         </select>
                     </label>
 
                     <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Code</span>
+                        <span className="mb-2 block">Category (Optional)</span>
+                        <select
+                            value={form.categoryId}
+                            onChange={event =>
+                                updateField(
+                                    'categoryId',
+                                    event.target.value ? Number(event.target.value) : '',
+                                )
+                            }
+                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                        >
+                            <option value="">Select a category</option>
+                            {categories.map(category => (
+                                <option key={category.id} value={category.id}>
+                                    {category.name} (ID: {category.id})
+                                </option>
+                            ))}
+                        </select>
+                    </label>
+
+                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                        <span className="mb-2 block">Coupon Type</span>
+                        <select
+                            value={form.couponType}
+                            onChange={event => updateField('couponType', event.target.value)}
+                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                        >
+                            <option value="coupon">Coupon (Promo Code)</option>
+                            <option value="deal">Deal (No Code)</option>
+                        </select>
+                    </label>
+
+                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                        <span className="mb-2 block">Coupon Code</span>
                         <input
                             value={form.code}
                             onChange={event => updateField('code', event.target.value)}
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                            placeholder="e.g. SAVE20"
+                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 font-mono uppercase"
                         />
                     </label>
 
@@ -181,35 +403,48 @@ function CouponModal({
                         <span className="mb-2 block">Discount Type</span>
                         <select
                             value={form.discountType}
-                            onChange={event =>
-                                updateField(
-                                    'discountType',
-                                    event.target.value as CouponRecord['discountType'],
-                                )
-                            }
+                            onChange={event => updateField('discountType', event.target.value)}
                             className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         >
-                            <option value="Percent">Percent</option>
-                            <option value="Fixed">Fixed</option>
-                            <option value="Cashback">Cashback</option>
+                            <option value="percentage">Percentage (%)</option>
+                            <option value="fixed">Fixed Amount</option>
+                            <option value="cashback">Cashback</option>
                         </select>
                     </label>
 
                     <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
                         <span className="mb-2 block">Discount Value</span>
                         <input
+                            type="number"
                             value={form.discountValue}
-                            onChange={event => updateField('discountValue', event.target.value)}
+                            onChange={event =>
+                                updateField('discountValue', Number(event.target.value) || 0)
+                            }
+                            placeholder="e.g. 20"
                             className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
                     </label>
 
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
-                        <span className="mb-2 block">Short Description</span>
-                        <textarea
-                            value={form.shortDescription}
-                            onChange={event => updateField('shortDescription', event.target.value)}
-                            className="min-h-[78px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                        <span className="mb-2 block">Currency</span>
+                        <input
+                            value={form.currency}
+                            onChange={event => updateField('currency', event.target.value)}
+                            placeholder="e.g. BDT"
+                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                        />
+                    </label>
+
+                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                        <span className="mb-2 block">Minimum Order Amount</span>
+                        <input
+                            type="number"
+                            value={form.minimumOrderAmount}
+                            onChange={event =>
+                                updateField('minimumOrderAmount', Number(event.target.value) || 0)
+                            }
+                            placeholder="e.g. 1000"
+                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
                     </label>
 
@@ -217,53 +452,43 @@ function CouponModal({
                         <span className="mb-2 block">Status</span>
                         <select
                             value={form.status}
-                            onChange={event =>
-                                updateField('status', event.target.value as CouponRecord['status'])
-                            }
+                            onChange={event => updateField('status', event.target.value)}
                             className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         >
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
                             <option value="expired">Expired</option>
+                            <option value="draft">Draft</option>
                         </select>
                     </label>
 
                     <label className="block text-[13px] font-semibold text-foreground md:col-span-3">
-                        <span className="mb-2 block">Description</span>
+                        <span className="mb-2 block">Affiliate URL</span>
+                        <input
+                            value={form.affiliateUrl}
+                            onChange={event => updateField('affiliateUrl', event.target.value)}
+                            placeholder="https://..."
+                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                        />
+                    </label>
+
+                    <label className="block text-[13px] font-semibold text-foreground md:col-span-3">
+                        <span className="mb-2 block">Short Description</span>
                         <textarea
-                            value={form.description}
-                            onChange={event => updateField('description', event.target.value)}
-                            className="min-h-[110px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                            value={form.shortDescription}
+                            onChange={event => updateField('shortDescription', event.target.value)}
+                            placeholder="e.g. Get extra savings"
+                            className="min-h-[70px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
                     </label>
 
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Min Purchase</span>
-                        <input
-                            value={form.minimumPurchase}
-                            onChange={event => updateField('minimumPurchase', event.target.value)}
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Max Discount</span>
-                        <input
-                            value={form.maximumDiscount}
-                            onChange={event => updateField('maximumDiscount', event.target.value)}
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Display Order</span>
-                        <input
-                            type="number"
-                            value={form.displayOrder}
-                            onChange={event =>
-                                updateField('displayOrder', Number(event.target.value) || 1)
-                            }
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    <label className="block text-[13px] font-semibold text-foreground md:col-span-3">
+                        <span className="mb-2 block">Terms & Conditions</span>
+                        <textarea
+                            value={form.termsConditions}
+                            onChange={event => updateField('termsConditions', event.target.value)}
+                            placeholder="e.g. Valid on selected products"
+                            className="min-h-[70px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
                     </label>
 
@@ -271,8 +496,8 @@ function CouponModal({
                         <span className="mb-2 block">Start Date</span>
                         <input
                             type="date"
-                            value={form.startDate}
-                            onChange={event => updateField('startDate', event.target.value)}
+                            value={form.startAt}
+                            onChange={event => updateField('startAt', event.target.value)}
                             className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
                     </label>
@@ -281,47 +506,51 @@ function CouponModal({
                         <span className="mb-2 block">Expiration Date</span>
                         <input
                             type="date"
-                            value={form.expirationDate}
-                            onChange={event => updateField('expirationDate', event.target.value)}
+                            value={form.expiresAt}
+                            onChange={event => updateField('expiresAt', event.target.value)}
                             className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
                     </label>
 
-                    <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground">
+                    <div className="flex items-center gap-6 pt-6 md:col-span-1">
+                        <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground cursor-pointer">
+                            <input
+                                type="checkbox"
+                                checked={form.isFeatured}
+                                onChange={event => updateField('isFeatured', event.target.checked)}
+                                className="h-4 w-4 rounded border-border text-primary"
+                            />
+                            Featured
+                        </label>
+                        <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground cursor-pointer">
+                            <input
+                                type="checkbox"
+                                checked={form.isVerified}
+                                onChange={event => updateField('isVerified', event.target.checked)}
+                                className="h-4 w-4 rounded border-border text-primary"
+                            />
+                            Verified
+                        </label>
+                    </div>
+
+                    <label className="block text-[13px] font-semibold text-foreground md:col-span-3">
+                        <span className="mb-2 block">SEO Title</span>
                         <input
-                            type="checkbox"
-                            checked={form.featured}
-                            onChange={event => updateField('featured', event.target.checked)}
-                            className="h-4 w-4 rounded border-border text-primary"
+                            value={form.seoTitle}
+                            onChange={event => updateField('seoTitle', event.target.value)}
+                            placeholder="e.g. 20% off Summer sale"
+                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
-                        Featured
                     </label>
-                    <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground">
-                        <input
-                            type="checkbox"
-                            checked={form.popular}
-                            onChange={event => updateField('popular', event.target.checked)}
-                            className="h-4 w-4 rounded border-border text-primary"
+
+                    <label className="block text-[13px] font-semibold text-foreground md:col-span-3">
+                        <span className="mb-2 block">Meta Description</span>
+                        <textarea
+                            value={form.metaDescription}
+                            onChange={event => updateField('metaDescription', event.target.value)}
+                            placeholder="e.g. Summer offer"
+                            className="min-h-[70px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
-                        Popular
-                    </label>
-                    <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground">
-                        <input
-                            type="checkbox"
-                            checked={form.trending}
-                            onChange={event => updateField('trending', event.target.checked)}
-                            className="h-4 w-4 rounded border-border text-primary"
-                        />
-                        Trending
-                    </label>
-                    <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground">
-                        <input
-                            type="checkbox"
-                            checked={form.verified}
-                            onChange={event => updateField('verified', event.target.checked)}
-                            className="h-4 w-4 rounded border-border text-primary"
-                        />
-                        Verified
                     </label>
                 </div>
 
@@ -341,66 +570,225 @@ function CouponModal({
 }
 
 export default function CouponsAdminPage() {
-    const [coupons, setCoupons] = useState(couponData);
+    const [couponOverrides, setCouponOverrides] = useState<Record<string, CouponUiRecord | null>>(
+        {},
+    );
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [typeFilter, setTypeFilter] = useState('all');
     const [featuredFilter, setFeaturedFilter] = useState('all');
+    const [verifiedFilter, setVerifiedFilter] = useState('all');
     const [page, setPage] = useState(1);
     const [modalOpen, setModalOpen] = useState(false);
-    const [editing, setEditing] = useState<CouponRecord | null>(null);
-    const [deleteTarget, setDeleteTarget] = useState<CouponRecord | null>(null);
+    const [editing, setEditing] = useState<CouponUiRecord | null>(null);
+    const [deleteTarget, setDeleteTarget] = useState<CouponUiRecord | null>(null);
     const [toast, setToast] = useState('');
+
+    const { data: apiData } = useGetCoupons(page, pageSize);
+    const { data: storesApiData } = useGetStores(1, 100);
+    const { data: categoriesApiData } = useGetCategories(1, 100);
+
+    const { mutateAsync: createCouponMutation } = useCreateCoupon();
+    const { mutateAsync: updateCouponMutation } = useUpdateCoupon();
+    const { mutateAsync: deleteCouponMutation } = useDeleteCoupon();
+
+    const couponsResponse = useMemo(() => getCouponsResponse(apiData), [apiData]);
+    const stores = useMemo(() => getStoresList(storesApiData), [storesApiData]);
+    const categories = useMemo(() => getCategoriesList(categoriesApiData), [categoriesApiData]);
+
+    const coupons = useMemo(() => {
+        const items: CouponUiRecord[] =
+            couponsResponse?.data.map(item => {
+                const storeName =
+                    typeof item.store === 'object' && item.store !== null
+                        ? item.store.name
+                        : typeof item.store === 'string'
+                          ? item.store
+                          : stores.find(s => s.id === item.store_id)?.name ||
+                            `Store #${item.store_id}`;
+
+                const categoryName =
+                    typeof item.category === 'object' && item.category !== null
+                        ? item.category.name
+                        : typeof item.category === 'string'
+                          ? item.category
+                          : item.category_id
+                            ? categories.find(c => c.id === item.category_id)?.name ||
+                              `Category #${item.category_id}`
+                            : '';
+
+                return {
+                    id: String(item.id),
+                    storeId: item.store_id,
+                    storeName,
+                    categoryId: item.category_id,
+                    categoryName,
+                    title: item.title,
+                    slug: item.slug,
+                    code: item.code ?? '',
+                    couponType: item.coupon_type || 'coupon',
+                    discountType: item.discount_type || 'percentage',
+                    discountValue: item.discount_value ?? 0,
+                    currency: item.currency ?? 'BDT',
+                    shortDescription: item.short_description ?? '',
+                    termsConditions: item.terms_conditions ?? '',
+                    minimumOrderAmount: item.minimum_order_amount ?? 0,
+                    affiliateUrl: item.affiliate_url ?? '',
+                    startAt: item.start_at ?? '',
+                    expiresAt: item.expires_at ?? '',
+                    isFeatured: Boolean(item.is_featured),
+                    isVerified: Boolean(item.is_verified),
+                    status: item.status || 'active',
+                    seoTitle: item.seo_title ?? '',
+                    metaDescription: item.meta_description ?? '',
+                    createdAt: item.created_at ?? '',
+                };
+            }) ?? [];
+
+        return items.flatMap(coupon => {
+            const override = couponOverrides[coupon.id];
+            return override === null ? [] : [override ?? coupon];
+        });
+    }, [categories, couponOverrides, couponsResponse, stores]);
 
     const filteredCoupons = useMemo(() => {
         return coupons.filter(coupon => {
             const matchesSearch =
                 coupon.title.toLowerCase().includes(search.toLowerCase()) ||
                 coupon.code.toLowerCase().includes(search.toLowerCase()) ||
-                coupon.store.toLowerCase().includes(search.toLowerCase());
+                coupon.storeName.toLowerCase().includes(search.toLowerCase()) ||
+                coupon.slug.toLowerCase().includes(search.toLowerCase());
             const matchesStatus = statusFilter === 'all' || coupon.status === statusFilter;
-            const matchesType = typeFilter === 'all' || coupon.type === typeFilter;
+            const matchesType = typeFilter === 'all' || coupon.couponType === typeFilter;
             const matchesFeatured =
                 featuredFilter === 'all' ||
-                (featuredFilter === 'featured' ? coupon.featured : !coupon.featured);
-            return matchesSearch && matchesStatus && matchesType && matchesFeatured;
+                (featuredFilter === 'featured' ? coupon.isFeatured : !coupon.isFeatured);
+            const matchesVerified =
+                verifiedFilter === 'all' ||
+                (verifiedFilter === 'verified' ? coupon.isVerified : !coupon.isVerified);
+            return (
+                matchesSearch && matchesStatus && matchesType && matchesFeatured && matchesVerified
+            );
         });
-    }, [coupons, featuredFilter, search, statusFilter, typeFilter]);
+    }, [coupons, featuredFilter, search, statusFilter, typeFilter, verifiedFilter]);
 
     const totalPages = Math.max(1, Math.ceil(filteredCoupons.length / pageSize));
     const visibleCoupons = filteredCoupons.slice((page - 1) * pageSize, page * pageSize);
 
-    const handleSave = (payload: CouponRecord) => {
-        setCoupons(current => {
-            const index = current.findIndex(item => item.id === payload.id);
-            if (index >= 0) {
-                const updated = [...current];
-                updated[index] = payload;
-                return updated;
+    const handleSave = async (form: CouponFormState) => {
+        try {
+            const createPayload: CouponCreatePayload = {
+                store_id: Number(form.storeId),
+                category_id: form.categoryId ? Number(form.categoryId) : null,
+                title: form.title.trim(),
+                slug: form.slug.trim() || slugify(form.title),
+                code: form.code.trim() ? form.code.trim().toUpperCase() : null,
+                coupon_type: form.couponType || 'coupon',
+                discount_type: form.discountType || 'percentage',
+                discount_value: Number(form.discountValue) || 0,
+                currency: form.currency || 'BDT',
+                short_description: form.shortDescription,
+                terms_conditions: form.termsConditions,
+                minimum_order_amount: Number(form.minimumOrderAmount) || 0,
+                affiliate_url: form.affiliateUrl,
+                start_at: form.startAt,
+                expires_at: form.expiresAt,
+                is_featured: form.isFeatured,
+                is_verified: form.isVerified,
+                status: form.status,
+                seo_title: form.seoTitle || form.title.trim(),
+                meta_description: form.metaDescription || form.shortDescription,
+            };
+
+            const storeName =
+                stores.find(s => s.id === Number(form.storeId))?.name || `Store #${form.storeId}`;
+            const categoryName = form.categoryId
+                ? categories.find(c => c.id === Number(form.categoryId))?.name ||
+                  `Category #${form.categoryId}`
+                : '';
+
+            if (editing?.id) {
+                await updateCouponMutation({
+                    id: editing.id,
+                    values: createPayload,
+                });
+                const updatedRecord: CouponUiRecord = {
+                    id: String(editing.id),
+                    storeId: Number(form.storeId),
+                    storeName,
+                    categoryId: form.categoryId ? Number(form.categoryId) : null,
+                    categoryName,
+                    title: form.title.trim(),
+                    slug: form.slug.trim() || slugify(form.title),
+                    code: form.code.trim() ? form.code.trim().toUpperCase() : '',
+                    couponType: form.couponType,
+                    discountType: form.discountType,
+                    discountValue: Number(form.discountValue) || 0,
+                    currency: form.currency || 'BDT',
+                    shortDescription: form.shortDescription,
+                    termsConditions: form.termsConditions,
+                    minimumOrderAmount: Number(form.minimumOrderAmount) || 0,
+                    affiliateUrl: form.affiliateUrl,
+                    startAt: form.startAt,
+                    expiresAt: form.expiresAt,
+                    isFeatured: form.isFeatured,
+                    isVerified: form.isVerified,
+                    status: form.status,
+                    seoTitle: form.seoTitle,
+                    metaDescription: form.metaDescription,
+                    createdAt: editing.createdAt ?? new Date().toISOString().slice(0, 10),
+                };
+                setCouponOverrides(current => ({
+                    ...current,
+                    [String(editing.id)]: updatedRecord,
+                }));
+                setToast('Coupon updated successfully.');
+            } else {
+                await createCouponMutation(createPayload);
+                setToast('Coupon created successfully.');
             }
-            return [payload, ...current];
-        });
-        setModalOpen(false);
-        setEditing(null);
-        setToast(payload.id ? 'Coupon updated successfully.' : 'Coupon created successfully.');
+
+            setModalOpen(false);
+            setEditing(null);
+        } catch (error) {
+            setToast('Failed to save coupon.');
+            console.error('Save error:', error);
+        }
     };
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (!deleteTarget) return;
-        setCoupons(current => current.filter(item => item.id !== deleteTarget.id));
-        setDeleteTarget(null);
-        setToast('Coupon deleted successfully.');
+
+        try {
+            await deleteCouponMutation(deleteTarget.id);
+            setCouponOverrides(current => ({ ...current, [deleteTarget.id]: null }));
+            setDeleteTarget(null);
+            setToast('Coupon deleted successfully.');
+        } catch (error) {
+            setToast('Failed to delete coupon.');
+            console.error('Delete error:', error);
+        }
     };
 
-    const toggleStatus = (id: string) => {
-        setCoupons(current =>
-            current.map(coupon =>
-                coupon.id === id
-                    ? { ...coupon, status: coupon.status === 'active' ? 'inactive' : 'active' }
-                    : coupon,
-            ),
-        );
-        setToast('Coupon status updated.');
+    const toggleStatus = async (id: string) => {
+        const coupon = coupons.find(item => item.id === id);
+        if (!coupon) return;
+
+        const nextStatus = coupon.status === 'active' ? 'inactive' : 'active';
+        try {
+            await updateCouponMutation({
+                id,
+                values: { status: nextStatus },
+            });
+            setCouponOverrides(current => ({
+                ...current,
+                [id]: { ...coupon, status: nextStatus },
+            }));
+            setToast('Coupon status updated.');
+        } catch (error) {
+            setToast('Failed to update status.');
+            console.error('Status toggle error:', error);
+        }
     };
 
     return (
@@ -438,6 +826,7 @@ export default function CouponsAdminPage() {
                                 { value: 'active', label: 'Active' },
                                 { value: 'inactive', label: 'Inactive' },
                                 { value: 'expired', label: 'Expired' },
+                                { value: 'draft', label: 'Draft' },
                             ]}
                         />
                         <FilterSelect
@@ -446,8 +835,8 @@ export default function CouponsAdminPage() {
                             placeholder="Type"
                             options={[
                                 { value: 'all', label: 'All types' },
-                                { value: 'Code', label: 'Code' },
-                                { value: 'Deal', label: 'Deal' },
+                                { value: 'coupon', label: 'Coupon' },
+                                { value: 'deal', label: 'Deal' },
                             ]}
                         />
                         <FilterSelect
@@ -455,9 +844,19 @@ export default function CouponsAdminPage() {
                             onChange={setFeaturedFilter}
                             placeholder="Featured"
                             options={[
-                                { value: 'all', label: 'All items' },
+                                { value: 'all', label: 'All featured' },
                                 { value: 'featured', label: 'Featured' },
                                 { value: 'non-featured', label: 'Not featured' },
+                            ]}
+                        />
+                        <FilterSelect
+                            value={verifiedFilter}
+                            onChange={setVerifiedFilter}
+                            placeholder="Verified"
+                            options={[
+                                { value: 'all', label: 'All verification' },
+                                { value: 'verified', label: 'Verified' },
+                                { value: 'non-verified', label: 'Unverified' },
                             ]}
                         />
                     </div>
@@ -491,22 +890,33 @@ export default function CouponsAdminPage() {
                                         <td className="px-4 py-3">
                                             <div className="font-semibold">{coupon.title}</div>
                                             <div className="text-[12px] text-muted-foreground">
-                                                {coupon.shortDescription}
+                                                {coupon.shortDescription || 'N/A'}
                                             </div>
                                         </td>
-                                        <td className="px-4 py-3">{coupon.store}</td>
-                                        <td className="px-4 py-3">
-                                            <code className="rounded bg-slate-100 px-2 py-1 font-mono text-[12px] font-bold text-slate-700">
-                                                {coupon.code}
-                                            </code>
+                                        <td className="px-4 py-3 font-medium">
+                                            {coupon.storeName}
                                         </td>
-                                        <td className="px-4 py-3">{coupon.type}</td>
+                                        <td className="px-4 py-3">
+                                            {coupon.code ? (
+                                                <code className="rounded bg-slate-100 px-2 py-1 font-mono text-[12px] font-bold text-slate-700">
+                                                    {coupon.code}
+                                                </code>
+                                            ) : (
+                                                <span className="text-[12px] text-muted-foreground italic">
+                                                    Deal (No Code)
+                                                </span>
+                                            )}
+                                        </td>
+                                        <td className="px-4 py-3 capitalize">
+                                            {coupon.couponType}
+                                        </td>
                                         <td className="px-4 py-3">
                                             <span className="font-semibold text-primary">
                                                 {coupon.discountValue}{' '}
-                                                {coupon.discountType === 'Percent'
-                                                    ? 'off'
-                                                    : coupon.discountType}
+                                                {coupon.discountType === 'percentage' ||
+                                                coupon.discountType === 'Percent'
+                                                    ? '%'
+                                                    : coupon.currency || coupon.discountType}
                                             </span>
                                         </td>
                                         <td className="px-4 py-3">
@@ -514,16 +924,18 @@ export default function CouponsAdminPage() {
                                         </td>
                                         <td className="px-4 py-3">
                                             <StatusBadge
-                                                status={coupon.featured ? 'featured' : 'inactive'}
+                                                status={coupon.isFeatured ? 'featured' : 'inactive'}
                                             />
                                         </td>
                                         <td className="px-4 py-3">
                                             <StatusBadge
-                                                status={coupon.verified ? 'active' : 'inactive'}
+                                                status={coupon.isVerified ? 'active' : 'inactive'}
                                             />
                                         </td>
                                         <td className="px-4 py-3 text-[13px] text-muted-foreground">
-                                            {coupon.expirationDate}
+                                            {coupon.expiresAt
+                                                ? coupon.expiresAt.slice(0, 10)
+                                                : 'N/A'}
                                         </td>
                                         <td className="px-4 py-3">
                                             <div className="flex justify-end gap-2">
@@ -599,6 +1011,8 @@ export default function CouponsAdminPage() {
             {modalOpen && (
                 <CouponModal
                     initialData={editing}
+                    stores={stores}
+                    categories={categories}
                     onClose={() => {
                         setEditing(null);
                         setModalOpen(false);

@@ -1,6 +1,6 @@
 'use client';
 
-import { Info, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 import {
@@ -13,7 +13,7 @@ import {
 import { MediaGrid } from '@/components/admin/media-gallery';
 import { MediaUploadModal } from '@/components/admin/media-upload-modal';
 import { Button } from '@/components/ui/button';
-import { type MediaRecord, mediaData } from '@/utils/admin-data';
+import { type MediaRecord } from '@/utils/admin-data';
 import { file_base_url } from '@/utils/config';
 import { useDeleteMedia, useGetMedia } from '@/utils/hooks/media';
 
@@ -114,7 +114,7 @@ function getMediaItems(response: unknown): {
 }
 
 export default function MediaLibraryPage() {
-    const [allMedia, setAllMedia] = useState(mediaData);
+    const [allMedia, setAllMedia] = useState<MediaRecord[]>([]);
     const [search, setSearch] = useState('');
     const [typeFilter, setTypeFilter] = useState('all');
     const [sortFilter, setSortFilter] = useState('newest');

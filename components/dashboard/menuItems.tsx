@@ -45,7 +45,18 @@ export const menuItems: MenuItem[] = [
         id: 'blog',
         title: 'Blog',
         icon: <BookOpenText className="h-5 w-5" />,
-        path: '/admin/blog',
+        submenu: [
+            {
+                id: 'blog-posts',
+                title: 'All Posts',
+                path: '/admin/blog',
+            },
+            {
+                id: 'blog-categories',
+                title: 'Categories',
+                path: '/admin/blog/categories',
+            },
+        ],
     },
     {
         id: 'media',

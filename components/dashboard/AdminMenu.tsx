@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 
 import { ChevronDown } from 'lucide-react';
 import { useLocale } from 'next-intl';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { locales } from '@/i18n';
 import { cn } from '@/utils/cn';
@@ -103,9 +103,6 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
             });
 
             setOpenMenus(menusToKeep);
-            try {
-                localStorage.setItem('openMenus', JSON.stringify(menusToKeep));
-            } catch {}
         } else {
             let newOpenMenus = [...openMenus];
 
@@ -136,9 +133,6 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
             }
 
             setOpenMenus(newOpenMenus);
-            try {
-                localStorage.setItem('openMenus', JSON.stringify(newOpenMenus));
-            } catch {}
         }
     };
 
@@ -237,18 +231,6 @@ const findActiveMenuPath = (items: MenuItem[], targetPath: string): string[] => 
     return [];
 };
 
-function getInitialOpenMenus(currentNormalizedPath: string): string[] {
-    if (typeof window === 'undefined') return [];
-    try {
-        const savedOpenMenus = localStorage.getItem('openMenus');
-        const initialMenus: string[] = savedOpenMenus ? JSON.parse(savedOpenMenus) : [];
-        const activePath = findActiveMenuPath(menuItems, currentNormalizedPath);
-        return [...new Set([...initialMenus, ...activePath])];
-    } catch {
-        return findActiveMenuPath(menuItems, currentNormalizedPath);
-    }
-}
-
 export default function AdminMenu() {
     const pathname = usePathname();
 
@@ -257,8 +239,8 @@ export default function AdminMenu() {
         ? `/${segments.slice(2).join('/')}`
         : pathname;
 
-    const [openMenus, setOpenMenus] = useState<string[]>(() =>
-        getInitialOpenMenus(normalizedPathname),
+    const [openMenus, setOpenMenus] = useState<string[]>(
+        () => findActiveMenuPath(menuItems, normalizedPathname) || [],
     );
 
     return (

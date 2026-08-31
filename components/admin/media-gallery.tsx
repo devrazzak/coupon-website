@@ -31,6 +31,8 @@ export function MediaCard({
     selectable?: boolean;
     selected?: boolean;
 }) {
+    const hasImage = Boolean(media.url && media.url.trim() && !media.url.startsWith('blob:'));
+
     return (
         <div
             className={`group relative overflow-hidden rounded-2xl border-2 transition-all ${
@@ -44,12 +46,18 @@ export function MediaCard({
         >
             {/* Image Container */}
             <div className="relative aspect-square w-full overflow-hidden bg-surface">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                    src={media.url}
-                    alt={media.altText || media.fileName}
-                    className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                />
+                {hasImage ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                        src={media.url}
+                        alt={media.altText || media.fileName}
+                        className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                    />
+                ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-surface text-[11px] font-semibold text-muted-foreground">
+                        No Image
+                    </div>
+                )}
                 {selected && (
                     <div className="absolute inset-0 flex items-center justify-center bg-primary/30 backdrop-blur-sm">
                         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white">

@@ -1,7 +1,7 @@
 'use client';
 
 import { Edit3, Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
     AdminPageHeader,
@@ -14,9 +14,110 @@ import {
 } from '@/components/admin/admin-shared';
 import { MediaPicker } from '@/components/admin/media-picker';
 import { Button } from '@/components/ui/button';
-import { type MediaRecord, type StoreRecord, mediaData, storeData } from '@/utils/admin-data';
+import { type MediaRecord, type StoreRecord } from '@/utils/admin-data';
+import { file_base_url } from '@/utils/config';
+import { useGetMedia } from '@/utils/hooks/media';
+import { useCreateStore, useDeleteStore, useGetStores, useUpdateStore } from '@/utils/hooks/store';
+
+export interface StoreApiItem {
+    id: number;
+    name: string;
+    slug: string;
+    logo: string | null;
+    logo_alt_txt: string | null;
+    categories: number[];
+    website_url: string | null;
+    affiliate_url: string | null;
+    short_description: string | null;
+    description: string | null;
+    how_to_use: string | null;
+    is_featured: boolean;
+    is_active: boolean;
+    sort_order: number;
+    seo_title: string | null;
+    meta_description: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface StoresResponse {
+    success: boolean;
+    message: string;
+    data: StoreApiItem[];
+    meta: {
+        currentPage: number;
+        totalCount: number;
+    };
+}
+
+function getStoresResponse(response: unknown): StoresResponse | null {
+    if (!response || typeof response !== 'object') return null;
+
+    const payload = (response as { data?: unknown }).data;
+    if (payload && typeof payload === 'object' && Array.isArray((payload as StoresResponse).data)) {
+        return payload as StoresResponse;
+    }
+
+    return null;
+}
+
+function normalizeMediaUrl(value: string | null | undefined): string {
+    const normalized = String(value ?? '').trim();
+    if (!normalized || normalized.startsWith('blob:')) return '';
+    if (/^https?:\/\//i.test(normalized)) return normalized;
+
+    const base = file_base_url.replace(/\/$/, '');
+    const path = normalized.replace(/^\/+/, '');
+    return `${base}/${path}`;
+}
+
+function normalizeMediaItem(item: Record<string, any>): MediaRecord {
+    const filePath = String(item?.file_path ?? item?.url ?? item?.filePath ?? '');
+    const fileName = String(item?.name ?? item?.fileName ?? filePath.split('/').pop() ?? 'media');
+    const safeId = String(item?.id ?? (filePath || 'media-default'));
+
+    return {
+        id: safeId,
+        fileName,
+        url: normalizeMediaUrl(filePath),
+        mimeType: String(item?.mime_type ?? item?.mimeType ?? 'image/jpeg'),
+        fileSize: Number(item?.file_size ?? item?.fileSize ?? 0),
+        width: Number(item?.width ?? 0),
+        height: Number(item?.height ?? 0),
+        altText: String(item?.alt_text ?? item?.altText ?? ''),
+        uploadedBy: String(item?.uploaded_by ?? item?.uploadedBy ?? 'admin'),
+        createdAt: String(item?.created_at ?? item?.createdAt ?? new Date().toISOString()),
+        updatedAt: String(item?.updated_at ?? item?.updatedAt ?? new Date().toISOString()),
+        usedBy: Array.isArray(item?.used_by) ? item.used_by : [],
+    };
+}
+
+function getMediaItems(response: unknown): MediaRecord[] {
+    if (!response || typeof response !== 'object') return [];
+
+    const payload = (response as { data?: unknown }).data;
+    const list = Array.isArray(payload)
+        ? payload
+        : payload &&
+            typeof payload === 'object' &&
+            Array.isArray((payload as { data?: unknown }).data)
+          ? ((payload as { data?: unknown[] }).data ?? [])
+          : [];
+
+    return list.map(item => normalizeMediaItem((item || {}) as Record<string, any>));
+}
 
 const pageSize = 6;
+
+function normalizeStoreLogoUrl(value: string | null | undefined): string {
+    const normalized = String(value ?? '').trim();
+    if (!normalized || normalized.startsWith('blob:')) return '';
+    if (/^https?:\/\//i.test(normalized)) return normalized;
+
+    const base = file_base_url.replace(/\/$/, '');
+    const path = normalized.replace(/^\/+/, '');
+    return `${base}/${path}`;
+}
 
 function slugify(value: string) {
     return (
@@ -28,6 +129,25 @@ function slugify(value: string) {
     );
 }
 
+type StoreFormState = {
+    id: string;
+    name: string;
+    slug: string;
+    logo: string;
+    logoAltTxt: string;
+    categories: number[];
+    websiteUrl: string;
+    affiliateUrl: string;
+    shortDescription: string;
+    description: string;
+    howToUse: string;
+    isFeatured: boolean;
+    isActive: boolean;
+    sortOrder: number;
+    seoTitle: string;
+    metaDescription: string;
+};
+
 function StoreModal({
     initialData,
     onClose,
@@ -37,40 +157,62 @@ function StoreModal({
 }: {
     initialData: StoreRecord | null;
     onClose: () => void;
-    onSave: (payload: StoreRecord) => void;
+    onSave: (payload: StoreFormState) => void;
     allMedia: MediaRecord[];
     onUploadMedia: (media: MediaRecord[]) => void;
 }) {
-    const [form, setForm] = useState<StoreRecord>(
-        initialData ?? {
-            id: '',
-            name: '',
-            slug: '',
-            logo: '',
-            coverImage: '',
-            shortDescription: '',
-            description: '',
-            categories: [],
-            websiteUrl: '',
-            affiliateUrl: '',
-            status: 'active',
-            featured: false,
-            popular: false,
-            verified: false,
-            displayOrder: 1,
-            metaTitle: '',
-            metaDescription: '',
-            createdAt: new Date().toISOString().slice(0, 10),
-        },
+    const [form, setForm] = useState<StoreFormState>(
+        initialData
+            ? {
+                  id: initialData.id,
+                  name: initialData.name,
+                  slug: initialData.slug,
+                  logo: normalizeStoreLogoUrl(initialData.logo),
+                  logoAltTxt: '',
+                  categories: Array.isArray(initialData.categories)
+                      ? initialData.categories
+                            .map(item => Number(item))
+                            .filter(item => !Number.isNaN(item))
+                      : [],
+                  websiteUrl: initialData.websiteUrl,
+                  affiliateUrl: initialData.affiliateUrl,
+                  shortDescription: initialData.shortDescription,
+                  description: initialData.description,
+                  howToUse: '',
+                  isFeatured: Boolean(initialData.featured),
+                  isActive: initialData.status === 'active',
+                  sortOrder: initialData.displayOrder,
+                  seoTitle: initialData.metaTitle,
+                  metaDescription: initialData.metaDescription,
+              }
+            : {
+                  id: '',
+                  name: '',
+                  slug: '',
+                  logo: '',
+                  logoAltTxt: '',
+                  categories: [],
+                  websiteUrl: '',
+                  affiliateUrl: '',
+                  shortDescription: '',
+                  description: '',
+                  howToUse: '',
+                  isFeatured: false,
+                  isActive: true,
+                  sortOrder: 1,
+                  seoTitle: '',
+                  metaDescription: '',
+              },
     );
     const [error, setError] = useState('');
 
-    const updateField = <K extends keyof StoreRecord>(key: K, value: StoreRecord[K]) => {
+    const updateField = <K extends keyof StoreFormState>(key: K, value: StoreFormState[K]) => {
         setForm(current => ({ ...current, [key]: value }));
     };
 
     const handleSubmit = () => {
-        if (!form.name.trim()) {
+        const name = form.name.trim();
+        if (!name) {
             setError('Store name is required.');
             return;
         }
@@ -82,9 +224,9 @@ function StoreModal({
         onSave({
             ...form,
             id: form.id || form.slug || 'new-store',
-            name: form.name.trim(),
+            name,
             slug: form.slug.trim(),
-            metaTitle: form.metaTitle || form.name,
+            seoTitle: form.seoTitle || form.name,
             metaDescription: form.metaDescription || form.shortDescription,
         });
     };
@@ -136,7 +278,7 @@ function StoreModal({
                         />
                     </label>
 
-                    <div className="md:col-span-1">
+                    <div className="md:col-span-2">
                         <MediaPicker
                             label="Store Logo"
                             value={form.logo}
@@ -147,36 +289,16 @@ function StoreModal({
                         />
                     </div>
 
-                    <div className="md:col-span-1">
-                        <MediaPicker
-                            label="Cover Image"
-                            value={form.coverImage}
-                            onChange={url => updateField('coverImage', url)}
-                            allMedia={allMedia}
-                            onUpload={onUploadMedia}
-                            helpText="Banner image for store page"
-                        />
-                    </div>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
-                        <span className="mb-2 block">Short Description</span>
-                        <textarea
-                            value={form.shortDescription}
-                            onChange={event => updateField('shortDescription', event.target.value)}
-                            className="min-h-[78px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                        <span className="mb-2 block">Logo Alt Text</span>
+                        <input
+                            value={form.logoAltTxt}
+                            onChange={event => updateField('logoAltTxt', event.target.value)}
+                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
                     </label>
 
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
-                        <span className="mb-2 block">Description</span>
-                        <textarea
-                            value={form.description}
-                            onChange={event => updateField('description', event.target.value)}
-                            className="min-h-[110px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
+                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
                         <span className="mb-2 block">Categories</span>
                         <input
                             value={form.categories.join(', ')}
@@ -185,8 +307,8 @@ function StoreModal({
                                     'categories',
                                     event.target.value
                                         .split(',')
-                                        .map(item => item.trim())
-                                        .filter(Boolean),
+                                        .map(item => Number(item.trim()))
+                                        .filter(value => !Number.isNaN(value)),
                                 )
                             }
                             className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
@@ -211,66 +333,70 @@ function StoreModal({
                         />
                     </label>
 
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Status</span>
-                        <select
-                            value={form.status}
-                            onChange={event =>
-                                updateField('status', event.target.value as StoreRecord['status'])
-                            }
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        >
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                            <option value="draft">Draft</option>
-                        </select>
+                    <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
+                        <span className="mb-2 block">Short Description</span>
+                        <textarea
+                            value={form.shortDescription}
+                            onChange={event => updateField('shortDescription', event.target.value)}
+                            className="min-h-[78px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                        />
                     </label>
 
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Display Order</span>
-                        <input
-                            type="number"
-                            value={form.displayOrder}
-                            onChange={event =>
-                                updateField('displayOrder', Number(event.target.value) || 1)
-                            }
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
+                        <span className="mb-2 block">Description</span>
+                        <textarea
+                            value={form.description}
+                            onChange={event => updateField('description', event.target.value)}
+                            className="min-h-[110px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                        />
+                    </label>
+
+                    <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
+                        <span className="mb-2 block">How to Use</span>
+                        <textarea
+                            value={form.howToUse}
+                            onChange={event => updateField('howToUse', event.target.value)}
+                            className="min-h-[88px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
                     </label>
 
                     <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground">
                         <input
                             type="checkbox"
-                            checked={form.featured}
-                            onChange={event => updateField('featured', event.target.checked)}
+                            checked={form.isFeatured}
+                            onChange={event => updateField('isFeatured', event.target.checked)}
                             className="h-4 w-4 rounded border-border text-primary"
                         />
                         Featured
                     </label>
+
                     <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground">
                         <input
                             type="checkbox"
-                            checked={form.popular}
-                            onChange={event => updateField('popular', event.target.checked)}
+                            checked={form.isActive}
+                            onChange={event => updateField('isActive', event.target.checked)}
                             className="h-4 w-4 rounded border-border text-primary"
                         />
-                        Popular
+                        Active
                     </label>
-                    <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground">
+
+                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                        <span className="mb-2 block">Sort Order</span>
                         <input
-                            type="checkbox"
-                            checked={form.verified}
-                            onChange={event => updateField('verified', event.target.checked)}
-                            className="h-4 w-4 rounded border-border text-primary"
+                            type="number"
+                            value={form.sortOrder}
+                            onChange={event =>
+                                updateField('sortOrder', Number(event.target.value) || 1)
+                            }
+                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
-                        Verified
                     </label>
 
                     <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
-                        <span className="mb-2 block">Meta Title</span>
+                        <span className="mb-2 block">SEO Title</span>
                         <input
-                            value={form.metaTitle}
-                            onChange={event => updateField('metaTitle', event.target.value)}
+                            value={form.seoTitle}
+                            onChange={event => updateField('seoTitle', event.target.value)}
                             className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
                     </label>
@@ -301,8 +427,8 @@ function StoreModal({
 }
 
 export default function StoresAdminPage() {
-    const [stores, setStores] = useState(storeData);
-    const [allMedia, setAllMedia] = useState(mediaData);
+    const [storeOverrides, setStoreOverrides] = useState<Record<string, StoreRecord | null>>({});
+    const [uploadedMedia, setUploadedMedia] = useState<MediaRecord[]>([]);
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [featuredFilter, setFeaturedFilter] = useState('all');
@@ -313,6 +439,44 @@ export default function StoresAdminPage() {
     const [editing, setEditing] = useState<StoreRecord | null>(null);
     const [deleteTarget, setDeleteTarget] = useState<StoreRecord | null>(null);
     const [toast, setToast] = useState('');
+
+    const { data: apiData } = useGetStores(page, pageSize);
+    const { data: mediaApiData } = useGetMedia(1, 100);
+    const { mutateAsync: createStoreMutation } = useCreateStore();
+    const { mutateAsync: updateStoreMutation } = useUpdateStore();
+    const { mutateAsync: deleteStoreMutation } = useDeleteStore();
+    const storesResponse = useMemo(() => getStoresResponse(apiData), [apiData]);
+    const mediaItems = useMemo(() => getMediaItems(mediaApiData), [mediaApiData]);
+    const allMedia = useMemo(() => [...uploadedMedia, ...mediaItems], [uploadedMedia, mediaItems]);
+
+    const stores = useMemo(() => {
+        const items =
+            storesResponse?.data.map(store => ({
+                id: String(store.id),
+                name: store.name,
+                slug: store.slug,
+                logo: normalizeStoreLogoUrl(store.logo),
+                coverImage: '',
+                shortDescription: store.short_description ?? '',
+                description: store.description ?? '',
+                categories: store.categories.map(String),
+                websiteUrl: store.website_url ?? '',
+                affiliateUrl: store.affiliate_url ?? '',
+                status: store.is_active ? 'active' : 'inactive',
+                featured: store.is_featured,
+                popular: null,
+                verified: null,
+                displayOrder: store.sort_order,
+                metaTitle: store.seo_title ?? '',
+                metaDescription: store.meta_description ?? '',
+                createdAt: store.created_at,
+            })) ?? [];
+
+        return items.flatMap(store => {
+            const override = storeOverrides[store.id];
+            return override === null ? [] : [override ?? store];
+        });
+    }, [storeOverrides, storesResponse]);
 
     const filteredStores = useMemo(() => {
         return stores.filter(store => {
@@ -342,45 +506,102 @@ export default function StoresAdminPage() {
     const totalPages = Math.max(1, Math.ceil(filteredStores.length / pageSize));
     const visibleStores = filteredStores.slice((page - 1) * pageSize, page * pageSize);
 
-    const handleSave = (payload: StoreRecord) => {
-        setStores(current => {
-            const index = current.findIndex(item => item.id === payload.id);
-            if (index >= 0) {
-                const updated = [...current];
-                updated[index] = payload;
-                return updated;
+    const handleSave = async (payload: StoreFormState) => {
+        try {
+            const safeLogoUrl = normalizeStoreLogoUrl(payload.logo);
+
+            const createdStore: StoreRecord = {
+                id: payload.id,
+                name: payload.name,
+                slug: payload.slug,
+                logo: safeLogoUrl,
+                coverImage: '',
+                shortDescription: payload.shortDescription,
+                description: payload.description,
+                categories: payload.categories.map(String),
+                websiteUrl: payload.websiteUrl,
+                affiliateUrl: payload.affiliateUrl,
+                status: payload.isActive ? 'active' : 'inactive',
+                featured: payload.isFeatured,
+                popular: false,
+                verified: false,
+                displayOrder: payload.sortOrder,
+                metaTitle: payload.seoTitle,
+                metaDescription: payload.metaDescription,
+                createdAt: editing?.createdAt ?? new Date().toISOString().slice(0, 10),
+            };
+
+            const createPayload = {
+                name: payload.name,
+                slug: payload.slug,
+                logo: safeLogoUrl,
+                logo_alt_txt: payload.logoAltTxt || payload.name,
+                categories: payload.categories,
+                website_url: payload.websiteUrl,
+                affiliate_url: payload.affiliateUrl,
+                short_description: payload.shortDescription,
+                description: payload.description,
+                how_to_use: payload.howToUse,
+                is_featured: payload.isFeatured,
+                is_active: payload.isActive,
+                sort_order: payload.sortOrder,
+                seo_title: payload.seoTitle,
+                meta_description: payload.metaDescription,
+            };
+
+            if (editing?.id) {
+                await updateStoreMutation({
+                    id: payload.id,
+                    values: {
+                        ...createPayload,
+                    },
+                });
+                setStoreOverrides(current => ({ ...current, [payload.id]: createdStore }));
+                setToast('Store updated successfully.');
+            } else {
+                await createStoreMutation(createPayload);
+                setToast('Store created successfully.');
             }
-            return [payload, ...current];
-        });
-        setModalOpen(false);
-        setEditing(null);
-        setToast(payload.id ? 'Store updated successfully.' : 'Store created successfully.');
+
+            setModalOpen(false);
+            setEditing(null);
+        } catch (error) {
+            setToast('Failed to save store.');
+            console.error('Save error:', error);
+        }
     };
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (!deleteTarget) return;
-        setStores(current => current.filter(item => item.id !== deleteTarget.id));
-        setDeleteTarget(null);
-        setToast('Store deleted successfully.');
+
+        try {
+            await deleteStoreMutation(deleteTarget.id);
+            setStoreOverrides(current => ({ ...current, [deleteTarget.id]: null }));
+            setDeleteTarget(null);
+            setToast('Store deleted successfully.');
+        } catch (error) {
+            setToast('Failed to delete store.');
+            console.error('Delete error:', error);
+        }
     };
 
     const toggleStatus = (id: string) => {
-        setStores(current =>
-            current.map(store =>
-                store.id === id
-                    ? { ...store, status: store.status === 'active' ? 'inactive' : 'active' }
-                    : store,
-            ),
-        );
+        const store = stores.find(item => item.id === id);
+        if (!store) return;
+
+        const nextStatus = store.status === 'active' ? 'inactive' : 'active';
+        setStoreOverrides(current => ({ ...current, [id]: { ...store, status: nextStatus } }));
         setToast('Store status updated.');
     };
 
     const toggleFeatured = (id: string) => {
-        setStores(current =>
-            current.map(store =>
-                store.id === id ? { ...store, featured: !store.featured } : store,
-            ),
-        );
+        const store = stores.find(item => item.id === id);
+        if (!store) return;
+
+        setStoreOverrides(current => ({
+            ...current,
+            [id]: { ...store, featured: !store.featured },
+        }));
         setToast('Featured status updated.');
     };
 
@@ -476,21 +697,29 @@ export default function StoresAdminPage() {
                                         className="border-t border-border text-[14px] text-foreground"
                                     >
                                         <td className="px-4 py-3">
-                                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                                            <img
-                                                src={store.logo}
-                                                alt={store.name}
-                                                className="h-10 w-10 rounded-xl border border-border bg-surface object-contain p-2"
-                                            />
+                                            {store.logo ? (
+                                                /* eslint-disable-next-line @next/next/no-img-element */
+                                                <img
+                                                    src={store.logo}
+                                                    alt={store.name}
+                                                    className="h-10 w-10 rounded-xl border border-border bg-surface object-contain p-2"
+                                                />
+                                            ) : (
+                                                <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-surface text-[10px] font-semibold text-muted-foreground">
+                                                    N/A
+                                                </div>
+                                            )}
                                         </td>
                                         <td className="px-4 py-3">
                                             <div className="font-semibold">{store.name}</div>
                                             <div className="text-[12px] text-muted-foreground">
-                                                {store.shortDescription}
+                                                {store.shortDescription || 'N/A'}
                                             </div>
                                         </td>
                                         <td className="px-4 py-3">
-                                            {store.categories.join(', ') || '—'}
+                                            {store.categories.length
+                                                ? store.categories.join(', ')
+                                                : 'N/A'}
                                         </td>
                                         <td className="px-4 py-3">
                                             {store.status === 'active' ? '24' : '0'}
@@ -504,16 +733,26 @@ export default function StoresAdminPage() {
                                             />
                                         </td>
                                         <td className="px-4 py-3">
-                                            <StatusBadge
-                                                status={store.popular ? 'featured' : 'inactive'}
-                                            />
+                                            {store.popular === null ||
+                                            store.popular === undefined ? (
+                                                'N/A'
+                                            ) : (
+                                                <StatusBadge
+                                                    status={store.popular ? 'featured' : 'inactive'}
+                                                />
+                                            )}
                                         </td>
                                         <td className="px-4 py-3">
-                                            <StatusBadge
-                                                status={store.verified ? 'active' : 'inactive'}
-                                            />
+                                            {store.verified === null ||
+                                            store.verified === undefined ? (
+                                                'N/A'
+                                            ) : (
+                                                <StatusBadge
+                                                    status={store.verified ? 'active' : 'inactive'}
+                                                />
+                                            )}
                                         </td>
-                                        <td className="px-4 py-3">{store.createdAt}</td>
+                                        <td className="px-4 py-3">{store.createdAt || 'N/A'}</td>
                                         <td className="px-4 py-3">
                                             <div className="flex justify-end gap-2">
                                                 <Button
@@ -594,7 +833,7 @@ export default function StoresAdminPage() {
                     }}
                     onSave={handleSave}
                     allMedia={allMedia}
-                    onUploadMedia={newMedia => setAllMedia(prev => [...newMedia, ...prev])}
+                    onUploadMedia={newMedia => setUploadedMedia(prev => [...newMedia, ...prev])}
                 />
             )}
             <ConfirmDeleteModal

@@ -45,8 +45,8 @@ export type StoreRecord = {
     affiliateUrl: string;
     status: AdminStatus;
     featured: boolean;
-    popular: boolean;
-    verified: boolean;
+    popular?: boolean | null;
+    verified?: boolean | null;
     displayOrder: number;
     metaTitle: string;
     metaDescription: string;
