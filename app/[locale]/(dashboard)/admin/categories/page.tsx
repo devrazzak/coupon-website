@@ -12,12 +12,57 @@ import {
     TableWrapper,
     Toast,
 } from '@/components/admin/admin-shared';
+import { CreateCategoryModal } from '@/components/admin/category-modal';
 import { MediaPicker } from '@/components/admin/media-picker';
 import { Button } from '@/components/ui/button';
-import { type CategoryRecord, type MediaRecord, categoryData, mediaData } from '@/utils/admin-data';
-import { useGetCategory } from '@/utils/hooks/category';
+import { type CategoryRecord, type MediaRecord, mediaData } from '@/utils/admin-data';
+import {
+    useCreateCategory,
+    useDeleteCategory,
+    useGetCategories,
+    useUpdateCategory,
+} from '@/utils/hooks/category';
 
-const pageSize = 6;
+export interface CategoryApiItem {
+    id: number;
+    name: string;
+    slug: string;
+    image: string | null;
+    short_description: string | null;
+    description: string | null;
+    is_featured: boolean;
+    is_active: boolean;
+    sort_order: number;
+    seo_title: string | null;
+    meta_description: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface CategoriesResponse {
+    success: boolean;
+    message: string;
+    data: CategoryApiItem[];
+    meta: {
+        currentPage: number;
+        totalCount: number;
+    };
+}
+
+function getCategoriesResponse(response: unknown): CategoriesResponse | null {
+    if (!response || typeof response !== 'object') return null;
+
+    const payload = (response as { data?: unknown }).data;
+    if (
+        payload &&
+        typeof payload === 'object' &&
+        Array.isArray((payload as CategoriesResponse).data)
+    ) {
+        return payload as CategoriesResponse;
+    }
+
+    return null;
+}
 
 function slugify(value: string) {
     return (
@@ -48,21 +93,26 @@ function CategoryModal({
             name: '',
             slug: '',
             description: '',
-            icon: 'shirt',
             image: '',
-            status: 'active',
+            status: true,
             featured: false,
             displayOrder: 1,
             metaTitle: '',
             metaDescription: '',
-            storesCount: 0,
-            couponsCount: 0,
         },
     );
     const [error, setError] = useState('');
 
     const updateField = <K extends keyof CategoryRecord>(key: K, value: CategoryRecord[K]) => {
         setForm(current => ({ ...current, [key]: value }));
+    };
+
+    const handleNameChange = (value: string) => {
+        setForm(current => ({
+            ...current,
+            name: value,
+            slug: current.slug || slugify(value),
+        }));
     };
 
     const handleSubmit = () => {
@@ -77,7 +127,7 @@ function CategoryModal({
         }
         onSave({
             ...form,
-            id: form.id || `cat-${Date.now()}`,
+            id: form.id || form.slug || 'new-category',
             name,
             slug: form.slug.trim(),
             metaTitle: form.metaTitle || name,
@@ -97,13 +147,15 @@ function CategoryModal({
                             {initialData ? 'Edit Category' : 'Create Category'}
                         </h3>
                     </div>
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="rounded-full border border-border p-2 text-muted-foreground hover:bg-muted"
-                    >
-                        ×
-                    </button>
+                    <div>
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="rounded-full border border-border p-2 text-muted-foreground hover:bg-muted"
+                        >
+                            ×
+                        </button>
+                    </div>
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2">
@@ -137,16 +189,7 @@ function CategoryModal({
                         <textarea
                             value={form.description}
                             onChange={event => updateField('description', event.target.value)}
-                            className="min-h-[96px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Icon</span>
-                        <input
-                            value={form.icon}
-                            onChange={event => updateField('icon', event.target.value)}
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                            className="min-h-24 w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
                     </label>
 
@@ -160,23 +203,14 @@ function CategoryModal({
                             helpText="Select an image from the Media Library or upload a new one"
                         />
                     </div>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Status</span>
-                        <select
-                            value={form.status}
-                            onChange={event =>
-                                updateField(
-                                    'status',
-                                    event.target.value as CategoryRecord['status'],
-                                )
-                            }
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        >
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                            <option value="draft">Draft</option>
-                        </select>
+                    <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground md:col-span-1">
+                        <input
+                            type="checkbox"
+                            checked={form.status}
+                            onChange={event => updateField('status', event.target.checked)}
+                            className="h-4 w-4 rounded border-border text-primary"
+                        />
+                        Status
                     </label>
 
                     <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
@@ -215,7 +249,7 @@ function CategoryModal({
                         <textarea
                             value={form.metaDescription}
                             onChange={event => updateField('metaDescription', event.target.value)}
-                            className="min-h-[88px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                            className="min-h-22 w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
                     </label>
                 </div>
@@ -236,7 +270,9 @@ function CategoryModal({
 }
 
 export default function CategoriesAdminPage() {
-    const [categories, setCategories] = useState(categoryData);
+    const [categoryOverrides, setCategoryOverrides] = useState<
+        Record<string, CategoryRecord | null>
+    >({});
     const [allMedia, setAllMedia] = useState(mediaData);
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
@@ -247,16 +283,47 @@ export default function CategoriesAdminPage() {
     const [deleteTarget, setDeleteTarget] = useState<CategoryRecord | null>(null);
     const [toast, setToast] = useState('');
 
-    const { data } = useGetCategory();
+    const pageSize = 6;
 
-    console.log('Category data:', data);
+    // API hooks
+    const { data: apiData, isFetching } = useGetCategories(page, pageSize);
+    const { mutateAsync: createCategoryMutation } = useCreateCategory();
+    const { mutateAsync: updateCategoryMutation } = useUpdateCategory();
+    const { mutateAsync: deleteCategoryMutation } = useDeleteCategory();
+    const categoriesResponse = useMemo(() => getCategoriesResponse(apiData), [apiData]);
+
+    const categories = useMemo(() => {
+        const items =
+            categoriesResponse?.data.map(category => ({
+                id: String(category.id),
+                name: category.name,
+                slug: category.slug,
+                description: category.description ?? category.short_description ?? '',
+                image: category.image ?? '',
+                status: category.is_active,
+                featured: category.is_featured,
+                displayOrder: category.sort_order,
+                metaTitle: category.seo_title ?? '',
+                metaDescription: category.meta_description ?? '',
+                storesCount: 0,
+                couponsCount: 0,
+            })) ?? [];
+
+        return items.flatMap(category => {
+            const override = categoryOverrides[category.id];
+            return override === null ? [] : [override ?? category];
+        });
+    }, [categoriesResponse, categoryOverrides]);
 
     const filteredCategories = useMemo(() => {
         return categories.filter(category => {
             const matchesSearch =
                 category.name.toLowerCase().includes(search.toLowerCase()) ||
                 category.slug.toLowerCase().includes(search.toLowerCase());
-            const matchesStatus = statusFilter === 'all' || category.status === statusFilter;
+            const matchesStatus =
+                statusFilter === 'all' ||
+                (statusFilter === 'active' && category.status === true) ||
+                (statusFilter === 'inactive' && category.status === false);
             const matchesFeatured =
                 featuredFilter === 'all' ||
                 (featuredFilter === 'featured' ? category.featured : !category.featured);
@@ -264,52 +331,117 @@ export default function CategoriesAdminPage() {
         });
     }, [categories, featuredFilter, search, statusFilter]);
 
-    const totalPages = Math.max(1, Math.ceil(filteredCategories.length / pageSize));
-    const visibleCategories = filteredCategories.slice((page - 1) * pageSize, page * pageSize);
+    const totalCount = categoriesResponse?.meta.totalCount ?? filteredCategories.length;
+    const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+    const visibleCategories = filteredCategories;
 
-    const handleSave = (payload: CategoryRecord) => {
-        setCategories(current => {
-            const index = current.findIndex(item => item.id === payload.id);
-            if (index >= 0) {
-                const next = [...current];
-                next[index] = payload;
-                return next;
+    const handleSave = async (payload: CategoryRecord) => {
+        try {
+            if (editing?.id) {
+                // Update existing category
+                await updateCategoryMutation({
+                    id: payload.id,
+                    values: {
+                        name: payload.name,
+                        slug: payload.slug,
+                        image: payload.image,
+                        short_description: payload.description,
+                        description: payload.description,
+                        is_featured: payload.featured,
+                        is_active: payload.status,
+                        sort_order: payload.displayOrder,
+                        seo_title: payload.metaTitle,
+                        meta_description: payload.metaDescription,
+                    },
+                });
+                setToast('Category updated successfully.');
+            } else {
+                // Create new category
+                await createCategoryMutation({
+                    name: payload.name,
+                    slug: payload.slug,
+                    image: payload.image,
+                    short_description: payload.description,
+                    description: payload.description,
+                    is_featured: payload.featured,
+                    is_active: payload.status,
+                    sort_order: payload.displayOrder,
+                    seo_title: payload.metaTitle,
+                    meta_description: payload.metaDescription,
+                });
+                setToast('Category created successfully.');
             }
-            return [payload, ...current];
-        });
-        setModalOpen(false);
-        setEditing(null);
-        setToast(payload.id ? 'Category updated successfully.' : 'Category created successfully.');
+
+            // Update local state
+            if (editing?.id) {
+                setCategoryOverrides(current => ({ ...current, [payload.id]: payload }));
+            }
+
+            setModalOpen(false);
+            setEditing(null);
+        } catch (error) {
+            setToast('Failed to save category.');
+            console.error('Save error:', error);
+        }
     };
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (!deleteTarget) return;
-        setCategories(current => current.filter(item => item.id !== deleteTarget.id));
-        setDeleteTarget(null);
-        setToast('Category deleted successfully.');
+
+        try {
+            await deleteCategoryMutation(deleteTarget.id);
+            setCategoryOverrides(current => ({ ...current, [deleteTarget.id]: null }));
+            setDeleteTarget(null);
+            setToast('Category deleted successfully.');
+        } catch (error) {
+            setToast('Failed to delete category.');
+            console.error('Delete error:', error);
+        }
     };
 
-    const toggleStatus = (id: string) => {
-        setCategories(current =>
-            current.map(category =>
-                category.id === id
-                    ? {
-                          ...category,
-                          status: category.status === 'active' ? 'inactive' : 'active',
-                      }
-                    : category,
-            ),
-        );
-        setToast('Category status updated.');
+    const toggleStatus = async (id: string) => {
+        const category = categories.find(item => item.id === id);
+
+        if (!category) return;
+
+        const newStatus = !category.status;
+
+        try {
+            await updateCategoryMutation({
+                id,
+                values: {
+                    is_active: newStatus,
+                },
+            });
+
+            setCategoryOverrides(current => ({
+                ...current,
+                [id]: { ...category, status: newStatus },
+            }));
+
+            setToast(`Category ${newStatus ? 'activated' : 'deactivated'} successfully.`);
+        } catch (error) {
+            console.error('Status update error:', error);
+            setToast('Failed to update category status.');
+        }
     };
 
-    const toggleFeatured = (id: string) => {
-        setCategories(current =>
-            current.map(category =>
-                category.id === id ? { ...category, featured: !category.featured } : category,
-            ),
-        );
-        setToast('Featured status updated.');
+    const toggleFeatured = async (id: string) => {
+        const category = categories.find(item => item.id === id);
+        if (!category) return;
+
+        const featured = !category.featured;
+        try {
+            await updateCategoryMutation({ id, values: { is_featured: featured } });
+            setCategoryOverrides(current => ({
+                ...current,
+                [id]: { ...category, featured },
+            }));
+            setToast('Featured status updated.');
+        } catch (error) {
+            console.error('Featured update error:', error);
+            setToast('Failed to update featured status.');
+        }
     };
 
     return (
@@ -388,7 +520,17 @@ export default function CategoriesAdminPage() {
                                     >
                                         <td className="px-4 py-3">
                                             <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary-light text-primary">
-                                                {category.icon.toUpperCase().slice(0, 1)}
+                                                {category.image ? (
+                                                    <img
+                                                        src={category.image}
+                                                        alt={category.name}
+                                                        className="h-6 w-6 rounded"
+                                                    />
+                                                ) : (
+                                                    <span className="text-[12px] font-bold uppercase text-primary">
+                                                        {category.name.charAt(0)}
+                                                    </span>
+                                                )}
                                             </span>
                                         </td>
                                         <td className="px-4 py-3">
@@ -398,10 +540,12 @@ export default function CategoriesAdminPage() {
                                             </div>
                                         </td>
                                         <td className="px-4 py-3">/{category.slug}</td>
-                                        <td className="px-4 py-3">{category.storesCount}</td>
-                                        <td className="px-4 py-3">{category.couponsCount}</td>
+                                        <td className="px-4 py-3">0</td>
+                                        <td className="px-4 py-3">0</td>
                                         <td className="px-4 py-3">
-                                            <StatusBadge status={category.status} />
+                                            <StatusBadge
+                                                status={category.status ? 'active' : 'inactive'}
+                                            />
                                         </td>
                                         <td className="px-4 py-3">
                                             <StatusBadge
@@ -417,7 +561,7 @@ export default function CategoriesAdminPage() {
                                                     onClick={() => toggleStatus(category.id)}
                                                     title="Toggle status"
                                                 >
-                                                    {category.status === 'active' ? (
+                                                    {category.status ? (
                                                         <Eye className="h-4 w-4" />
                                                     ) : (
                                                         <EyeOff className="h-4 w-4" />
@@ -455,6 +599,16 @@ export default function CategoriesAdminPage() {
                                         </td>
                                     </tr>
                                 ))}
+                                {!isFetching && visibleCategories.length === 0 && (
+                                    <tr>
+                                        <td
+                                            colSpan={9}
+                                            className="px-4 py-10 text-center text-sm text-muted-foreground"
+                                        >
+                                            No categories found.
+                                        </td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -463,7 +617,7 @@ export default function CategoriesAdminPage() {
 
             <div className="mt-6 flex items-center justify-between">
                 <div className="text-[13px] text-muted-foreground">
-                    Showing {visibleCategories.length} of {filteredCategories.length} categories
+                    Showing {visibleCategories.length} of {totalCount} categories
                 </div>
                 <div className="flex items-center gap-2">
                     <Button
@@ -488,25 +642,33 @@ export default function CategoriesAdminPage() {
                 </div>
             </div>
 
-            {modalOpen && (
-                <CategoryModal
-                    initialData={editing}
-                    onClose={() => {
-                        setEditing(null);
-                        setModalOpen(false);
-                    }}
-                    onSave={handleSave}
-                    allMedia={allMedia}
-                    onUploadMedia={newMedia => setAllMedia(prev => [...newMedia, ...prev])}
-                />
-            )}
+            {modalOpen &&
+                (editing ? (
+                    <CategoryModal
+                        initialData={editing}
+                        onClose={() => {
+                            setEditing(null);
+                            setModalOpen(false);
+                        }}
+                        onSave={handleSave}
+                        allMedia={allMedia}
+                        onUploadMedia={newMedia => setAllMedia(prev => [...newMedia, ...prev])}
+                    />
+                ) : (
+                    <CreateCategoryModal
+                        onClose={() => setModalOpen(false)}
+                        onSave={handleSave}
+                        allMedia={allMedia}
+                        onUploadMedia={newMedia => setAllMedia(prev => [...newMedia, ...prev])}
+                    />
+                ))}
 
             <ConfirmDeleteModal
                 open={!!deleteTarget}
                 title="Delete category"
                 description={
                     deleteTarget
-                        ? `This category contains ${deleteTarget.storesCount} stores and ${deleteTarget.couponsCount} coupons. Deleting it may affect related catalog data.`
+                        ? `This category contains coupons. Deleting it may affect related catalog data.`
                         : 'Delete this category?'
                 }
                 onClose={() => setDeleteTarget(null)}

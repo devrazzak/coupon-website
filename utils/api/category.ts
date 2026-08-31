@@ -1,7 +1,52 @@
 import { API_END_POINTS } from '@/api/APIEndpoint';
 import AxiosServices from '@/api/AxiosService';
 
-// Axios service for get category
+// Axios service for get category (public)
 export const getCategory = () => {
     return AxiosServices.get(API_END_POINTS.GET_CATEGORY, {});
+};
+
+// Axios service for get categories (admin dashboard with pagination)
+export const getCategories = (page: number, limit: number) => {
+    return AxiosServices.get(API_END_POINTS.DASHBOARD.CATEGORY.GET(page, limit), {});
+};
+
+// Axios service for create category
+export const createCategory = (data: {
+    name: string;
+    slug: string;
+    image?: string;
+    short_description?: string;
+    description?: string;
+    is_featured?: boolean;
+    is_active?: boolean;
+    sort_order?: number;
+    seo_title?: string;
+    meta_description?: string;
+}) => {
+    return AxiosServices.post(API_END_POINTS.DASHBOARD.CATEGORY.POST, data);
+};
+
+// Axios service for update category
+export const updateCategory = (
+    id: string | number,
+    data: {
+        name?: string;
+        slug?: string;
+        image?: string;
+        short_description?: string;
+        description?: string;
+        is_featured?: boolean;
+        is_active?: boolean;
+        sort_order?: number;
+        seo_title?: string;
+        meta_description?: string;
+    },
+) => {
+    return AxiosServices.put(API_END_POINTS.DASHBOARD.CATEGORY.PUT(String(id)), data);
+};
+
+// Axios service for delete category
+export const deleteCategory = (id: string | number) => {
+    return AxiosServices.remove(API_END_POINTS.DASHBOARD.CATEGORY.DELETE(String(id)));
 };

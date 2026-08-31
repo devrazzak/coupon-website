@@ -90,7 +90,7 @@ function BlogModal({
 
         onSave({
             ...form,
-            id: form.id || `blog-${Date.now()}`,
+            id: form.id || form.slug || 'new-blog',
             title: form.title.trim(),
             slug: form.slug.trim() || slugify(form.title),
             author: form.author.trim(),

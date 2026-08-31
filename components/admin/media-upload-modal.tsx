@@ -99,7 +99,7 @@ export function MediaUploadModal({
                     {}) as Record<string, any>;
 
                 const newMedia: MediaRecord = {
-                    id: String(uploadedItem?.id ?? `media-${Date.now()}-${i}`),
+                    id: String(uploadedItem?.id ?? (uploadedItem?.file_path || 'media-upload')),
                     fileName: String(uploadedItem?.name ?? file.name),
                     url: String(
                         uploadedItem?.file_path

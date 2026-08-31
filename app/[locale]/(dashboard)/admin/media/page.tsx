@@ -41,9 +41,9 @@ function getMediaUrl(filePath: string): string {
 }
 
 function normalizeMediaItem(item: Record<string, any>): MediaRecord {
-    const safeId = String(item?.id ?? `media-${Date.now()}-${Math.random()}`);
     const filePath = String(item?.file_path ?? item?.url ?? item?.filePath ?? '');
     const fileName = String(item?.name ?? item?.fileName ?? filePath.split('/').pop() ?? 'media');
+    const safeId = String(item?.id ?? (filePath || 'media-default'));
     const altText = String(item?.alt_text ?? item?.altText ?? '');
     const createdAt = String(item?.created_at ?? item?.createdAt ?? '');
     const updatedAt = String(item?.updated_at ?? item?.updatedAt ?? createdAt);
@@ -133,8 +133,9 @@ export default function MediaLibraryPage() {
             return;
         }
 
+        // This is an incremental pagination cache; it cannot be derived from one API page.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setAllMedia(prev => {
-            // eslint-disable-line react-hooks/set-state-in-effect
             if (page === 1) return mediaResponse.items;
             const existingIds = new Set(prev.map(item => item.id));
             const merged = [

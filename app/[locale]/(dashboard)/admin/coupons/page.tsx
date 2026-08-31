@@ -97,7 +97,7 @@ function CouponModal({
 
         onSave({
             ...form,
-            id: form.id || `coupon-${Date.now()}`,
+            id: form.id || form.code || 'new-coupon',
             title: form.title.trim(),
             store: form.store.trim(),
             slug: form.slug.trim() || slugify(form.title),

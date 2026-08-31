@@ -81,7 +81,7 @@ function StoreModal({
 
         onSave({
             ...form,
-            id: form.id || `store-${Date.now()}`,
+            id: form.id || form.slug || 'new-store',
             name: form.name.trim(),
             slug: form.slug.trim(),
             metaTitle: form.metaTitle || form.name,

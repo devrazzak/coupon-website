@@ -24,15 +24,12 @@ export type CategoryRecord = {
     name: string;
     slug: string;
     description: string;
-    icon: string;
     image: string;
-    status: AdminStatus;
+    status: boolean;
     featured: boolean;
     displayOrder: number;
     metaTitle: string;
     metaDescription: string;
-    storesCount: number;
-    couponsCount: number;
 };
 
 export type StoreRecord = {
@@ -122,60 +119,12 @@ export const categoryData: CategoryRecord[] = [
         name: 'Fashion',
         slug: 'fashion',
         description: 'Style updates, wardrobe essentials and seasonal discounts.',
-        icon: 'shirt',
         image: '',
-        status: 'active',
+        status: true,
         featured: true,
         displayOrder: 1,
         metaTitle: 'Fashion Deals',
         metaDescription: 'Discover the latest fashion discounts and deals.',
-        storesCount: 14,
-        couponsCount: 248,
-    },
-    {
-        id: 'cat-electronics',
-        name: 'Electronics',
-        slug: 'electronics',
-        description: 'Tech gadgets, gear and upgraded home devices.',
-        icon: 'laptop',
-        image: '',
-        status: 'active',
-        featured: true,
-        displayOrder: 2,
-        metaTitle: 'Electronics Discounts',
-        metaDescription: 'Compare the best electronics deals and promo codes.',
-        storesCount: 11,
-        couponsCount: 197,
-    },
-    {
-        id: 'cat-travel',
-        name: 'Travel',
-        slug: 'travel',
-        description: 'Flights, hotels and holiday savings for your next trip.',
-        icon: 'plane',
-        image: '',
-        status: 'active',
-        featured: false,
-        displayOrder: 3,
-        metaTitle: 'Travel Savings',
-        metaDescription: 'Find travel offers, hotel discounts and getaway codes.',
-        storesCount: 8,
-        couponsCount: 124,
-    },
-    {
-        id: 'cat-beauty',
-        name: 'Beauty',
-        slug: 'beauty',
-        description: 'Beauty essentials, grooming and self-care finds.',
-        icon: 'sparkles',
-        image: '',
-        status: 'inactive',
-        featured: false,
-        displayOrder: 4,
-        metaTitle: 'Beauty Shop Deals',
-        metaDescription: 'Save on skincare, makeup and beauty favorites.',
-        storesCount: 6,
-        couponsCount: 84,
     },
 ];
 

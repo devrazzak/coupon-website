@@ -14,5 +14,12 @@ export const API_END_POINTS = {
             POST: '/api/v1/admin/media',
             DELETE: (id: string) => `/api/v1/admin/media/${id}`,
         },
+        CATEGORY: {
+            GET: (page: number, limit: number) =>
+                `/api/v1/admin/categories?page=${page}&limit=${limit}`,
+            POST: '/api/v1/admin/categories',
+            PUT: (id: string) => `/api/v1/admin/categories/${id}`,
+            DELETE: (id: string) => `/api/v1/admin/categories/${id}`,
+        },
     },
 };
