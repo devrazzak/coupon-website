@@ -9,8 +9,8 @@ import { StoreCardSkeleton } from '@/components/ui/store-card-skeleton';
 import PATH from '@/routes/path';
 import { useGetPublicStores } from '@/utils/hooks/store';
 
-function storeHref(slug: string, websiteUrl?: string): string {
-    return websiteUrl || PATH.shopDetails.replace(':slug', slug);
+function storeHref(slug: string, id: number): string {
+    return `${PATH.shopDetails.replace(':slug', slug)}?store_id=${id}`;
 }
 
 export function PopularStores() {
@@ -77,9 +77,7 @@ export function PopularStores() {
                                     className="w-40 shrink-0 snap-start sm:w-44 md:w-46"
                                 >
                                     <Link
-                                        href={storeHref(store.slug, store.website_url)}
-                                        target={store.website_url ? '_blank' : undefined}
-                                        rel={store.website_url ? 'noopener noreferrer' : undefined}
+                                        href={storeHref(store.slug, store.id)}
                                         className="group relative flex h-40 flex-col items-center justify-between rounded-xl border border-border bg-card p-3 text-center transition-all duration-200 hover:border-primary/50 sm:h-42"
                                     >
                                         {store.logo ? (

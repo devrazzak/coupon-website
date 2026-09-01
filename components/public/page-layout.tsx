@@ -208,9 +208,7 @@ export function CouponCard<T extends CouponCardItem>({
 export function StoreCard({ item }: { item: PublicStore }) {
     return (
         <Link
-            href={item.website_url || PATHS.shopDetails.replace(':slug', item.slug)}
-            target={item.website_url ? '_blank' : undefined}
-            rel={item.website_url ? 'noopener noreferrer' : undefined}
+            href={`${PATHS.shopDetails.replace(':slug', item.slug)}?store_id=${item.id}`}
             className="group relative flex h-42 flex-col items-center justify-between rounded-xl border border-border bg-card p-3.5 text-center transition-all duration-200 hover:border-primary/50"
         >
             {item.logo ? (

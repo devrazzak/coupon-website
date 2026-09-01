@@ -40,7 +40,10 @@ export function Categories() {
                         {categories.map(category => (
                             <li key={category.id}>
                                 <Link
-                                    href={PATHS.categories}
+                                    href={`${PATHS.categoryDetails.replace(
+                                        ':slug',
+                                        category.slug,
+                                    )}?category_id=${category.id}`}
                                     className="group flex h-full flex-col items-center justify-center gap-3 rounded-2xl border border-border bg-card px-3 py-6 text-center transition-all duration-200 hover:-translate-y-1.5 hover:border-primary/50"
                                 >
                                     <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary-light text-primary transition-transform duration-200 group-hover:scale-110">

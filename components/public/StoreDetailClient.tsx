@@ -2,22 +2,23 @@
 
 import Link from 'next/link';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { CouponModal } from '@/components/CouponSection';
-import { type Coupon } from '@/utils/coupello';
-import { type StoreDirectoryItem } from '@/utils/public-content';
+import { PublicCouponRow } from '@/components/public/PublicCouponRow';
+import { CouponCardSkeleton } from '@/components/ui/coupon-card-skeleton';
+import type { PublicCoupon } from '@/utils/api/coupon';
+import { useGetPublicCoupons } from '@/utils/hooks/coupon';
 
-import { CouponCard } from './page-layout';
+export function StoreDetailClient({ storeId, storeName }: { storeId?: number; storeName: string }) {
+    const [selected, setSelected] = useState<PublicCoupon | null>(null);
 
-export function StoreDetailClient({
-    store,
-    storeCoupons,
-}: {
-    store: StoreDirectoryItem;
-    storeCoupons: Coupon[];
-}) {
-    const [selected, setSelected] = useState<Coupon | null>(null);
+    const { data: apiData, isLoading } = useGetPublicCoupons({
+        storeId,
+        page: 1,
+        limit: 50,
+    });
+    const coupons = useMemo(() => apiData?.data?.data ?? [], [apiData]);
 
     return (
         <>
@@ -38,24 +39,39 @@ export function StoreDetailClient({
                         </Link>
                         <span className="text-border">/</span>
                     </div>
-                    <span className="font-medium text-foreground">{store.name}</span>
+                    <span className="font-medium text-foreground">{storeName}</span>
                 </nav>
 
                 <div className="mt-10">
                     <div className="mb-5 flex items-center justify-between gap-3">
                         <h2 className="font-display text-[28px] font-extrabold tracking-tight text-foreground">
-                            Available coupons & deals
+                            {storeName} coupons &amp; deals
                         </h2>
                         <span className="text-[13px] font-semibold text-muted-foreground">
-                            {storeCoupons.length} active offers
+                            {coupons.length} active offers
                         </span>
                     </div>
 
-                    <div className="mt-6 overflow-hidden rounded-xl border border-border bg-card">
-                        {storeCoupons.map(coupon => (
-                            <CouponCard key={coupon.id} coupon={coupon} onShow={setSelected} />
-                        ))}
-                    </div>
+                    {isLoading ? (
+                        <div className="mt-6 overflow-hidden rounded-xl border border-border bg-card">
+                            <CouponCardSkeleton rows={4} />
+                        </div>
+                    ) : (
+                        <ul className="mt-6 overflow-hidden rounded-xl border border-border bg-card">
+                            {coupons.map(coupon => (
+                                <PublicCouponRow
+                                    key={coupon.id}
+                                    coupon={coupon}
+                                    onShow={setSelected}
+                                />
+                            ))}
+                            {coupons.length === 0 && (
+                                <li className="p-12 text-center text-sm text-muted-foreground">
+                                    No coupons available for {storeName} right now. Check back soon!
+                                </li>
+                            )}
+                        </ul>
+                    )}
                 </div>
             </section>
 
