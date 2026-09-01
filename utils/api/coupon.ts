@@ -26,6 +26,66 @@ export type CouponCreatePayload = {
 
 export type CouponUpdatePayload = Partial<CouponCreatePayload>;
 
+export type PublicStoreRef = {
+    id: number;
+    name: string;
+    slug: string;
+};
+
+export type PublicCategoryRef = {
+    id: number;
+    name: string;
+    slug: string;
+};
+
+export type PublicCoupon = {
+    id: number;
+    title: string;
+    slug: string;
+    code?: string | null;
+    coupon_type?: string;
+    discount_type?: string;
+    discount_value?: number;
+    currency?: string;
+    short_description?: string;
+    expires_at?: string;
+    store?: PublicStoreRef;
+    category?: PublicCategoryRef;
+};
+
+export type PublicCouponsResponse = {
+    success: boolean;
+    message: string;
+    data: PublicCoupon[];
+    meta: {
+        currentPage: number;
+        totalCount: number;
+    };
+};
+
+export type PublicCouponsQuery = {
+    search?: string;
+    categoryIds?: number[];
+    storeId?: number;
+    page?: number;
+    limit?: number;
+    sort?: string;
+};
+
+export const getPublicCoupons = ({
+    search,
+    categoryIds,
+    storeId,
+    page = 1,
+    limit = 20,
+    sort,
+}: PublicCouponsQuery = {}) => {
+    return AxiosServices.get<PublicCouponsResponse>(
+        API_END_POINTS.PUBLIC.COUPON.GET(search, categoryIds, storeId, page, limit, sort),
+        {},
+    );
+};
+
 export const getCoupons = (page: number, limit: number) => {
     return AxiosServices.get(API_END_POINTS.DASHBOARD.COUPON.GET(page, limit), {});
 };

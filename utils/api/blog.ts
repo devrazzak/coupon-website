@@ -25,6 +25,68 @@ export type BlogCreatePayload = {
 
 export type BlogUpdatePayload = Partial<BlogCreatePayload>;
 
+export type PublicBlogCategoryRef = {
+    id: number;
+    name: string;
+    slug: string;
+};
+
+export type PublicBlog = {
+    id: number;
+    title: string;
+    slug: string;
+    short_description?: string;
+    description?: string;
+    thumbnail?: string;
+    tags?: string[];
+    category?: PublicBlogCategoryRef;
+    view_count?: number;
+    created_at?: string;
+};
+
+export type PublicBlogsResponse = {
+    success: boolean;
+    message: string;
+    data: PublicBlog[];
+    meta: {
+        currentPage: number;
+        totalCount: number;
+    } | null;
+};
+
+export type PublicBlogsQuery = {
+    search?: string;
+    categoryIds?: number[];
+    page?: number;
+    limit?: number;
+};
+
+export type PublicBlogDetailResponse = {
+    success: boolean;
+    message: string;
+    data: PublicBlog;
+    meta: null;
+};
+
+export const getPublicBlogs = ({
+    search,
+    categoryIds,
+    page = 1,
+    limit = 20,
+}: PublicBlogsQuery = {}) => {
+    return AxiosServices.get<PublicBlogsResponse>(
+        API_END_POINTS.PUBLIC.BLOG.GET(search, categoryIds, page, limit),
+        {},
+    );
+};
+
+export const getPublicBlogBySlug = (slug: string) => {
+    return AxiosServices.get<PublicBlogDetailResponse>(
+        API_END_POINTS.PUBLIC.BLOG.GET_BY_SLUG(slug),
+        {},
+    );
+};
+
 export const getBlogs = (page: number, limit: number) => {
     return AxiosServices.get(API_END_POINTS.DASHBOARD.BLOG.GET(page, limit), {});
 };

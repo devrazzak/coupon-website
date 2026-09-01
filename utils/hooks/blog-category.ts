@@ -6,8 +6,17 @@ import {
     createBlogCategory,
     deleteBlogCategory,
     getBlogCategories,
+    getPublicBlogCategories,
     updateBlogCategory,
 } from '@/utils/api/blog-category';
+
+export function useGetPublicBlogCategories(page = 1, limit = 20, sort?: string) {
+    return useQuery({
+        queryKey: ['GetPublicBlogCategories', page, limit, sort],
+        queryFn: () => getPublicBlogCategories(page, limit, sort),
+        retry: false,
+    });
+}
 
 export function useGetBlogCategories(page = 1, limit = 10) {
     return useQuery({

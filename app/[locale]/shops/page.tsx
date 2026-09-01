@@ -1,7 +1,11 @@
+'use client';
+
 import { Search } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { FilterPill, PublicPageShell, StoreCard } from '@/components/public/page-layout';
-import { stores } from '@/utils/public-content';
+import { StoreCardSkeleton } from '@/components/ui/store-card-skeleton';
+import { useGetPublicStores } from '@/utils/hooks/store';
 
 const alphaFilters = [
     'All',
@@ -33,7 +37,35 @@ const alphaFilters = [
     'Z',
 ];
 
+const sortFilters = ['All', 'Popular', 'Featured', 'Newest'] as const;
+type SortFilter = (typeof sortFilters)[number];
+
+const PAGE_LIMIT = 20;
+
 export default function ShopsPage() {
+    const [search, setSearch] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+    const [sort, setSort] = useState<SortFilter>('All');
+    const [letter, setLetter] = useState('All');
+
+    // Debounce the search input to avoid a request on every keystroke.
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedSearch(search), 300);
+        return () => clearTimeout(timer);
+    }, [search]);
+
+    // Filters are sent to the API; changing any of them triggers a new request.
+    const { data: apiData, isLoading } = useGetPublicStores({
+        search: debouncedSearch || undefined,
+        page: 1,
+        limit: PAGE_LIMIT,
+        sort: sort === 'All' ? undefined : sort.toLowerCase(),
+        letter: letter === 'All' ? undefined : letter,
+    });
+
+    const stores = useMemo(() => apiData?.data?.data ?? [], [apiData]);
+    const totalCount = apiData?.data?.meta?.totalCount ?? 0;
+
     return (
         <PublicPageShell>
             <section className="container-page py-15">
@@ -44,33 +76,56 @@ export default function ShopsPage() {
                             <input
                                 aria-label="Search stores"
                                 placeholder="Search stores, categories, brands..."
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
                                 className="h-11 w-full rounded-md border border-border bg-background pl-10 pr-3 text-[14px] text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary"
                             />
                         </div>
                         <div className="flex flex-wrap gap-2">
-                            <FilterPill active>All</FilterPill>
-                            <FilterPill>Popular</FilterPill>
-                            <FilterPill>Featured</FilterPill>
-                            <FilterPill>Newest</FilterPill>
+                            {sortFilters.map(f => (
+                                <FilterPill key={f} active={sort === f} onClick={() => setSort(f)}>
+                                    {f}
+                                </FilterPill>
+                            ))}
                         </div>
                     </div>
 
                     <div className="mt-4 pb-1">
                         <div className="flex flex-wrap gap-1">
-                            {alphaFilters.map((letter, index) => (
-                                <FilterPill key={letter} active={index === 0}>
-                                    {letter}
+                            {alphaFilters.map(letterOption => (
+                                <FilterPill
+                                    key={letterOption}
+                                    active={letter === letterOption}
+                                    onClick={() => setLetter(letterOption)}
+                                >
+                                    {letterOption}
                                 </FilterPill>
                             ))}
                         </div>
                     </div>
                 </div>
 
-                <div className="mt-10 grid gap-4 grid-cols-6">
-                    {stores.map(store => (
-                        <StoreCard key={store.slug} item={store} />
-                    ))}
-                </div>
+                <p className="mt-6 text-sm text-muted-foreground">
+                    {totalCount > 0
+                        ? `${totalCount} store${totalCount === 1 ? '' : 's'} found`
+                        : ''}
+                </p>
+
+                {isLoading ? (
+                    <div className="mt-4">
+                        <StoreCardSkeleton count={12} />
+                    </div>
+                ) : stores.length > 0 ? (
+                    <div className="mt-4 grid gap-4 grid-cols-6">
+                        {stores.map(store => (
+                            <StoreCard key={store.id} item={store} />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="mt-4 rounded-xl border border-border bg-card p-10 text-center text-muted-foreground">
+                        No stores found.
+                    </div>
+                )}
             </section>
         </PublicPageShell>
     );

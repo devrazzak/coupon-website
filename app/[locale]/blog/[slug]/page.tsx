@@ -1,17 +1,29 @@
-import Image from 'next/image';
+import { notFound } from 'next/navigation';
 
-import {
-    CalendarDays,
-    Clock3,
-    Globe,
-    MessageSquareText,
-    Send,
-    Share2,
-    UserRound,
-} from 'lucide-react';
+import { CalendarDays, Globe, MessageSquareText, Send, Share2, UserRound } from 'lucide-react';
 
 import { Breadcrumbs, PublicPageShell } from '@/components/public/page-layout';
-import { blogPosts } from '@/utils/public-content';
+import { getPublicBlogBySlug } from '@/utils/api/blog';
+
+function formatDate(dateStr?: string): string {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    if (Number.isNaN(date.getTime())) return dateStr;
+    return date.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    });
+}
+
+async function fetchBlog(slug: string) {
+    try {
+        const res = await getPublicBlogBySlug(slug);
+        return res?.data?.data ?? null;
+    } catch {
+        return null;
+    }
+}
 
 export async function generateMetadata({
     params,
@@ -19,13 +31,20 @@ export async function generateMetadata({
     params: Promise<{ locale: string; slug: string }>;
 }) {
     const { slug } = await params;
-    const post = blogPosts.find(item => item.slug === slug) ?? blogPosts[0];
+    const blog = await fetchBlog(slug);
+
+    if (!blog) {
+        return {
+            title: 'Blog | Coupello',
+            description: 'Savings guides and tips.',
+        };
+    }
 
     return {
-        title: `${post.title} | Coupello Blog`,
-        description: post.excerpt,
+        title: `${blog.title} | Coupello Blog`,
+        description: blog.short_description || '',
         alternates: {
-            canonical: `/blog/${slug}`,
+            canonical: `/blog/${blog.slug}`,
         },
     };
 }
@@ -36,11 +55,16 @@ export default async function BlogDetailPage({
     params: Promise<{ locale: string; slug: string }>;
 }) {
     const { slug } = await params;
-    const post = blogPosts.find(item => item.slug === slug) ?? blogPosts[0];
-    const related = blogPosts.filter(item => item.slug !== post.slug).slice(0, 3);
-    const index = blogPosts.findIndex(item => item.slug === post.slug);
-    const previous = blogPosts[index - 1] ?? blogPosts[blogPosts.length - 1];
-    const next = blogPosts[index + 1] ?? blogPosts[0];
+    const blog = await fetchBlog(slug);
+
+    if (!blog) {
+        notFound();
+    }
+
+    const paragraphs = (blog.description || '')
+        .split(/\n+/)
+        .map(p => p.trim())
+        .filter(Boolean);
 
     return (
         <PublicPageShell>
@@ -49,7 +73,7 @@ export default async function BlogDetailPage({
                     items={[
                         { label: 'Home', href: '/' },
                         { label: 'Blog', href: '/blog' },
-                        { label: post.title },
+                        { label: blog.title },
                     ]}
                 />
 
@@ -57,23 +81,20 @@ export default async function BlogDetailPage({
                     <div className="border-b border-border p-6 md:p-8">
                         <div className="flex flex-wrap items-center gap-3 text-[12px] text-muted-foreground">
                             <span className="inline-flex rounded-full bg-primary-light px-2.5 py-1 font-semibold text-primary">
-                                {post.category}
+                                {blog.category?.name || 'Blog'}
                             </span>
                             <span>•</span>
                             <span className="inline-flex items-center gap-1">
-                                <CalendarDays className="h-3.5 w-3.5" /> {post.date}
-                            </span>
-                            <span>•</span>
-                            <span className="inline-flex items-center gap-1">
-                                <Clock3 className="h-3.5 w-3.5" /> {post.readTime}
+                                <CalendarDays className="h-3.5 w-3.5" />{' '}
+                                {formatDate(blog.created_at) || 'Recently published'}
                             </span>
                         </div>
 
                         <h1 className="mt-4 font-display text-[34px] font-extrabold leading-tight text-foreground md:text-[46px]">
-                            {post.title}
+                            {blog.title}
                         </h1>
                         <p className="mt-4 max-w-3xl text-[16px] leading-7 text-muted-foreground">
-                            {post.excerpt}
+                            {blog.short_description}
                         </p>
 
                         <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-4">
@@ -82,8 +103,10 @@ export default async function BlogDetailPage({
                                     <UserRound className="h-4 w-4" />
                                 </span>
                                 <div>
-                                    <p className="font-semibold text-foreground">{post.author}</p>
-                                    <p>Updated {post.updated ?? post.date}</p>
+                                    <p className="font-semibold text-foreground">
+                                        {blog.view_count ? `${blog.view_count} views` : 'Coupello'}
+                                    </p>
+                                    <p>{blog.tags?.length ? blog.tags.join(', ') : 'Guide'}</p>
                                 </div>
                             </div>
 
@@ -103,43 +126,33 @@ export default async function BlogDetailPage({
                     </div>
 
                     <div className="overflow-hidden">
-                        <Image
-                            src={post.image}
-                            alt={post.title}
-                            width={1600}
-                            height={900}
-                            className="h-[280px] w-full object-cover md:h-[420px]"
-                        />
+                        {blog.thumbnail ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                                src={blog.thumbnail}
+                                alt={blog.title}
+                                className="h-[280px] w-full object-cover md:h-[420px]"
+                            />
+                        ) : (
+                            <div className="flex h-[280px] w-full items-center justify-center bg-muted text-4xl font-extrabold text-muted-foreground md:h-[420px]">
+                                {blog.title.charAt(0).toUpperCase()}
+                            </div>
+                        )}
                     </div>
 
                     <div className="p-8">
                         <div className="prose max-w-none text-[15px] leading-8 text-foreground prose-headings:font-display prose-headings:tracking-[-0.03em] prose-p:text-muted-foreground prose-a:text-primary prose-strong:text-foreground prose-li:text-muted-foreground">
-                            <h2 id="intro" className="mt-0 text-[28px] font-extrabold">
-                                Introduction
-                            </h2>
-                            <p>
-                                Saving money online is less about chasing every discount and more
-                                about building better shopping habits. When you understand how
-                                offers work and what terms matter most, you make more confident
-                                decisions and keep more money in your wallet.
-                            </p>
-                            <p>
-                                Coupon discovery is most valuable when it helps you compare purchase
-                                timing, retailer policies and product value. With a clear strategy,
-                                even small savings can add up quickly over a month or a season.
-                            </p>
-                            <p>
-                                Saving money online is less about chasing every discount and more
-                                about building better shopping habits. When you understand how
-                                offers work and what terms matter most, you make more confident
-                                decisions and keep more money in your wallet.
-                            </p>
-                            <p>
-                                Saving money online is less about chasing every discount and more
-                                about building better shopping habits. When you understand how
-                                offers work and what terms matter most, you make more confident
-                                decisions and keep more money in your wallet.
-                            </p>
+                            {paragraphs.length > 0 ? (
+                                paragraphs.map((p, index) => (
+                                    <p key={index} className={index === 0 ? 'mt-0' : ''}>
+                                        {p}
+                                    </p>
+                                ))
+                            ) : (
+                                <p className="mt-0">
+                                    {blog.short_description || 'No content yet.'}
+                                </p>
+                            )}
                         </div>
                     </div>
                 </article>

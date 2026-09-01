@@ -11,6 +11,30 @@ export type BlogCategoryCreatePayload = {
 
 export type BlogCategoryUpdatePayload = Partial<BlogCategoryCreatePayload>;
 
+export type PublicBlogCategory = {
+    id: number;
+    name: string;
+    slug: string;
+    sort_order?: number;
+};
+
+export type PublicBlogCategoriesResponse = {
+    success: boolean;
+    message: string;
+    data: PublicBlogCategory[];
+    meta: {
+        currentPage: number;
+        totalCount: number;
+    };
+};
+
+export const getPublicBlogCategories = (page = 1, limit = 20, sort?: string) => {
+    return AxiosServices.get<PublicBlogCategoriesResponse>(
+        API_END_POINTS.PUBLIC.BLOG_CATEGORY.GET(page, limit, sort),
+        {},
+    );
+};
+
 export const getBlogCategories = (page: number, limit: number) => {
     return AxiosServices.get(API_END_POINTS.DASHBOARD.BLOG_CATEGORY.GET(page, limit), {});
 };

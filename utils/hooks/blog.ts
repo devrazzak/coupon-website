@@ -3,11 +3,31 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
     type BlogCreatePayload,
     type BlogUpdatePayload,
+    type PublicBlogsQuery,
     createBlog,
     deleteBlog,
     getBlogs,
+    getPublicBlogBySlug,
+    getPublicBlogs,
     updateBlog,
 } from '@/utils/api/blog';
+
+export function useGetPublicBlogs(query: PublicBlogsQuery = {}) {
+    return useQuery({
+        queryKey: ['GetPublicBlogs', query],
+        queryFn: () => getPublicBlogs(query),
+        retry: false,
+    });
+}
+
+export function useGetPublicBlogBySlug(slug: string) {
+    return useQuery({
+        queryKey: ['GetPublicBlogBySlug', slug],
+        queryFn: () => getPublicBlogBySlug(slug),
+        retry: false,
+        enabled: !!slug,
+    });
+}
 
 export function useGetBlogs(page = 1, limit = 10) {
     return useQuery({

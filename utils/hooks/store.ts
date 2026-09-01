@@ -1,13 +1,23 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
+    type PublicStoresQuery,
     type StoreCreatePayload,
     type StoreUpdatePayload,
     createStore,
     deleteStore,
+    getPublicStores,
     getStores,
     updateStore,
 } from '@/utils/api/store';
+
+export function useGetPublicStores(query: PublicStoresQuery = {}) {
+    return useQuery({
+        queryKey: ['GetPublicStores', query],
+        queryFn: () => getPublicStores(query),
+        retry: false,
+    });
+}
 
 export function useGetStores(page = 1, limit = 10) {
     return useQuery({

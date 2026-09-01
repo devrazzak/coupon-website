@@ -1,45 +1,28 @@
+'use client';
+
 import Link from 'next/link';
 
-import {
-    HeartPulse,
-    Laptop,
-    LayoutGrid,
-    type LucideIcon,
-    Plane,
-    Search,
-    Shirt,
-    Sofa,
-    Sparkles,
-    UtensilsCrossed,
-} from 'lucide-react';
+import { LayoutGrid, Search } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 import { FilterPill, PublicPageShell } from '@/components/public/page-layout';
 import PATHS from '@/routes/path';
-import { categories } from '@/utils/public-content';
+import { useGetPublicBlogCategories } from '@/utils/hooks/blog-category';
 
-const icons = {
-    shirt: Shirt,
-    laptop: Laptop,
-    plane: Plane,
-    sparkles: Sparkles,
-    utensils: UtensilsCrossed,
-    heart: HeartPulse,
-    home: Sofa,
-    grid: LayoutGrid,
-} satisfies Record<string, LucideIcon>;
-
-const categoryStyles: Record<string, { bg: string; text: string }> = {
-    shirt: { bg: 'bg-rose-50 text-rose-600', text: 'text-rose-600' },
-    laptop: { bg: 'bg-blue-50 text-blue-600', text: 'text-blue-600' },
-    plane: { bg: 'bg-sky-50 text-sky-600', text: 'text-sky-600' },
-    sparkles: { bg: 'bg-fuchsia-50 text-fuchsia-600', text: 'text-fuchsia-600' },
-    utensils: { bg: 'bg-amber-50 text-amber-600', text: 'text-amber-600' },
-    heart: { bg: 'bg-emerald-50 text-emerald-600', text: 'text-emerald-600' },
-    home: { bg: 'bg-orange-50 text-orange-600', text: 'text-orange-600' },
-    grid: { bg: 'bg-primary-light text-primary', text: 'text-primary' },
-};
+const sortFilters = ['All', 'Popular', 'Newest', 'Most Deals'];
+const DEFAULT_SORT = 'All';
 
 export default function CategoriesPage() {
+    const [sort, setSort] = useState<string>(DEFAULT_SORT);
+
+    // Sort is sent to the API; changing it triggers a new request.
+    const { data: apiData, isLoading } = useGetPublicBlogCategories(
+        1,
+        20,
+        sort === 'All' ? undefined : sort.toLowerCase().replace(/\s+/g, '_'),
+    );
+    const categories = useMemo(() => apiData?.data?.data ?? [], [apiData]);
+
     return (
         <PublicPageShell>
             <section className="container-page py-15">
@@ -54,47 +37,59 @@ export default function CategoriesPage() {
                             />
                         </div>
                         <div className="flex flex-wrap gap-2">
-                            <FilterPill active>All</FilterPill>
-                            <FilterPill>Popular</FilterPill>
-                            <FilterPill>Newest</FilterPill>
-                            <FilterPill>Most Deals</FilterPill>
+                            {sortFilters.map(f => (
+                                <FilterPill key={f} active={sort === f} onClick={() => setSort(f)}>
+                                    {f}
+                                </FilterPill>
+                            ))}
                         </div>
                     </div>
                 </div>
 
                 <div className="mt-10">
-                    <ul className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-8">
-                        {categories.map((category: any, index: number) => {
-                            const Icon = icons[category.icon as keyof typeof icons];
-                            const style = categoryStyles[category.icon] || {
-                                bg: 'bg-primary-light text-primary',
-                                text: 'text-primary',
-                            };
-
-                            return (
-                                <li key={index}>
+                    {isLoading ? (
+                        <ul className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-8">
+                            {Array.from({ length: 8 }).map((_, i) => (
+                                <li key={i}>
+                                    <div className="flex h-full animate-pulse flex-col items-center justify-center gap-3 rounded-2xl border border-border bg-card px-3 py-6 text-center">
+                                        <span className="h-12 w-12 rounded-2xl bg-muted" />
+                                        <div className="space-y-1.5">
+                                            <div className="h-3 w-20 rounded bg-muted" />
+                                            <div className="h-2.5 w-14 rounded bg-muted" />
+                                        </div>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <ul className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-8">
+                            {categories.map(category => (
+                                <li key={category.id}>
                                     <Link
                                         href={PATHS.categoryDetails.replace(':slug', category.slug)}
                                         className="group flex h-full flex-col items-center justify-center gap-3 rounded-2xl border border-border bg-card px-3 py-6 text-center transition-all duration-200 hover:-translate-y-1.5 hover:border-primary/50"
                                     >
-                                        <span
-                                            className={`grid h-12 w-12 place-items-center rounded-2xl ${style.bg} transition-transform duration-200 group-hover:scale-110`}
-                                        >
-                                            <Icon className="h-6 w-6" strokeWidth={2.2} />
+                                        <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary-light text-primary transition-transform duration-200 group-hover:scale-110">
+                                            <LayoutGrid className="h-6 w-6" strokeWidth={2.2} />
                                         </span>
                                         <div>
                                             <h3 className="font-display text-[13.5px] font-bold text-foreground group-hover:text-primary transition-colors">
                                                 {category.name}
                                             </h3>
                                             <p className="mt-0.5 text-[11.5px] font-medium text-muted-foreground">
-                                                {category.count}
+                                                N/A
                                             </p>
                                         </div>
                                     </Link>
                                 </li>
-                            );
-                        })}
-                    </ul>
+                            ))}
+                            {categories.length === 0 && (
+                                <li className="col-span-full p-8 text-center text-sm text-muted-foreground">
+                                    No categories found.
+                                </li>
+                            )}
+                        </ul>
+                    )}
                 </div>
             </section>
         </PublicPageShell>

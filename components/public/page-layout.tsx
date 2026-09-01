@@ -27,8 +27,9 @@ import Footer from '@/components/layout/Footer';
 import Header from '@/components/layout/Header';
 import Nike from '@/public/images/shops/nike.jpg';
 import PATHS from '@/routes/path';
+import { type PublicStore } from '@/utils/api/store';
 import { Coupon } from '@/utils/coupello';
-import { type CouponListItem, stores } from '@/utils/public-content';
+import { type CouponListItem } from '@/utils/public-content';
 
 const icons = {
     shirt: Shirt,
@@ -204,20 +205,28 @@ export function CouponCard<T extends CouponCardItem>({
     );
 }
 
-export function StoreCard({ item }: { item: (typeof stores)[number] }) {
+export function StoreCard({ item }: { item: PublicStore }) {
     return (
         <Link
-            href={PATHS.shopDetails.replace(':slug', item.slug)}
-            rel="noopener noreferrer"
+            href={item.website_url || PATHS.shopDetails.replace(':slug', item.slug)}
+            target={item.website_url ? '_blank' : undefined}
+            rel={item.website_url ? 'noopener noreferrer' : undefined}
             className="group relative flex h-42 flex-col items-center justify-between rounded-xl border border-border bg-card p-3.5 text-center transition-all duration-200 hover:border-primary/50"
         >
-            <Image
-                src={Nike.src}
-                alt={`${item.name} logo`}
-                width={64}
-                height={64}
-                className="w-full h-full pb-3 rounded-md"
-            />
+            {item.logo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                    src={item.logo}
+                    alt={`${item.name} logo`}
+                    className="w-full h-full pb-3 rounded-md object-contain"
+                />
+            ) : (
+                <div className="flex h-full w-full items-center justify-center pb-3">
+                    <span className="text-2xl font-extrabold text-muted-foreground">
+                        {(item.name || '?').charAt(0).toUpperCase()}
+                    </span>
+                </div>
+            )}
             {/* Footer Info */}
             <div className="flex w-full items-center justify-between border-t border-border/60 pt-2 text-[11px] text-muted-foreground">
                 <span className="font-medium text-emerald-600 inline-flex items-center gap-0.5">
@@ -225,7 +234,7 @@ export function StoreCard({ item }: { item: (typeof stores)[number] }) {
                     Active
                 </span>
                 <span className="font-semibold text-foreground/80 group-hover:text-primary">
-                    {item.couponCount}
+                    {item.short_description || 'N/A'}
                 </span>
             </div>
         </Link>

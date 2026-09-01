@@ -21,6 +21,50 @@ export type StoreCreatePayload = {
 
 export type StoreUpdatePayload = Partial<StoreCreatePayload>;
 
+export type PublicStore = {
+    id: number;
+    name: string;
+    slug: string;
+    logo?: string;
+    website_url?: string;
+    affiliate_url?: string;
+    short_description?: string;
+    seo_title?: string;
+};
+
+export type PublicStoresResponse = {
+    success: boolean;
+    message: string;
+    data: PublicStore[];
+    meta: {
+        currentPage: number;
+        totalCount: number;
+    };
+};
+
+export type PublicStoresQuery = {
+    search?: string;
+    categoryIds?: number[];
+    page?: number;
+    limit?: number;
+    sort?: string;
+    letter?: string;
+};
+
+export const getPublicStores = ({
+    search,
+    categoryIds,
+    page = 1,
+    limit = 20,
+    sort,
+    letter,
+}: PublicStoresQuery = {}) => {
+    return AxiosServices.get<PublicStoresResponse>(
+        API_END_POINTS.PUBLIC.STORE.GET(search, categoryIds, page, limit, sort, letter),
+        {},
+    );
+};
+
 export const getStores = (page: number, limit: number) => {
     return AxiosServices.get(API_END_POINTS.DASHBOARD.STORE.GET(page, limit), {});
 };

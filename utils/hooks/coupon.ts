@@ -3,11 +3,21 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
     type CouponCreatePayload,
     type CouponUpdatePayload,
+    type PublicCouponsQuery,
     createCoupon,
     deleteCoupon,
     getCoupons,
+    getPublicCoupons,
     updateCoupon,
 } from '@/utils/api/coupon';
+
+export function useGetPublicCoupons(query: PublicCouponsQuery = {}) {
+    return useQuery({
+        queryKey: ['GetPublicCoupons', query],
+        queryFn: () => getPublicCoupons(query),
+        retry: false,
+    });
+}
 
 export function useGetCoupons(page = 1, limit = 10) {
     return useQuery({
