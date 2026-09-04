@@ -1,9 +1,46 @@
 import { API_END_POINTS } from '@/api/APIEndpoint';
 import AxiosServices from '@/api/AxiosService';
 
-// Axios service for get category (public)
-export const getCategory = () => {
-    return AxiosServices.get(API_END_POINTS.GET_CATEGORY, {});
+export type PublicCategory = {
+    id: number;
+    name: string;
+    slug: string;
+    image?: string | null;
+    short_description?: string | null;
+    description?: string | null;
+    is_featured?: boolean;
+    is_active?: boolean;
+    sort_order?: number;
+};
+
+export type PublicCategoriesResponse = {
+    success: boolean;
+    message: string;
+    data: PublicCategory[];
+    meta: {
+        currentPage: number;
+        totalCount: number;
+    };
+};
+
+export type PublicCategoriesQuery = {
+    page?: number;
+    limit?: number;
+    sort?: string;
+    search?: string;
+};
+
+// Axios service for get categories (public with pagination and search)
+export const getPublicCategories = (page = 1, limit = 20, sort?: string, search?: string) => {
+    return AxiosServices.get<PublicCategoriesResponse>(
+        API_END_POINTS.PUBLIC.CATEGORY.GET(page, limit, sort, search),
+        {},
+    );
+};
+
+// Backward compatibility alias
+export const getCategory = (page = 1, limit = 20) => {
+    return getPublicCategories(page, limit);
 };
 
 // Axios service for get categories (admin dashboard with pagination)

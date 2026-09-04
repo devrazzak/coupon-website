@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 
-import { CouponModal } from '@/components/CouponSection';
+import { CouponModal } from '@/components/CouponModal';
 import { PublicCouponRow } from '@/components/public/PublicCouponRow';
 import { Breadcrumbs, PublicPageShell } from '@/components/public/page-layout';
 import { CouponCardSkeleton } from '@/components/ui/coupon-card-skeleton';

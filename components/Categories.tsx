@@ -6,10 +6,10 @@ import { LayoutGrid } from 'lucide-react';
 
 import { SectionHeading } from '@/components/SectionHeading';
 import PATHS from '@/routes/path';
-import { useGetPublicBlogCategories } from '@/utils/hooks/blog-category';
+import { useGetPublicCategories } from '@/utils/hooks/category';
 
 export function Categories() {
-    const { data: apiData, isLoading } = useGetPublicBlogCategories(1, 20);
+    const { data: apiData, isLoading } = useGetPublicCategories(1, 20);
     const categories = apiData?.data?.data ?? [];
 
     return (
@@ -44,18 +44,25 @@ export function Categories() {
                                         ':slug',
                                         category.slug,
                                     )}?category_id=${category.id}`}
-                                    className="group flex h-full flex-col items-center justify-center gap-3 rounded-2xl border border-border bg-card px-3 py-6 text-center transition-all duration-200 hover:-translate-y-1.5 hover:border-primary/50"
+                                    className="group flex h-full flex-col items-center justify-center gap-3 rounded-xl border border-border bg-card px-2 py-4 text-center transition-all duration-200 hover:border-primary/50"
+                                    aria-label={`View all ${category.name} coupons and offers`}
                                 >
-                                    <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary-light text-primary transition-transform duration-200 group-hover:scale-110">
-                                        <LayoutGrid className="h-6 w-6" strokeWidth={2.2} />
-                                    </span>
+                                    {category.image ? (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img
+                                            src={category.image}
+                                            alt={category.name}
+                                            className="w-full max-h-[60px] rounded-2xl object-contain p-1 transition-transform duration-200 group-hover:scale-110"
+                                        />
+                                    ) : (
+                                        <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary-light text-primary transition-transform duration-200 group-hover:scale-110">
+                                            <LayoutGrid className="h-6 w-6" strokeWidth={2.2} />
+                                        </span>
+                                    )}
                                     <div>
                                         <h3 className="font-display text-[13.5px] font-bold text-foreground group-hover:text-primary transition-colors">
                                             {category.name}
                                         </h3>
-                                        <p className="mt-0.5 text-[11.5px] font-medium text-muted-foreground">
-                                            N/A
-                                        </p>
                                     </div>
                                 </Link>
                             </li>

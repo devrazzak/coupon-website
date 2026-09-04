@@ -54,6 +54,7 @@ export function BlogSection() {
                                 <Link
                                     href={PATHS.blogDetails.replace(':id', post.slug)}
                                     className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:border-primary/40"
+                                    aria-label={`Read blog post: ${post.title}`}
                                 >
                                     {post.thumbnail ? (
                                         // eslint-disable-next-line @next/next/no-img-element

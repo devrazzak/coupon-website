@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 import { useMemo, useState } from 'react';
 
-import { CouponModal } from '@/components/CouponSection';
+import { CouponModal } from '@/components/CouponModal';
 import { PublicCouponRow } from '@/components/public/PublicCouponRow';
 import { CouponCardSkeleton } from '@/components/ui/coupon-card-skeleton';
 import type { PublicCoupon } from '@/utils/api/coupon';

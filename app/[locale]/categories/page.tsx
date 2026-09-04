@@ -3,23 +3,31 @@
 import Link from 'next/link';
 
 import { LayoutGrid, Search } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { FilterPill, PublicPageShell } from '@/components/public/page-layout';
 import PATHS from '@/routes/path';
-import { useGetPublicBlogCategories } from '@/utils/hooks/blog-category';
+import { useGetPublicCategories } from '@/utils/hooks/category';
 
 const sortFilters = ['All', 'Popular', 'Newest', 'Most Deals'];
 const DEFAULT_SORT = 'All';
 
 export default function CategoriesPage() {
     const [sort, setSort] = useState<string>(DEFAULT_SORT);
+    const [search, setSearch] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
 
-    // Sort is sent to the API; changing it triggers a new request.
-    const { data: apiData, isLoading } = useGetPublicBlogCategories(
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedSearch(search), 300);
+        return () => clearTimeout(timer);
+    }, [search]);
+
+    // Sort and search are sent to the API; changing them triggers a new request.
+    const { data: apiData, isLoading } = useGetPublicCategories(
         1,
         20,
         sort === 'All' ? undefined : sort.toLowerCase().replace(/\s+/g, '_'),
+        debouncedSearch || undefined,
     );
     const categories = useMemo(() => apiData?.data?.data ?? [], [apiData]);
 
@@ -33,6 +41,8 @@ export default function CategoriesPage() {
                             <input
                                 aria-label="Search categories"
                                 placeholder="Search categories..."
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
                                 className="h-11 w-full rounded-md border border-border bg-background pl-10 pr-3 text-[14px] text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary"
                             />
                         </div>
@@ -72,15 +82,24 @@ export default function CategoriesPage() {
                                         )}?category_id=${category.id}`}
                                         className="group flex h-full flex-col items-center justify-center gap-3 rounded-2xl border border-border bg-card px-3 py-6 text-center transition-all duration-200 hover:-translate-y-1.5 hover:border-primary/50"
                                     >
-                                        <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary-light text-primary transition-transform duration-200 group-hover:scale-110">
-                                            <LayoutGrid className="h-6 w-6" strokeWidth={2.2} />
-                                        </span>
+                                        {category.image ? (
+                                            // eslint-disable-next-line @next/next/no-img-element
+                                            <img
+                                                src={category.image}
+                                                alt={category.name}
+                                                className="h-12 w-12 rounded-2xl object-contain p-1 transition-transform duration-200 group-hover:scale-110"
+                                            />
+                                        ) : (
+                                            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary-light text-primary transition-transform duration-200 group-hover:scale-110">
+                                                <LayoutGrid className="h-6 w-6" strokeWidth={2.2} />
+                                            </span>
+                                        )}
                                         <div>
                                             <h3 className="font-display text-[13.5px] font-bold text-foreground group-hover:text-primary transition-colors">
                                                 {category.name}
                                             </h3>
-                                            <p className="mt-0.5 text-[11.5px] font-medium text-muted-foreground">
-                                                N/A
+                                            <p className="mt-0.5 text-[11.5px] font-medium text-muted-foreground line-clamp-1">
+                                                {category.short_description || 'Explore offers'}
                                             </p>
                                         </div>
                                     </Link>

@@ -1,5 +1,5 @@
 import { CategoryDetailClient } from '@/components/public/CategoryDetailClient';
-import { getPublicBlogCategories } from '@/utils/api/blog-category';
+import { getPublicCategories } from '@/utils/api/category';
 
 async function resolveCategory(slug: string, queryCategoryId?: string | null) {
     // Prefer the explicit id passed via query param (e.g. from category cards).
@@ -8,7 +8,7 @@ async function resolveCategory(slug: string, queryCategoryId?: string | null) {
         return { id, name: slug, slug };
     }
     try {
-        const res = await getPublicBlogCategories(1, 500);
+        const res = await getPublicCategories(1, 500);
         const category = res?.data?.data?.find(item => item.slug === slug);
         if (category) {
             return { id: category.id, name: category.name, slug: category.slug };

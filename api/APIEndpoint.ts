@@ -7,8 +7,17 @@ export const API_END_POINTS = {
         RESET_PASSWORD: '/auth/reset-password',
         ADMIN_SIGN_IN: '/api/v1/auth/login',
     },
-    GET_CATEGORY: '/api/v1/categories',
     PUBLIC: {
+        CATEGORY: {
+            GET: (page = 1, limit = 20, sort?: string, search?: string) => {
+                const params = new URLSearchParams();
+                if (search) params.set('search', search);
+                if (sort && sort !== 'All') params.set('sort', sort);
+                params.set('page', String(page));
+                params.set('limit', String(limit));
+                return `/api/v1/categories?${params.toString()}`;
+            },
+        },
         STORE: {
             GET: (
                 search?: string,

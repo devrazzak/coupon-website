@@ -51,7 +51,7 @@ export function PopularStores() {
             <div className="container-page">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between items-center">
                     <div>
-                        <h2 className="font-display text-[26px] font-extrabold tracking-tight text-foreground md:text-[32px]">
+                        <h2 className="font-display text-[20px] font-semibold tracking-tight text-foreground md:text-[24px]">
                             Popular Stores
                         </h2>
                     </div>
@@ -74,18 +74,19 @@ export function PopularStores() {
                             {stores.map(store => (
                                 <li
                                     key={store.id}
-                                    className="w-40 shrink-0 snap-start sm:w-44 md:w-46"
+                                    className="w-40 shrink-0 snap-start sm:w-40 md:w-40"
                                 >
                                     <Link
                                         href={storeHref(store.slug, store.id)}
-                                        className="group relative flex h-40 flex-col items-center justify-between rounded-xl border border-border bg-card p-3 text-center transition-all duration-200 hover:border-primary/50 sm:h-42"
+                                        className="group relative flex flex-col items-center justify-between rounded-xl border border-border bg-card p-2 text-center transition-all duration-200 hover:border-primary"
+                                        aria-label={`${store.name} coupons and deals`}
                                     >
                                         {store.logo ? (
                                             // eslint-disable-next-line @next/next/no-img-element
                                             <img
                                                 src={store.logo}
-                                                alt={`${store.name} logo`}
-                                                className="w-full h-full pb-3 rounded-md object-contain"
+                                                alt={`${store.name}`}
+                                                className="w-full h-full pb-3 rounded-md object-contain max-h-[80px]"
                                             />
                                         ) : (
                                             <div className="flex h-full w-full items-center justify-center pb-3">
@@ -95,13 +96,9 @@ export function PopularStores() {
                                             </div>
                                         )}
                                         {/* Footer Info */}
-                                        <div className="flex w-full items-center justify-between border-t border-border/60 pt-2 text-[11px] text-muted-foreground">
-                                            <span className="font-medium text-emerald-600 inline-flex items-center gap-0.5">
-                                                <BadgeCheck className="h-3 w-3" />
-                                                Active
-                                            </span>
+                                        <div className="pt-2 text-[13px] text-muted-foreground">
                                             <span className="font-semibold text-foreground/80 group-hover:text-primary truncate">
-                                                {store.short_description || 'N/A'}
+                                                {store.name || 'N/A'}
                                             </span>
                                         </div>
                                     </Link>

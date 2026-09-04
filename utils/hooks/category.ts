@@ -5,10 +5,20 @@ import {
     deleteCategory,
     getCategories,
     getCategory,
+    getPublicCategories,
     updateCategory,
 } from '@/utils/api/category';
 
-// Custom hook using useQuery for get category (public)
+// Custom hook using useQuery for public categories
+export function useGetPublicCategories(page = 1, limit = 20, sort?: string, search?: string) {
+    return useQuery({
+        queryKey: ['GetPublicCategories', page, limit, sort, search],
+        queryFn: () => getPublicCategories(page, limit, sort, search),
+        retry: false,
+    });
+}
+
+// Custom hook using useQuery for get category (public backward compatibility)
 export function useGetCategory() {
     return useQuery({
         queryKey: ['GetCategory'],
@@ -36,6 +46,7 @@ export function useCreateCategory() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['GetCategories'] });
             queryClient.invalidateQueries({ queryKey: ['GetCategory'] });
+            queryClient.invalidateQueries({ queryKey: ['GetPublicCategories'] });
         },
     });
 }
@@ -51,6 +62,7 @@ export function useUpdateCategory() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['GetCategories'] });
             queryClient.invalidateQueries({ queryKey: ['GetCategory'] });
+            queryClient.invalidateQueries({ queryKey: ['GetPublicCategories'] });
         },
     });
 }
@@ -65,6 +77,7 @@ export function useDeleteCategory() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['GetCategories'] });
             queryClient.invalidateQueries({ queryKey: ['GetCategory'] });
+            queryClient.invalidateQueries({ queryKey: ['GetPublicCategories'] });
         },
     });
 }

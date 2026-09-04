@@ -2,7 +2,7 @@
 
 import { BadgeCheck, Clock, Percent, Scissors } from 'lucide-react';
 
-import { StoreLogo, formatDiscount, formatExpiry } from '@/components/CouponSection';
+import { StoreLogo, formatDiscount, formatExpiry } from '@/components/CouponModal';
 import type { PublicCoupon } from '@/utils/api/coupon';
 
 // Reusable coupon row for public pages driven by the API (/api/v1/coupons).
