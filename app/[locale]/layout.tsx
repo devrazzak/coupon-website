@@ -1,5 +1,4 @@
-import { getTranslations } from 'next-intl/server';
-
+import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 
 import { locales } from '@/i18n';
@@ -8,23 +7,14 @@ export function generateStaticParams() {
     return locales.map(locale => ({ locale }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
-    const { locale } = await params;
-    const t = await getTranslations({ locale, namespace: 'Metadata' });
-
-    return {
-        title: t('title'),
-        description: t('description'),
-        alternates: {
-            canonical: `/${locale}`,
-            languages: {
-                en: '/en',
-                es: '/es',
-                bn: '/bn',
-            },
-        },
-    };
-}
+export const metadata: Metadata = {
+    title: {
+        template: '%s | Coupello',
+        default: 'Coupello — Verified Promo Codes, Coupons & Deals',
+    },
+    description:
+        'Find the latest verified coupon codes, discounts, and daily deals for your favorite online stores.',
+};
 
 export default async function LocaleLayout({
     children,
