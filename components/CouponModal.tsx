@@ -75,12 +75,10 @@ export function StoreLogo({ coupon, size = 24 }: { coupon: ModalCoupon; size?: n
 
         if (logoUrl) {
             return (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img
                     src={logoUrl}
                     alt={`${name} logo`}
                     className="rounded-lg border border-border bg-card object-contain p-1"
-                    style={{ width: size * 2.2, height: size * 1.5 }}
                 />
             );
         }

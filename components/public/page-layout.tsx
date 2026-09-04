@@ -73,7 +73,7 @@ export function PageHeader({
                                 {eyebrow}
                             </span>
                         )}
-                        <h1 className="mt-4 font-display text-[30px] font-extrabold tracking-[-0.04em] text-foreground md:text-[42px]">
+                        <h1 className="mt-4 font-display text-[24px] font-semibold tracking-[-0.04em] text-foreground md:text-[32px]">
                             {title}
                         </h1>
                         {description && (

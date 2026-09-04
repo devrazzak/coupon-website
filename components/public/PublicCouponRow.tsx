@@ -1,6 +1,6 @@
 'use client';
 
-import { BadgeCheck, Clock, Percent, Scissors } from 'lucide-react';
+import { BadgeCheck, Clock, Scissors } from 'lucide-react';
 
 import { StoreLogo, formatDiscount, formatExpiry } from '@/components/CouponModal';
 import type { PublicCoupon } from '@/utils/api/coupon';
@@ -20,7 +20,6 @@ export function PublicCouponRow({
                 <div className="flex items-center gap-3.5 md:w-[130px] md:shrink-0 md:flex-col md:items-start md:gap-2">
                     <StoreLogo coupon={coupon} />
                     <span className="inline-flex items-center gap-1 rounded-md bg-primary-light px-2 py-0.5 text-[11px] font-extrabold text-primary">
-                        <Percent className="h-3 w-3" />
                         {formatDiscount(coupon)}
                     </span>
                 </div>
