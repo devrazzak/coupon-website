@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 
-import { BookOpen, Info, Tag, TicketPercent } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { BookOpen, Info, Search, Tag, TicketPercent } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { CouponModal } from '@/components/CouponModal';
 import { PublicCouponRow } from '@/components/public/PublicCouponRow';
@@ -28,8 +28,16 @@ export function StoreDetailClient({
     storeCategories?: PublicStoreCategory[];
 }) {
     const [selected, setSelected] = useState<PublicCoupon | null>(null);
+    const [search, setSearch] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedSearch(search), 300);
+        return () => clearTimeout(timer);
+    }, [search]);
 
     const { data: apiData, isLoading } = useGetPublicCoupons({
+        search: debouncedSearch || undefined,
         storeId,
         page: 1,
         limit: 50,
@@ -73,6 +81,18 @@ export function StoreDetailClient({
                             </div>
                         </div>
 
+                        <div className="relative mt-5 max-w-xl">
+                            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            <input
+                                type="search"
+                                aria-label={`Search ${storeName} coupons`}
+                                placeholder={`Search ${storeName} coupons...`}
+                                value={search}
+                                onChange={event => setSearch(event.target.value)}
+                                className="h-11 w-full rounded-md border border-border bg-card pl-10 pr-3 text-[14px] text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary"
+                            />
+                        </div>
+
                         {isLoading ? (
                             <div className="mt-6 overflow-hidden rounded-xl border border-border bg-card">
                                 <CouponCardSkeleton rows={4} />
@@ -88,8 +108,9 @@ export function StoreDetailClient({
                                 ))}
                                 {coupons.length === 0 && (
                                     <li className="p-12 text-center text-sm text-muted-foreground">
-                                        No coupons available for {storeName} right now. Check back
-                                        soon!
+                                        {debouncedSearch
+                                            ? 'No coupons match your search.'
+                                            : `No coupons available for ${storeName} right now. Check back soon!`}
                                     </li>
                                 )}
                             </ul>
@@ -112,7 +133,7 @@ export function StoreDetailClient({
                                     About {storeName}
                                 </h2>
                                 {storeFullDescription && (
-                                    <p className="mt-2 whitespace-pre-wrap break-words text-[13px] leading-6 text-muted-foreground">
+                                    <p className="mt-2 whitespace-pre-wrap wrap-break-word text-[13px] leading-6 text-muted-foreground">
                                         {storeFullDescription}
                                     </p>
                                 )}
@@ -142,7 +163,7 @@ export function StoreDetailClient({
                                             <BookOpen className="h-4 w-4 text-primary" />
                                             How to use
                                         </h2>
-                                        <p className="mt-3 whitespace-pre-wrap break-words text-[13px] leading-6 text-muted-foreground">
+                                        <p className="mt-3 whitespace-pre-wrap wrap-break-word text-[13px] leading-6 text-muted-foreground">
                                             {storeHowToUse}
                                         </p>
                                     </div>

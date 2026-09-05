@@ -1,7 +1,7 @@
 'use client';
 
-import { Info, TicketPercent } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { Info, Search, TicketPercent } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { CouponModal } from '@/components/CouponModal';
 import { PublicCouponRow } from '@/components/public/PublicCouponRow';
@@ -24,8 +24,16 @@ export function CategoryDetailClient({
     categoryDescription?: string;
 }) {
     const [selected, setSelected] = useState<PublicCoupon | null>(null);
+    const [search, setSearch] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedSearch(search), 300);
+        return () => clearTimeout(timer);
+    }, [search]);
 
     const { data: apiData, isLoading } = useGetPublicCoupons({
+        search: debouncedSearch || undefined,
         categoryIds: categoryId ? [categoryId] : undefined,
         page: 1,
         limit: 50,
@@ -43,17 +51,24 @@ export function CategoryDetailClient({
                     ]}
                 />
 
-                <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
+                <div className="mt-5 grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
                     <div className="min-w-0">
                         <div className="mb-5">
                             <h1 className="font-display text-[24px] font-semibold tracking-tight text-foreground md:text-[30px]">
                                 {categoryName} coupons &amp; deals
                             </h1>
-                            {categoryShortDescription && (
-                                <p className="mt-2 max-w-2xl text-[14px] leading-6 text-muted-foreground">
-                                    {categoryShortDescription}
-                                </p>
-                            )}
+                        </div>
+
+                        <div className="relative mt-5 max-w-xl">
+                            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            <input
+                                type="search"
+                                aria-label={`Search ${categoryName} coupons`}
+                                placeholder={`Search ${categoryName} coupons...`}
+                                value={search}
+                                onChange={event => setSearch(event.target.value)}
+                                className="h-11 w-full rounded-md border border-border bg-card pl-10 pr-3 text-[14px] text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary"
+                            />
                         </div>
 
                         {isLoading ? (
@@ -71,8 +86,9 @@ export function CategoryDetailClient({
                                 ))}
                                 {coupons.length === 0 && (
                                     <li className="p-12 text-center text-sm text-muted-foreground">
-                                        No coupons available for {categoryName} right now. Check
-                                        back soon!
+                                        {debouncedSearch
+                                            ? 'No coupons match your search.'
+                                            : `No coupons available for ${categoryName} right now. Check back soon!`}
                                     </li>
                                 )}
                             </ul>
@@ -102,10 +118,10 @@ export function CategoryDetailClient({
                                     </div>
                                 )}
                                 <h2 className="mt-5 font-display text-lg font-bold text-foreground">
-                                    About {categoryName}
+                                    {categoryName}
                                 </h2>
                                 {categoryDescription ? (
-                                    <p className="mt-2 whitespace-pre-wrap break-words text-[13px] leading-6 text-muted-foreground">
+                                    <p className="mt-2 whitespace-pre-wrap wrap-break-word text-[13px] leading-6 text-muted-foreground">
                                         {categoryDescription}
                                     </p>
                                 ) : (
