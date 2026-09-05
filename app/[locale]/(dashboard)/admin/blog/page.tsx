@@ -7,6 +7,7 @@ import { useLocale } from 'next-intl';
 import { useMemo, useState } from 'react';
 
 import {
+    AdminModalShell,
     AdminPageHeader,
     ConfirmDeleteModal,
     FilterSelect,
@@ -309,218 +310,213 @@ function BlogModal({
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4">
-            <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-3xl border border-border bg-card p-5 shadow-lift md:p-6">
-                <div className="mb-5 flex items-center justify-between gap-3">
-                    <div>
-                        <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-primary">
-                            Blog Post
-                        </p>
-                        <h3 className="mt-1 font-display text-[26px] font-extrabold text-foreground">
-                            {initialData ? 'Edit Post' : 'Create Post'}
-                        </h3>
-                    </div>
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="rounded-full border border-border p-2 text-muted-foreground hover:bg-muted"
-                    >
-                        ×
-                    </button>
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-3">
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
-                        <span className="mb-2 block">Post Title</span>
-                        <input
-                            value={form.title}
-                            onChange={event => handleTitleChange(event.target.value)}
-                            placeholder="e.g. Top deal strategies"
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Slug</span>
-                        <input
-                            value={form.slug}
-                            onChange={event => {
-                                setSlugTouched(true);
-                                updateField('slug', event.target.value);
-                            }}
-                            placeholder="e.g. top-deal-strategies"
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Category</span>
-                        <select
-                            value={form.categoryId}
-                            onChange={event =>
-                                updateField(
-                                    'categoryId',
-                                    event.target.value ? Number(event.target.value) : '',
-                                )
-                            }
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        >
-                            <option value="">Select a category</option>
-                            {categories.map(c => (
-                                <option key={c.id} value={c.id}>
-                                    {c.name}
-                                </option>
-                            ))}
-                        </select>
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Author</span>
-                        <input
-                            value={form.author}
-                            onChange={event => updateField('author', event.target.value)}
-                            placeholder="e.g. Admin"
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Reading Time</span>
-                        <input
-                            value={form.readingTime}
-                            onChange={event => updateField('readingTime', event.target.value)}
-                            placeholder="e.g. 5 min read"
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-3">
-                        <span className="mb-2 block">Short Description</span>
-                        <textarea
-                            value={form.shortDescription}
-                            onChange={event => updateField('shortDescription', event.target.value)}
-                            placeholder="e.g. Smart choices for deals"
-                            className="min-h-[70px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <div className="md:col-span-3">
-                        <MediaPicker
-                            label="Thumbnail Image"
-                            value={form.thumbnail}
-                            onChange={url => {
-                                updateField('thumbnail', url);
-                                if (!form.featuredImage) {
-                                    updateField('featuredImage', url);
-                                }
-                            }}
-                            allMedia={allMedia}
-                            onUpload={onUploadMedia}
-                            helpText="Select or upload a thumbnail image"
-                        />
-                    </div>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-3">
-                        <span className="mb-2 block">Tags (comma-separated)</span>
-                        <input
-                            value={Array.isArray(form.tags) ? form.tags.join(', ') : form.tags}
-                            onChange={event =>
-                                updateField(
-                                    'tags',
-                                    event.target.value
-                                        .split(',')
-                                        .map(tag => tag.trim())
-                                        .filter(Boolean),
-                                )
-                            }
-                            placeholder="e.g. deals, shopping"
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-3">
-                        <span className="mb-2 block">Post Content / Description</span>
-                        <textarea
-                            value={form.description}
-                            onChange={event => updateField('description', event.target.value)}
-                            placeholder="Full blog content..."
-                            className="min-h-[140px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <div className="flex items-center gap-6 pt-2 md:col-span-3">
-                        <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground cursor-pointer">
-                            <input
-                                type="checkbox"
-                                checked={form.isActive}
-                                onChange={event => updateField('isActive', event.target.checked)}
-                                className="h-4 w-4 rounded border-border text-primary"
-                            />
-                            Active
-                        </label>
-                        <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground cursor-pointer">
-                            <input
-                                type="checkbox"
-                                checked={form.isFeatured}
-                                onChange={event => updateField('isFeatured', event.target.checked)}
-                                className="h-4 w-4 rounded border-border text-primary"
-                            />
-                            Featured
-                        </label>
-                        <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground cursor-pointer">
-                            <input
-                                type="checkbox"
-                                checked={form.isTrending}
-                                onChange={event => updateField('isTrending', event.target.checked)}
-                                className="h-4 w-4 rounded border-border text-primary"
-                            />
-                            Trending
-                        </label>
-                    </div>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
-                        <span className="mb-2 block">Meta Title</span>
-                        <input
-                            value={form.metaTitle}
-                            onChange={event => updateField('metaTitle', event.target.value)}
-                            placeholder="e.g. Top deal strategies"
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Canonical URL</span>
-                        <input
-                            value={form.canonicalUrl}
-                            onChange={event => updateField('canonicalUrl', event.target.value)}
-                            placeholder="https://..."
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-3">
-                        <span className="mb-2 block">Meta Description</span>
-                        <textarea
-                            value={form.metaDescription}
-                            onChange={event => updateField('metaDescription', event.target.value)}
-                            placeholder="e.g. Smart choices for deals"
-                            className="min-h-[70px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-                </div>
-
-                {error && <p className="mt-4 text-[13px] font-medium text-rose-600">{error}</p>}
-
-                <div className="mt-6 flex justify-end gap-3">
+        <AdminModalShell
+            eyebrow="Blog Post"
+            eyebrowClass="text-primary"
+            title={initialData ? 'Edit Post' : 'Create Post'}
+            subtitle={
+                initialData
+                    ? 'Update this article, its SEO and visibility settings.'
+                    : 'Publish a new article to the blog.'
+            }
+            onClose={onClose}
+            actions={
+                <>
                     <Button type="button" variant="outline" onClick={onClose}>
                         Cancel
                     </Button>
                     <Button type="button" onClick={handleSubmit}>
                         {initialData ? 'Save Changes' : 'Create Post'}
                     </Button>
+                </>
+            }
+        >
+            {error && (
+                <div className="mb-5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-[13px] font-medium text-rose-700">
+                    {error}
                 </div>
+            )}
+
+            <div className="grid gap-5 md:grid-cols-3">
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
+                    <span className="mb-2 block">Post Title</span>
+                    <input
+                        value={form.title}
+                        onChange={event => handleTitleChange(event.target.value)}
+                        placeholder="e.g. Top deal strategies"
+                        className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                    <span className="mb-2 block">Slug</span>
+                    <input
+                        value={form.slug}
+                        onChange={event => {
+                            setSlugTouched(true);
+                            updateField('slug', event.target.value);
+                        }}
+                        placeholder="e.g. top-deal-strategies"
+                        className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                    <span className="mb-2 block">Category</span>
+                    <select
+                        value={form.categoryId}
+                        onChange={event =>
+                            updateField(
+                                'categoryId',
+                                event.target.value ? Number(event.target.value) : '',
+                            )
+                        }
+                        className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    >
+                        <option value="">Select a category</option>
+                        {categories.map(c => (
+                            <option key={c.id} value={c.id}>
+                                {c.name}
+                            </option>
+                        ))}
+                    </select>
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                    <span className="mb-2 block">Author</span>
+                    <input
+                        value={form.author}
+                        onChange={event => updateField('author', event.target.value)}
+                        placeholder="e.g. Admin"
+                        className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                    <span className="mb-2 block">Reading Time</span>
+                    <input
+                        value={form.readingTime}
+                        onChange={event => updateField('readingTime', event.target.value)}
+                        placeholder="e.g. 5 min read"
+                        className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-3">
+                    <span className="mb-2 block">Short Description</span>
+                    <textarea
+                        value={form.shortDescription}
+                        onChange={event => updateField('shortDescription', event.target.value)}
+                        placeholder="e.g. Smart choices for deals"
+                        className="min-h-[70px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <div className="md:col-span-3">
+                    <MediaPicker
+                        label="Thumbnail Image"
+                        value={form.thumbnail}
+                        onChange={url => {
+                            updateField('thumbnail', url);
+                            if (!form.featuredImage) {
+                                updateField('featuredImage', url);
+                            }
+                        }}
+                        allMedia={allMedia}
+                        onUpload={onUploadMedia}
+                        helpText="Select or upload a thumbnail image"
+                    />
+                </div>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-3">
+                    <span className="mb-2 block">Tags (comma-separated)</span>
+                    <input
+                        value={Array.isArray(form.tags) ? form.tags.join(', ') : form.tags}
+                        onChange={event =>
+                            updateField(
+                                'tags',
+                                event.target.value
+                                    .split(',')
+                                    .map(tag => tag.trim())
+                                    .filter(Boolean),
+                            )
+                        }
+                        placeholder="e.g. deals, shopping"
+                        className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-3">
+                    <span className="mb-2 block">Post Content / Description</span>
+                    <textarea
+                        value={form.description}
+                        onChange={event => updateField('description', event.target.value)}
+                        placeholder="Full blog content..."
+                        className="min-h-[140px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <div className="flex items-center gap-6 pt-2 md:col-span-3">
+                    <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground cursor-pointer">
+                        <input
+                            type="checkbox"
+                            checked={form.isActive}
+                            onChange={event => updateField('isActive', event.target.checked)}
+                            className="h-4 w-4 rounded border-border text-primary"
+                        />
+                        Active
+                    </label>
+                    <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground cursor-pointer">
+                        <input
+                            type="checkbox"
+                            checked={form.isFeatured}
+                            onChange={event => updateField('isFeatured', event.target.checked)}
+                            className="h-4 w-4 rounded border-border text-primary"
+                        />
+                        Featured
+                    </label>
+                    <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground cursor-pointer">
+                        <input
+                            type="checkbox"
+                            checked={form.isTrending}
+                            onChange={event => updateField('isTrending', event.target.checked)}
+                            className="h-4 w-4 rounded border-border text-primary"
+                        />
+                        Trending
+                    </label>
+                </div>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
+                    <span className="mb-2 block">Meta Title</span>
+                    <input
+                        value={form.metaTitle}
+                        onChange={event => updateField('metaTitle', event.target.value)}
+                        placeholder="e.g. Top deal strategies"
+                        className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                    <span className="mb-2 block">Canonical URL</span>
+                    <input
+                        value={form.canonicalUrl}
+                        onChange={event => updateField('canonicalUrl', event.target.value)}
+                        placeholder="https://..."
+                        className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-3">
+                    <span className="mb-2 block">Meta Description</span>
+                    <textarea
+                        value={form.metaDescription}
+                        onChange={event => updateField('metaDescription', event.target.value)}
+                        placeholder="e.g. Smart choices for deals"
+                        className="min-h-[70px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
             </div>
-        </div>
+        </AdminModalShell>
     );
 }
 

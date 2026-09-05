@@ -4,6 +4,7 @@ import { Edit3, Eye, EyeOff, Plus, Sparkles, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import {
+    AdminModalShell,
     AdminPageHeader,
     ConfirmDeleteModal,
     FilterSelect,
@@ -187,132 +188,126 @@ function CategoryModal({
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4">
-            <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-border bg-card p-5 shadow-lift md:p-6">
-                <div className="mb-5 flex items-center justify-between gap-3">
-                    <div>
-                        <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-primary">
-                            Category
-                        </p>
-                        <h3 className="mt-1 font-display text-[26px] font-extrabold text-foreground">
-                            {initialData ? 'Edit Category' : 'Create Category'}
-                        </h3>
-                    </div>
-                    <div>
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="rounded-full border border-border p-2 text-muted-foreground hover:bg-muted"
-                        >
-                            ×
-                        </button>
-                    </div>
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-2">
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Category Name</span>
-                        <input
-                            value={form.name}
-                            onChange={event => handleNameChange(event.target.value)}
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Slug</span>
-                        <input
-                            value={form.slug}
-                            onChange={event => {
-                                setSlugTouched(true);
-                                updateField('slug', event.target.value);
-                            }}
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
-                        <span className="mb-2 block">Description</span>
-                        <textarea
-                            value={form.description}
-                            onChange={event => updateField('description', event.target.value)}
-                            className="min-h-24 w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <div className="md:col-span-2">
-                        <MediaPicker
-                            label="Category Image"
-                            value={form.image}
-                            onChange={url => updateField('image', url)}
-                            allMedia={allMedia}
-                            onUpload={onUploadMedia}
-                            helpText="Select an image from the Media Library or upload a new one"
-                        />
-                    </div>
-                    <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground md:col-span-1">
-                        <input
-                            type="checkbox"
-                            checked={form.status}
-                            onChange={event => updateField('status', event.target.checked)}
-                            className="h-4 w-4 rounded border-border text-primary"
-                        />
-                        Status
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Display Order</span>
-                        <input
-                            type="number"
-                            value={form.displayOrder}
-                            onChange={event =>
-                                updateField('displayOrder', Number(event.target.value) || 1)
-                            }
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground md:col-span-1">
-                        <input
-                            type="checkbox"
-                            checked={form.featured}
-                            onChange={event => updateField('featured', event.target.checked)}
-                            className="h-4 w-4 rounded border-border text-primary"
-                        />
-                        Featured
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
-                        <span className="mb-2 block">Meta Title</span>
-                        <input
-                            value={form.metaTitle}
-                            onChange={event => updateField('metaTitle', event.target.value)}
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
-                        <span className="mb-2 block">Meta Description</span>
-                        <textarea
-                            value={form.metaDescription}
-                            onChange={event => updateField('metaDescription', event.target.value)}
-                            className="min-h-22 w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-                </div>
-
-                {error && <p className="mt-4 text-[13px] font-medium text-rose-600">{error}</p>}
-
-                <div className="mt-6 flex justify-end gap-3">
+        <AdminModalShell
+            eyebrow="Category"
+            eyebrowClass="text-primary"
+            title={initialData ? 'Edit Category' : 'Create Category'}
+            subtitle={
+                initialData
+                    ? 'Update how this category is shown on the storefront.'
+                    : 'Add a new storefront category.'
+            }
+            onClose={onClose}
+            maxWidth="max-w-2xl"
+            actions={
+                <>
                     <Button type="button" variant="outline" onClick={onClose}>
                         Cancel
                     </Button>
                     <Button type="button" onClick={handleSubmit}>
                         {initialData ? 'Save Changes' : 'Create Category'}
                     </Button>
+                </>
+            }
+        >
+            {error && (
+                <div className="mb-5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-[13px] font-medium text-rose-700">
+                    {error}
                 </div>
+            )}
+
+            <div className="grid gap-5 md:grid-cols-2">
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                    <span className="mb-2 block">Category Name</span>
+                    <input
+                        value={form.name}
+                        onChange={event => handleNameChange(event.target.value)}
+                        className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                    <span className="mb-2 block">Slug</span>
+                    <input
+                        value={form.slug}
+                        onChange={event => {
+                            setSlugTouched(true);
+                            updateField('slug', event.target.value);
+                        }}
+                        className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
+                    <span className="mb-2 block">Description</span>
+                    <textarea
+                        value={form.description}
+                        onChange={event => updateField('description', event.target.value)}
+                        className="min-h-24 w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <div className="md:col-span-2">
+                    <MediaPicker
+                        label="Category Image"
+                        value={form.image}
+                        onChange={url => updateField('image', url)}
+                        allMedia={allMedia}
+                        onUpload={onUploadMedia}
+                        helpText="Select an image from the Media Library or upload a new one"
+                    />
+                </div>
+                <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground md:col-span-1">
+                    <input
+                        type="checkbox"
+                        checked={form.status}
+                        onChange={event => updateField('status', event.target.checked)}
+                        className="h-4 w-4 rounded border-border text-primary"
+                    />
+                    Status
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                    <span className="mb-2 block">Display Order</span>
+                    <input
+                        type="number"
+                        value={form.displayOrder}
+                        onChange={event =>
+                            updateField('displayOrder', Number(event.target.value) || 1)
+                        }
+                        className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground md:col-span-1">
+                    <input
+                        type="checkbox"
+                        checked={form.featured}
+                        onChange={event => updateField('featured', event.target.checked)}
+                        className="h-4 w-4 rounded border-border text-primary"
+                    />
+                    Featured
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
+                    <span className="mb-2 block">Meta Title</span>
+                    <input
+                        value={form.metaTitle}
+                        onChange={event => updateField('metaTitle', event.target.value)}
+                        className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
+                    <span className="mb-2 block">Meta Description</span>
+                    <textarea
+                        value={form.metaDescription}
+                        onChange={event => updateField('metaDescription', event.target.value)}
+                        className="min-h-22 w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
             </div>
-        </div>
+        </AdminModalShell>
     );
 }
 

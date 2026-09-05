@@ -4,6 +4,7 @@ import { Edit3, Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import {
+    AdminModalShell,
     AdminPageHeader,
     ConfirmDeleteModal,
     FilterSelect,
@@ -277,246 +278,240 @@ function StoreModal({
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4">
-            <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl border border-border bg-card p-5 shadow-lift md:p-6">
-                <div className="mb-5 flex items-center justify-between gap-3">
-                    <div>
-                        <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-primary">
-                            Store
-                        </p>
-                        <h3 className="mt-1 font-display text-[26px] font-extrabold text-foreground">
-                            {initialData ? 'Edit Store' : 'Create Store'}
-                        </h3>
-                    </div>
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="rounded-full border border-border p-2 text-muted-foreground hover:bg-muted"
-                    >
-                        ×
-                    </button>
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-2">
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Store Name</span>
-                        <input
-                            value={form.name}
-                            onChange={event => handleNameChange(event.target.value)}
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Slug</span>
-                        <input
-                            value={form.slug}
-                            onChange={event => {
-                                setSlugTouched(true);
-                                updateField('slug', event.target.value);
-                            }}
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <div className="md:col-span-2">
-                        <MediaPicker
-                            label="Store Logo"
-                            value={form.logo}
-                            onChange={url => updateField('logo', url)}
-                            allMedia={allMedia}
-                            onUpload={onUploadMedia}
-                            helpText="Logo for storefront"
-                        />
-                    </div>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Logo Alt Text</span>
-                        <input
-                            value={form.logoAltTxt}
-                            onChange={event => updateField('logoAltTxt', event.target.value)}
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
-                        <span className="mb-2 block">Categories</span>
-                        <div className="relative">
-                            <button
-                                type="button"
-                                onClick={() => setCatOpen(open => !open)}
-                                className="flex min-h-11 w-full items-center justify-between gap-2 rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                            >
-                                <span
-                                    className={
-                                        form.categories.length
-                                            ? 'text-foreground'
-                                            : 'text-muted-foreground'
-                                    }
-                                >
-                                    {form.categories.length
-                                        ? categories
-                                              .filter(c => form.categories.includes(c.id))
-                                              .map(c => c.name)
-                                              .join(', ')
-                                        : 'Select categories'}
-                                </span>
-                                <svg
-                                    className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${
-                                        catOpen ? 'rotate-180' : ''
-                                    }`}
-                                    viewBox="0 0 20 20"
-                                    fill="currentColor"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        fillRule="evenodd"
-                                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                                        clipRule="evenodd"
-                                    />
-                                </svg>
-                            </button>
-
-                            {catOpen && (
-                                <div className="mt-1 max-h-56 w-full overflow-y-auto rounded-xl border border-border bg-background p-1 shadow-soft">
-                                    {categories.length === 0 ? (
-                                        <p className="px-3 py-3 text-[13px] text-muted-foreground">
-                                            No categories available.
-                                        </p>
-                                    ) : (
-                                        categories.map(category => {
-                                            const checked = form.categories.includes(category.id);
-                                            return (
-                                                <label
-                                                    key={category.id}
-                                                    className="flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-[13px] hover:bg-muted"
-                                                >
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={checked}
-                                                        onChange={() => toggleCategory(category.id)}
-                                                        className="h-4 w-4 rounded border-border text-primary"
-                                                    />
-                                                    <span className="text-foreground">
-                                                        {category.name}
-                                                    </span>
-                                                </label>
-                                            );
-                                        })
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Website URL</span>
-                        <input
-                            value={form.websiteUrl}
-                            onChange={event => updateField('websiteUrl', event.target.value)}
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Affiliate URL</span>
-                        <input
-                            value={form.affiliateUrl}
-                            onChange={event => updateField('affiliateUrl', event.target.value)}
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
-                        <span className="mb-2 block">Short Description</span>
-                        <textarea
-                            value={form.shortDescription}
-                            onChange={event => updateField('shortDescription', event.target.value)}
-                            className="min-h-[78px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
-                        <span className="mb-2 block">Description</span>
-                        <textarea
-                            value={form.description}
-                            onChange={event => updateField('description', event.target.value)}
-                            className="min-h-[110px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
-                        <span className="mb-2 block">How to Use</span>
-                        <textarea
-                            value={form.howToUse}
-                            onChange={event => updateField('howToUse', event.target.value)}
-                            className="min-h-[88px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground">
-                        <input
-                            type="checkbox"
-                            checked={form.isFeatured}
-                            onChange={event => updateField('isFeatured', event.target.checked)}
-                            className="h-4 w-4 rounded border-border text-primary"
-                        />
-                        Featured
-                    </label>
-
-                    <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground">
-                        <input
-                            type="checkbox"
-                            checked={form.isActive}
-                            onChange={event => updateField('isActive', event.target.checked)}
-                            className="h-4 w-4 rounded border-border text-primary"
-                        />
-                        Active
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Sort Order</span>
-                        <input
-                            type="number"
-                            value={form.sortOrder}
-                            onChange={event =>
-                                updateField('sortOrder', Number(event.target.value) || 1)
-                            }
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
-                        <span className="mb-2 block">SEO Title</span>
-                        <input
-                            value={form.seoTitle}
-                            onChange={event => updateField('seoTitle', event.target.value)}
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
-                        <span className="mb-2 block">Meta Description</span>
-                        <textarea
-                            value={form.metaDescription}
-                            onChange={event => updateField('metaDescription', event.target.value)}
-                            className="min-h-[88px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-                </div>
-
-                {error && <p className="mt-4 text-[13px] font-medium text-rose-600">{error}</p>}
-
-                <div className="mt-6 flex justify-end gap-3">
+        <AdminModalShell
+            eyebrow="Store"
+            title={initialData ? 'Edit Store' : 'Create Store'}
+            subtitle={
+                initialData
+                    ? 'Update the brand details, categories and merchandising settings.'
+                    : 'Register a new brand and manage its offers.'
+            }
+            onClose={onClose}
+            actions={
+                <>
                     <Button type="button" variant="outline" onClick={onClose}>
                         Cancel
                     </Button>
                     <Button type="button" onClick={handleSubmit}>
                         {initialData ? 'Save Changes' : 'Create Store'}
                     </Button>
+                </>
+            }
+        >
+            {error && (
+                <div className="mb-5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-[13px] font-medium text-rose-700">
+                    {error}
                 </div>
+            )}
+
+            <div className="grid gap-5 md:grid-cols-2">
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                    <span className="mb-2 block">Store Name</span>
+                    <input
+                        value={form.name}
+                        onChange={event => handleNameChange(event.target.value)}
+                        className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                    <span className="mb-2 block">Slug</span>
+                    <input
+                        value={form.slug}
+                        onChange={event => {
+                            setSlugTouched(true);
+                            updateField('slug', event.target.value);
+                        }}
+                        className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <div className="md:col-span-2">
+                    <MediaPicker
+                        label="Store Logo"
+                        value={form.logo}
+                        onChange={url => updateField('logo', url)}
+                        allMedia={allMedia}
+                        onUpload={onUploadMedia}
+                        helpText="Logo for storefront"
+                    />
+                </div>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                    <span className="mb-2 block">Logo Alt Text</span>
+                    <input
+                        value={form.logoAltTxt}
+                        onChange={event => updateField('logoAltTxt', event.target.value)}
+                        className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
+                    <span className="mb-2 block">Categories</span>
+                    <div className="relative">
+                        <button
+                            type="button"
+                            onClick={() => setCatOpen(open => !open)}
+                            className="flex min-h-11 w-full items-center justify-between gap-2 rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                        >
+                            <span
+                                className={
+                                    form.categories.length
+                                        ? 'text-foreground'
+                                        : 'text-muted-foreground'
+                                }
+                            >
+                                {form.categories.length
+                                    ? categories
+                                          .filter(c => form.categories.includes(c.id))
+                                          .map(c => c.name)
+                                          .join(', ')
+                                    : 'Select categories'}
+                            </span>
+                            <svg
+                                className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${
+                                    catOpen ? 'rotate-180' : ''
+                                }`}
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    fillRule="evenodd"
+                                    d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                                    clipRule="evenodd"
+                                />
+                            </svg>
+                        </button>
+
+                        {catOpen && (
+                            <div className="mt-1 max-h-56 w-full overflow-y-auto rounded-xl border border-border bg-background p-1 shadow-soft">
+                                {categories.length === 0 ? (
+                                    <p className="px-3 py-3 text-[13px] text-muted-foreground">
+                                        No categories available.
+                                    </p>
+                                ) : (
+                                    categories.map(category => {
+                                        const checked = form.categories.includes(category.id);
+                                        return (
+                                            <label
+                                                key={category.id}
+                                                className="flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-[13px] hover:bg-muted"
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    checked={checked}
+                                                    onChange={() => toggleCategory(category.id)}
+                                                    className="h-4 w-4 rounded border-border text-primary"
+                                                />
+                                                <span className="text-foreground">
+                                                    {category.name}
+                                                </span>
+                                            </label>
+                                        );
+                                    })
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                    <span className="mb-2 block">Website URL</span>
+                    <input
+                        value={form.websiteUrl}
+                        onChange={event => updateField('websiteUrl', event.target.value)}
+                        className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                    <span className="mb-2 block">Affiliate URL</span>
+                    <input
+                        value={form.affiliateUrl}
+                        onChange={event => updateField('affiliateUrl', event.target.value)}
+                        className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
+                    <span className="mb-2 block">Short Description</span>
+                    <textarea
+                        value={form.shortDescription}
+                        onChange={event => updateField('shortDescription', event.target.value)}
+                        className="min-h-[78px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
+                    <span className="mb-2 block">Description</span>
+                    <textarea
+                        value={form.description}
+                        onChange={event => updateField('description', event.target.value)}
+                        className="min-h-[110px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
+                    <span className="mb-2 block">How to Use</span>
+                    <textarea
+                        value={form.howToUse}
+                        onChange={event => updateField('howToUse', event.target.value)}
+                        className="min-h-[88px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground">
+                    <input
+                        type="checkbox"
+                        checked={form.isFeatured}
+                        onChange={event => updateField('isFeatured', event.target.checked)}
+                        className="h-4 w-4 rounded border-border text-primary"
+                    />
+                    Featured
+                </label>
+
+                <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground">
+                    <input
+                        type="checkbox"
+                        checked={form.isActive}
+                        onChange={event => updateField('isActive', event.target.checked)}
+                        className="h-4 w-4 rounded border-border text-primary"
+                    />
+                    Active
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                    <span className="mb-2 block">Sort Order</span>
+                    <input
+                        type="number"
+                        value={form.sortOrder}
+                        onChange={event =>
+                            updateField('sortOrder', Number(event.target.value) || 1)
+                        }
+                        className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
+                    <span className="mb-2 block">SEO Title</span>
+                    <input
+                        value={form.seoTitle}
+                        onChange={event => updateField('seoTitle', event.target.value)}
+                        className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
+
+                <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
+                    <span className="mb-2 block">Meta Description</span>
+                    <textarea
+                        value={form.metaDescription}
+                        onChange={event => updateField('metaDescription', event.target.value)}
+                        className="min-h-[88px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    />
+                </label>
             </div>
-        </div>
+        </AdminModalShell>
     );
 }
 
