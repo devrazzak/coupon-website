@@ -174,29 +174,32 @@ export function CouponModal({ coupon, onClose }: CouponModalProps) {
                 }
             }}
         >
-            <DialogContent className="max-w-lg rounded-3xl border-border bg-card p-6 md:p-7 shadow-2xl">
+            <DialogContent className="max-w-lg rounded-3xl border-border bg-card p-6 shadow-2xl md:p-7">
                 {coupon && (
                     <>
                         <DialogHeader className="space-y-3 text-left">
-                            <div className="flex items-center justify-between gap-3">
-                                <StoreLogo coupon={coupon} size={30} />
-                                <div className="flex items-center gap-2">
-                                    {discountText && (
-                                        <span className="inline-flex items-center gap-1 rounded-full bg-primary-light px-2.5 py-0.5 text-[11px] font-extrabold text-primary">
-                                            <Percent className="h-3 w-3" />
-                                            {discountText}
+                            <div className="flex items-center gap-3">
+                                <div className="max-w-30">
+                                    <StoreLogo coupon={coupon} size={30} />
+                                </div>
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        {discountText && (
+                                            <span className="inline-flex items-center gap-1 rounded-full bg-primary-light px-2.5 py-0.5 text-[11px] font-bold text-primary border border-primary/40">
+                                                {discountText}
+                                            </span>
+                                        )}
+                                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200">
+                                            <BadgeCheck className="h-3.5 w-3.5" />
+                                            Verified
                                         </span>
-                                    )}
-                                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200">
-                                        <BadgeCheck className="h-3.5 w-3.5" />
-                                        Verified
-                                    </span>
+                                    </div>
+                                    <DialogTitle className="font-display text-[18px] font-semibold leading-snug text-foreground md:text-[20px] pt-3">
+                                        {title}
+                                    </DialogTitle>
                                 </div>
                             </div>
 
-                            <DialogTitle className="font-display text-[19px] font-extrabold leading-snug text-foreground md:text-[21px]">
-                                {title}
-                            </DialogTitle>
                             {description && (
                                 <DialogDescription className="text-[13.5px] leading-relaxed text-muted-foreground">
                                     {description}
@@ -225,9 +228,13 @@ export function CouponModal({ coupon, onClose }: CouponModalProps) {
 
                         {/* Interactive Coupon Box */}
                         <div className="relative overflow-hidden rounded-2xl border border-primary/40 bg-primary-light/50 p-4 text-center">
-                            <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
-                                {code ? 'Promo Code' : 'Direct Deal (No Code Required)'}
-                            </p>
+                            {code ? (
+                                ''
+                            ) : (
+                                <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                                    Direct Deal (No Code Required)
+                                </p>
+                            )}
                             <div className="mt-2 flex items-center justify-between gap-3 rounded-xl border border-primary/20 bg-card p-2 shadow-xs">
                                 <span className="min-w-0 flex-1 truncate font-mono text-[20px] sm:text-[22px] font-black tracking-widest text-foreground">
                                     {code || 'AUTOMATIC DISCOUNT'}

@@ -7,6 +7,7 @@ import {
     createCoupon,
     deleteCoupon,
     getCoupons,
+    getPublicCouponBySlug,
     getPublicCoupons,
     updateCoupon,
 } from '@/utils/api/coupon';
@@ -15,6 +16,15 @@ export function useGetPublicCoupons(query: PublicCouponsQuery = {}) {
     return useQuery({
         queryKey: ['GetPublicCoupons', query],
         queryFn: () => getPublicCoupons(query),
+        retry: false,
+    });
+}
+
+export function useGetPublicCouponBySlug(slug?: string) {
+    return useQuery({
+        queryKey: ['GetPublicCouponBySlug', slug],
+        queryFn: () => getPublicCouponBySlug(slug as string),
+        enabled: Boolean(slug),
         retry: false,
     });
 }

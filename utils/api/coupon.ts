@@ -43,6 +43,7 @@ export type PublicCoupon = {
     title: string;
     slug: string;
     code?: string | null;
+    affiliate_url?: string;
     coupon_type?: string;
     discount_type?: string;
     discount_value?: number;
@@ -61,6 +62,13 @@ export type PublicCouponsResponse = {
         currentPage: number;
         totalCount: number;
     };
+};
+
+export type PublicCouponDetailResponse = {
+    success: boolean;
+    message: string;
+    data: PublicCoupon;
+    meta: null;
 };
 
 export type PublicCouponsQuery = {
@@ -82,6 +90,13 @@ export const getPublicCoupons = ({
 }: PublicCouponsQuery = {}) => {
     return AxiosServices.get<PublicCouponsResponse>(
         API_END_POINTS.PUBLIC.COUPON.GET(search, categoryIds, storeId, page, limit, sort),
+        {},
+    );
+};
+
+export const getPublicCouponBySlug = (slug: string) => {
+    return AxiosServices.get<PublicCouponDetailResponse>(
+        API_END_POINTS.PUBLIC.COUPON.GET_BY_SLUG(slug),
         {},
     );
 };

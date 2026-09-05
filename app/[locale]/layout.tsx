@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
+import { Suspense } from 'react';
 
+import { CouponQueryModal } from '@/components/CouponQueryModal';
 import { locales } from '@/i18n';
 
 export function generateStaticParams() {
@@ -26,5 +28,12 @@ export default async function LocaleLayout({
     const { locale } = await params;
     const messages = (await import(`../../messages/${locale}.json`)).default;
 
-    return <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>;
+    return (
+        <NextIntlClientProvider messages={messages}>
+            {children}
+            <Suspense fallback={null}>
+                <CouponQueryModal />
+            </Suspense>
+        </NextIntlClientProvider>
+    );
 }

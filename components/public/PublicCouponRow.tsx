@@ -13,6 +13,18 @@ export function PublicCouponRow({
     coupon: PublicCoupon;
     onShow: (c: PublicCoupon) => void;
 }) {
+    const handleCouponClick = () => {
+        if (coupon.affiliate_url) {
+            const modalUrl = new URL(window.location.href);
+            modalUrl.searchParams.set('coupon_slug', coupon.slug);
+            window.open(modalUrl.toString(), '_blank', 'noopener,noreferrer');
+            window.location.href = coupon.affiliate_url;
+            return;
+        }
+
+        onShow(coupon);
+    };
+
     return (
         <li className="group border-b border-border/70 last:border-b-0 transition-colors hover:bg-surface/50">
             <div className="flex flex-col gap-4 px-5 py-4 md:flex-row md:items-center md:gap-6">
@@ -64,7 +76,7 @@ export function PublicCouponRow({
                 <div className="md:w-[220px] md:shrink-0">
                     <button
                         type="button"
-                        onClick={() => onShow(coupon)}
+                        onClick={handleCouponClick}
                         className="group/btn relative flex h-12 w-full items-center overflow-hidden rounded-xl bg-primary pl-4 pr-[60px] text-left font-bold text-primary-foreground shadow-sm transition-all hover:bg-primary-hover hover:shadow-primary active:scale-[0.99]"
                     >
                         <span className="flex items-center gap-1.5 truncate text-[13.5px] tracking-wide">

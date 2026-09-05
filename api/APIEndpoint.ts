@@ -57,6 +57,7 @@ export const API_END_POINTS = {
                 params.set('limit', String(limit));
                 return `/api/v1/coupons?${params.toString()}`;
             },
+            GET_BY_SLUG: (slug: string) => `/api/v1/coupons/${encodeURIComponent(slug)}`,
         },
         BLOG_CATEGORY: {
             GET: (page = 1, limit = 20, sort?: string) => {
