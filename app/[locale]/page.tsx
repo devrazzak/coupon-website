@@ -9,7 +9,7 @@ import Footer from '@/components/layout/Footer';
 import Header from '@/components/layout/Header';
 
 export const metadata: Metadata = {
-    title: 'Coupello — 250,000+ Verified Promo Codes, Coupons & Cash Back Deals',
+    title: 'Coupello - 250,000+ Verified Promo Codes, Coupons & Cash Back Deals',
     description:
         'Never pay full price. Coupello automatically finds, tests & applies verified coupon codes, promo codes, and discount deals across 50,000+ top online stores.',
     keywords: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
         'store vouchers',
     ],
     openGraph: {
-        title: 'Coupello — 250,000+ Verified Promo Codes, Coupons & Cash Back Deals',
+        title: 'Coupello - 250,000+ Verified Promo Codes, Coupons & Cash Back Deals',
         description:
             'Never pay full price. Coupello automatically finds, tests & applies verified coupon codes, promo codes, and discount deals across 50,000+ top online stores.',
         url: '/',
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'Coupello — 250,000+ Verified Promo Codes, Coupons & Cash Back Deals',
+        title: 'Coupello - 250,000+ Verified Promo Codes, Coupons & Cash Back Deals',
         description:
             'Never pay full price. Coupello automatically finds, tests & applies verified coupon codes, promo codes, and discount deals across 50,000+ top online stores.',
     },

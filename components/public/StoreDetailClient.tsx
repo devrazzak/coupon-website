@@ -34,7 +34,7 @@ export function StoreDetailClient({ storeId, storeName }: { storeId?: number; st
                         <span className="text-border">/</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Link href="/shops" className="transition-colors hover:text-primary">
+                        <Link href="/stores" className="transition-colors hover:text-primary">
                             Stores
                         </Link>
                         <span className="text-border">/</span>
