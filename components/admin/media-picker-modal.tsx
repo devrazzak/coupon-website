@@ -27,11 +27,14 @@ export function MediaPickerModal({
     const [uploadOpen, setUploadOpen] = useState(false);
 
     const filteredMedia = useMemo(() => {
-        return allMedia.filter(
-            item =>
+        return allMedia.filter(item => {
+            // Skip records that have no usable image URL (avoids "no image" phantom tiles).
+            if (!item.url || !item.url.trim() || item.url.startsWith('blob:')) return false;
+            return (
                 item.fileName.toLowerCase().includes(search.toLowerCase()) ||
-                item.altText.toLowerCase().includes(search.toLowerCase()),
-        );
+                item.altText.toLowerCase().includes(search.toLowerCase())
+            );
+        });
     }, [allMedia, search]);
 
     const handleSelect = () => {

@@ -1,7 +1,7 @@
 'use client';
 
 import { Edit3, Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import {
     AdminPageHeader,
@@ -16,6 +16,7 @@ import { MediaPicker } from '@/components/admin/media-picker';
 import { Button } from '@/components/ui/button';
 import { type MediaRecord, type StoreRecord } from '@/utils/admin-data';
 import { file_base_url } from '@/utils/config';
+import { useGetCategories } from '@/utils/hooks/category';
 import { useGetMedia } from '@/utils/hooks/media';
 import { useCreateStore, useDeleteStore, useGetStores, useUpdateStore } from '@/utils/hooks/store';
 
@@ -107,6 +108,24 @@ function getMediaItems(response: unknown): MediaRecord[] {
     return list.map(item => normalizeMediaItem((item || {}) as Record<string, any>));
 }
 
+function getCategoriesList(response: unknown): { id: number; name: string }[] {
+    if (!response || typeof response !== 'object') return [];
+
+    const payload = (response as { data?: unknown }).data;
+    const list = Array.isArray(payload)
+        ? payload
+        : payload &&
+            typeof payload === 'object' &&
+            Array.isArray((payload as { data?: unknown }).data)
+          ? ((payload as { data?: unknown[] }).data ?? [])
+          : [];
+
+    return list.map(item => ({
+        id: Number((item as any)?.id),
+        name: String((item as any)?.name || `Category #${(item as any)?.id}`),
+    }));
+}
+
 const pageSize = 6;
 
 function normalizeStoreLogoUrl(value: string | null | undefined): string {
@@ -125,7 +144,7 @@ function slugify(value: string) {
             .toLowerCase()
             .trim()
             .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-+|-+$/g, '') || 'store'
+            .replace(/^-+|-+$/g, '') || ''
     );
 }
 
@@ -150,12 +169,14 @@ type StoreFormState = {
 
 function StoreModal({
     initialData,
+    categories,
     onClose,
     onSave,
     allMedia,
     onUploadMedia,
 }: {
     initialData: StoreRecord | null;
+    categories: { id: number; name: string }[];
     onClose: () => void;
     onSave: (payload: StoreFormState) => void;
     allMedia: MediaRecord[];
@@ -205,9 +226,33 @@ function StoreModal({
               },
     );
     const [error, setError] = useState('');
+    const [slugTouched, setSlugTouched] = useState(false);
+    const [catOpen, setCatOpen] = useState(false);
 
     const updateField = <K extends keyof StoreFormState>(key: K, value: StoreFormState[K]) => {
         setForm(current => ({ ...current, [key]: value }));
+    };
+
+    const handleNameChange = (value: string) => {
+        setForm(current => ({
+            ...current,
+            name: value,
+            // Auto-generate the slug from the name while typing, unless the
+            // user has manually edited the slug field.
+            ...(!slugTouched ? { slug: slugify(value) } : {}),
+        }));
+    };
+
+    const toggleCategory = (categoryId: number) => {
+        setForm(current => {
+            const has = current.categories.includes(categoryId);
+            return {
+                ...current,
+                categories: has
+                    ? current.categories.filter(id => id !== categoryId)
+                    : [...current.categories, categoryId],
+            };
+        });
     };
 
     const handleSubmit = () => {
@@ -257,14 +302,7 @@ function StoreModal({
                         <span className="mb-2 block">Store Name</span>
                         <input
                             value={form.name}
-                            onChange={event => {
-                                const name = event.target.value;
-                                setForm(current => ({
-                                    ...current,
-                                    name,
-                                    slug: current.slug || slugify(name),
-                                }));
-                            }}
+                            onChange={event => handleNameChange(event.target.value)}
                             className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
                     </label>
@@ -273,7 +311,10 @@ function StoreModal({
                         <span className="mb-2 block">Slug</span>
                         <input
                             value={form.slug}
-                            onChange={event => updateField('slug', event.target.value)}
+                            onChange={event => {
+                                setSlugTouched(true);
+                                updateField('slug', event.target.value);
+                            }}
                             className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
                     </label>
@@ -298,21 +339,74 @@ function StoreModal({
                         />
                     </label>
 
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
+                    <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
                         <span className="mb-2 block">Categories</span>
-                        <input
-                            value={form.categories.join(', ')}
-                            onChange={event =>
-                                updateField(
-                                    'categories',
-                                    event.target.value
-                                        .split(',')
-                                        .map(item => Number(item.trim()))
-                                        .filter(value => !Number.isNaN(value)),
-                                )
-                            }
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
+                        <div className="relative">
+                            <button
+                                type="button"
+                                onClick={() => setCatOpen(open => !open)}
+                                className="flex min-h-11 w-full items-center justify-between gap-2 rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                            >
+                                <span
+                                    className={
+                                        form.categories.length
+                                            ? 'text-foreground'
+                                            : 'text-muted-foreground'
+                                    }
+                                >
+                                    {form.categories.length
+                                        ? categories
+                                              .filter(c => form.categories.includes(c.id))
+                                              .map(c => c.name)
+                                              .join(', ')
+                                        : 'Select categories'}
+                                </span>
+                                <svg
+                                    className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${
+                                        catOpen ? 'rotate-180' : ''
+                                    }`}
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        fillRule="evenodd"
+                                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                                        clipRule="evenodd"
+                                    />
+                                </svg>
+                            </button>
+
+                            {catOpen && (
+                                <div className="mt-1 max-h-56 w-full overflow-y-auto rounded-xl border border-border bg-background p-1 shadow-soft">
+                                    {categories.length === 0 ? (
+                                        <p className="px-3 py-3 text-[13px] text-muted-foreground">
+                                            No categories available.
+                                        </p>
+                                    ) : (
+                                        categories.map(category => {
+                                            const checked = form.categories.includes(category.id);
+                                            return (
+                                                <label
+                                                    key={category.id}
+                                                    className="flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-[13px] hover:bg-muted"
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={checked}
+                                                        onChange={() => toggleCategory(category.id)}
+                                                        className="h-4 w-4 rounded border-border text-primary"
+                                                    />
+                                                    <span className="text-foreground">
+                                                        {category.name}
+                                                    </span>
+                                                </label>
+                                            );
+                                        })
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     </label>
 
                     <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
@@ -442,12 +536,21 @@ export default function StoresAdminPage() {
 
     const { data: apiData } = useGetStores(page, pageSize);
     const { data: mediaApiData } = useGetMedia(1, 100);
+    const { data: categoriesApiData } = useGetCategories(1, 100);
     const { mutateAsync: createStoreMutation } = useCreateStore();
     const { mutateAsync: updateStoreMutation } = useUpdateStore();
     const { mutateAsync: deleteStoreMutation } = useDeleteStore();
     const storesResponse = useMemo(() => getStoresResponse(apiData), [apiData]);
     const mediaItems = useMemo(() => getMediaItems(mediaApiData), [mediaApiData]);
-    const allMedia = useMemo(() => [...uploadedMedia, ...mediaItems], [uploadedMedia, mediaItems]);
+    const allMedia = useMemo(() => {
+        const seen = new Set<string>();
+        return [...uploadedMedia, ...mediaItems].filter(item => {
+            if (seen.has(item.id)) return false;
+            seen.add(item.id);
+            return true;
+        });
+    }, [uploadedMedia, mediaItems]);
+    const categories = useMemo(() => getCategoriesList(categoriesApiData), [categoriesApiData]);
 
     const stores = useMemo(() => {
         const items =
@@ -827,6 +930,7 @@ export default function StoresAdminPage() {
             {modalOpen && (
                 <StoreModal
                     initialData={editing}
+                    categories={categories}
                     onClose={() => {
                         setEditing(null);
                         setModalOpen(false);

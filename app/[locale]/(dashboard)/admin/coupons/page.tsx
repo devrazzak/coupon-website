@@ -133,7 +133,7 @@ function slugify(value: string) {
             .toLowerCase()
             .trim()
             .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-+|-+$/g, '') || 'coupon'
+            .replace(/^-+|-+$/g, '') || ''
     );
 }
 
@@ -261,9 +261,21 @@ function CouponModal({
             : getDefaultCouponForm(),
     );
     const [error, setError] = useState('');
+    const [slugTouched, setSlugTouched] = useState(false);
 
     const updateField = <K extends keyof CouponFormState>(key: K, value: CouponFormState[K]) => {
         setForm(current => ({ ...current, [key]: value }));
+    };
+
+    const handleTitleChange = (value: string) => {
+        setForm(current => ({
+            ...current,
+            title: value,
+            // Auto-generate the slug from the title while typing, unless the
+            // user has manually edited the slug field.
+            ...(!slugTouched ? { slug: slugify(value) } : {}),
+            seoTitle: current.seoTitle || value,
+        }));
     };
 
     const handleSubmit = () => {
@@ -289,6 +301,37 @@ function CouponModal({
             metaDescription: form.metaDescription || form.shortDescription,
         });
     };
+
+    // Always include the edited coupon's existing store in the dropdown options,
+    // even if it isn't part of the (paginated/limited) `stores` list. Otherwise a
+    // controlled <select> with a `value` that has no matching <option> shows blank.
+    const storeOptions = useMemo(() => {
+        const exists = stores.some(s => s.id === initialData?.storeId);
+        if (!initialData || exists) return stores;
+        if (!initialData.storeId) return stores;
+        return [
+            {
+                id: initialData.storeId as number,
+                name: initialData.storeName || `Store #${initialData.storeId}`,
+            },
+            ...stores,
+        ];
+    }, [initialData, stores]);
+
+    // Same guarantee for the coupon's existing category so it always shows in the
+    // Category dropdown when editing, even if it's not in the fetched list.
+    const categoryOptions = useMemo(() => {
+        const exists = categories.some(c => c.id === initialData?.categoryId);
+        if (!initialData || exists) return categories;
+        if (!initialData.categoryId) return categories;
+        return [
+            {
+                id: initialData.categoryId,
+                name: initialData.categoryName || `Category #${initialData.categoryId}`,
+            },
+            ...categories,
+        ];
+    }, [categories, initialData]);
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4">
@@ -316,15 +359,7 @@ function CouponModal({
                         <span className="mb-2 block">Coupon Title</span>
                         <input
                             value={form.title}
-                            onChange={event => {
-                                const title = event.target.value;
-                                setForm(current => ({
-                                    ...current,
-                                    title,
-                                    slug: current.slug || slugify(title),
-                                    seoTitle: current.seoTitle || title,
-                                }));
-                            }}
+                            onChange={event => handleTitleChange(event.target.value)}
                             placeholder="e.g. 20% off Summer sale"
                             className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
@@ -334,7 +369,10 @@ function CouponModal({
                         <span className="mb-2 block">Slug</span>
                         <input
                             value={form.slug}
-                            onChange={event => updateField('slug', event.target.value)}
+                            onChange={event => {
+                                setSlugTouched(true);
+                                updateField('slug', event.target.value);
+                            }}
                             placeholder="e.g. 20-off-summer-sale"
                             className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
@@ -343,13 +381,22 @@ function CouponModal({
                     <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
                         <span className="mb-2 block">Store</span>
                         <select
-                            value={form.storeId}
-                            onChange={event => updateField('storeId', Number(event.target.value))}
+                            value={
+                                form.storeId === '' || form.storeId == null
+                                    ? ''
+                                    : String(form.storeId)
+                            }
+                            onChange={event =>
+                                updateField(
+                                    'storeId',
+                                    event.target.value ? Number(event.target.value) : '',
+                                )
+                            }
                             className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         >
                             <option value="">Select a store</option>
-                            {stores.map(store => (
-                                <option key={store.id} value={store.id}>
+                            {storeOptions.map(store => (
+                                <option key={store.id} value={String(store.id)}>
                                     {store.name} (ID: {store.id})
                                 </option>
                             ))}
@@ -359,7 +406,11 @@ function CouponModal({
                     <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
                         <span className="mb-2 block">Category (Optional)</span>
                         <select
-                            value={form.categoryId}
+                            value={
+                                form.categoryId === '' || form.categoryId == null
+                                    ? ''
+                                    : String(form.categoryId)
+                            }
                             onChange={event =>
                                 updateField(
                                     'categoryId',
@@ -369,8 +420,8 @@ function CouponModal({
                             className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         >
                             <option value="">Select a category</option>
-                            {categories.map(category => (
-                                <option key={category.id} value={category.id}>
+                            {categoryOptions.map(category => (
+                                <option key={category.id} value={String(category.id)}>
                                     {category.name} (ID: {category.id})
                                 </option>
                             ))}
@@ -599,29 +650,40 @@ export default function CouponsAdminPage() {
     const coupons = useMemo(() => {
         const items: CouponUiRecord[] =
             couponsResponse?.data.map(item => {
-                const storeName =
-                    typeof item.store === 'object' && item.store !== null
-                        ? item.store.name
-                        : typeof item.store === 'string'
-                          ? item.store
-                          : stores.find(s => s.id === item.store_id)?.name ||
-                            `Store #${item.store_id}`;
-
-                const categoryName =
+                const nestedStore =
+                    typeof item.store === 'object' && item.store !== null ? item.store : null;
+                const nestedCategory =
                     typeof item.category === 'object' && item.category !== null
-                        ? item.category.name
-                        : typeof item.category === 'string'
-                          ? item.category
-                          : item.category_id
-                            ? categories.find(c => c.id === item.category_id)?.name ||
-                              `Category #${item.category_id}`
-                            : '';
+                        ? item.category
+                        : null;
+
+                // Prefer the flat `store_id`/`category_id`, but fall back to the
+                // nested relation id — some list responses only embed the full
+                // store/category object and omit the flat foreign key, which would
+                // otherwise leave the Edit modal's select blank.
+                const storeIdRaw = item.store_id ?? nestedStore?.id;
+                const categoryIdRaw = item.category_id ?? nestedCategory?.id ?? null;
+
+                const storeName = nestedStore
+                    ? nestedStore.name
+                    : typeof item.store === 'string'
+                      ? item.store
+                      : stores.find(s => s.id === storeIdRaw)?.name || `Store #${storeIdRaw}`;
+
+                const categoryName = nestedCategory
+                    ? nestedCategory.name
+                    : typeof item.category === 'string'
+                      ? item.category
+                      : categoryIdRaw
+                        ? categories.find(c => c.id === categoryIdRaw)?.name ||
+                          `Category #${categoryIdRaw}`
+                        : '';
 
                 return {
                     id: String(item.id),
-                    storeId: item.store_id,
+                    storeId: storeIdRaw ?? 0,
                     storeName,
-                    categoryId: item.category_id,
+                    categoryId: categoryIdRaw,
                     categoryName,
                     title: item.title,
                     slug: item.slug,
