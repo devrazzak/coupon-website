@@ -1,22 +1,50 @@
+import type { Metadata } from 'next';
+
 import { StoreDetailClient } from '@/components/public/StoreDetailClient';
 import { PublicPageShell } from '@/components/public/page-layout';
-import { getPublicStores } from '@/utils/api/store';
+import { type PublicStore, getPublicStoreBySlug, getPublicStores } from '@/utils/api/store';
 
-async function resolveStore(slug: string, queryStoreId?: string | null) {
-    // Prefer the explicit id passed via query param (e.g. from Popular Stores).
-    if (queryStoreId && !Number.isNaN(Number(queryStoreId))) {
-        const id = Number(queryStoreId);
-        return { id, name: slug, slug };
+type ResolvedStore = Pick<PublicStore, 'name' | 'slug'> &
+    Partial<
+        Pick<
+            PublicStore,
+            | 'id'
+            | 'logo'
+            | 'seo_title'
+            | 'short_description'
+            | 'description'
+            | 'how_to_use'
+            | 'category'
+            | 'categories'
+            | 'meta_description'
+        >
+    >;
+
+async function resolveStore(slug: string, queryStoreId?: string | null): Promise<ResolvedStore> {
+    try {
+        const detailResponse = await getPublicStoreBySlug(slug);
+        if (detailResponse?.data?.data) {
+            return detailResponse.data.data;
+        }
+    } catch {
+        /* fall back to the public store list */
     }
+
     try {
         const res = await getPublicStores({ search: '', page: 1, limit: 500 });
         const store = res?.data?.data?.find(item => item.slug === slug);
         if (store) {
-            return { id: store.id, name: store.name, slug: store.slug };
+            return store;
         }
     } catch {
         /* fall through */
     }
+
+    // Keep the explicit id available when the public store lookup fails.
+    if (queryStoreId && !Number.isNaN(Number(queryStoreId))) {
+        return { id: Number(queryStoreId), name: slug, slug };
+    }
+
     return { id: undefined, name: slug, slug };
 }
 
@@ -28,13 +56,29 @@ export async function generateMetadata({
     const { slug } = await params;
     const store = await resolveStore(slug);
 
+    const title = store.seo_title || `${store.name} Coupons & Deals | Coupello`;
+    const description =
+        store.meta_description ||
+        `Browse verified coupon codes, promo offers, and the latest deals for ${store.name}.`;
+
     return {
-        title: `${store.name} Coupons & Deals | Coupello`,
-        description: `Browse the latest verified coupons and deals for ${store.name}.`,
+        title,
+        description,
         alternates: {
             canonical: `/stores/${slug}`,
         },
-    };
+        openGraph: {
+            title,
+            description,
+            url: `/stores/${slug}`,
+            siteName: 'Coupello',
+            type: 'website',
+        },
+        robots: {
+            index: true,
+            follow: true,
+        },
+    } satisfies Metadata;
 }
 
 export default async function StoreDetailPage({
@@ -49,7 +93,14 @@ export default async function StoreDetailPage({
 
     return (
         <PublicPageShell>
-            <StoreDetailClient storeId={store.id} storeName={store.name} />
+            <StoreDetailClient
+                storeId={store.id}
+                storeName={store.name}
+                storeDescription={store.short_description}
+                storeFullDescription={store.description}
+                storeHowToUse={store.how_to_use}
+                storeCategories={store.categories || (store.category ? [store.category] : [])}
+            />
         </PublicPageShell>
     );
 }

@@ -11,6 +11,8 @@ export type PublicCategory = {
     is_featured?: boolean;
     is_active?: boolean;
     sort_order?: number;
+    seo_title?: string;
+    meta_description?: string;
 };
 
 export type PublicCategoriesResponse = {
@@ -21,6 +23,13 @@ export type PublicCategoriesResponse = {
         currentPage: number;
         totalCount: number;
     };
+};
+
+export type PublicCategoryDetailResponse = {
+    success: boolean;
+    message: string;
+    data: PublicCategory;
+    meta: null;
 };
 
 export type PublicCategoriesQuery = {
@@ -34,6 +43,13 @@ export type PublicCategoriesQuery = {
 export const getPublicCategories = (page = 1, limit = 20, sort?: string, search?: string) => {
     return AxiosServices.get<PublicCategoriesResponse>(
         API_END_POINTS.PUBLIC.CATEGORY.GET(page, limit, sort, search),
+        {},
+    );
+};
+
+export const getPublicCategoryBySlug = (slug: string) => {
+    return AxiosServices.get<PublicCategoryDetailResponse>(
+        API_END_POINTS.PUBLIC.CATEGORY.GET_BY_SLUG(slug),
         {},
     );
 };

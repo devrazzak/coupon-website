@@ -21,6 +21,12 @@ export type StoreCreatePayload = {
 
 export type StoreUpdatePayload = Partial<StoreCreatePayload>;
 
+export type PublicStoreCategory = {
+    id: number;
+    name: string;
+    slug: string;
+};
+
 export type PublicStore = {
     id: number;
     name: string;
@@ -29,7 +35,12 @@ export type PublicStore = {
     website_url?: string;
     affiliate_url?: string;
     short_description?: string;
+    description?: string;
+    how_to_use?: string;
+    category?: PublicStoreCategory;
+    categories?: PublicStoreCategory[];
     seo_title?: string;
+    meta_description?: string;
 };
 
 export type PublicStoresResponse = {
@@ -40,6 +51,12 @@ export type PublicStoresResponse = {
         currentPage: number;
         totalCount: number;
     };
+};
+
+export type PublicStoreDetailResponse = {
+    success: boolean;
+    message: string;
+    data: PublicStore;
 };
 
 export type PublicStoresQuery = {
@@ -61,6 +78,13 @@ export const getPublicStores = ({
 }: PublicStoresQuery = {}) => {
     return AxiosServices.get<PublicStoresResponse>(
         API_END_POINTS.PUBLIC.STORE.GET(search, categoryIds, page, limit, sort, letter),
+        {},
+    );
+};
+
+export const getPublicStoreBySlug = (slug: string) => {
+    return AxiosServices.get<PublicStoreDetailResponse>(
+        API_END_POINTS.PUBLIC.STORE.GET_BY_SLUG(slug),
         {},
     );
 };

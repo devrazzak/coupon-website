@@ -1,11 +1,12 @@
 import { MetadataRoute } from 'next';
 
 import { locales } from '@/i18n';
+import { getPublicStores } from '@/utils/api/store';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://savewise.example';
 
-    const routes = ['', '/about'];
+    const routes = ['', '/about', '/stores'];
 
     const sitemapEntries: MetadataRoute.Sitemap = [];
 
@@ -23,6 +24,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
                 },
             });
         }
+    }
+
+    try {
+        const response = await getPublicStores({ page: 1, limit: 500 });
+        const stores = response?.data?.data ?? [];
+
+        for (const store of stores) {
+            for (const locale of locales) {
+                sitemapEntries.push({
+                    url: `${baseUrl}/${locale}/stores/${store.slug}`,
+                    lastModified: new Date(),
+                    changeFrequency: 'weekly',
+                    priority: 0.7,
+                });
+            }
+        }
+    } catch {
+        // Keep the static sitemap available when the public API is unavailable.
     }
 
     return sitemapEntries;

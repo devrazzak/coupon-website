@@ -17,6 +17,7 @@ export const API_END_POINTS = {
                 params.set('limit', String(limit));
                 return `/api/v1/categories?${params.toString()}`;
             },
+            GET_BY_SLUG: (slug: string) => `/api/v1/categories/${encodeURIComponent(slug)}`,
         },
         STORE: {
             GET: (
@@ -37,6 +38,7 @@ export const API_END_POINTS = {
                 params.set('limit', String(limit));
                 return `/api/v1/stores?${params.toString()}`;
             },
+            GET_BY_SLUG: (slug: string) => `/api/v1/stores/${encodeURIComponent(slug)}`,
         },
         COUPON: {
             GET: (

@@ -1,119 +1,28 @@
-'use client';
+import type { Metadata } from 'next';
 
-import Link from 'next/link';
+import CategoriesPageClient from './CategoriesPageClient';
 
-import { LayoutGrid, Search } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
-
-import { FilterPill, PublicPageShell } from '@/components/public/page-layout';
-import PATHS from '@/routes/path';
-import { useGetPublicCategories } from '@/utils/hooks/category';
-
-const sortFilters = ['All', 'Popular', 'Newest', 'Most Deals'];
-const DEFAULT_SORT = 'All';
+export const metadata: Metadata = {
+    title: 'Categories | Coupons, Promo Codes & Deals',
+    description:
+        'Browse shopping categories to discover verified coupons, promo codes, and money-saving deals on Coupello.',
+    alternates: {
+        canonical: '/categories',
+    },
+    openGraph: {
+        title: 'Categories | Coupons, Promo Codes & Deals',
+        description:
+            'Browse shopping categories to discover verified coupons, promo codes, and money-saving deals on Coupello.',
+        url: '/categories',
+        siteName: 'Coupello',
+        type: 'website',
+    },
+    robots: {
+        index: true,
+        follow: true,
+    },
+};
 
 export default function CategoriesPage() {
-    const [sort, setSort] = useState<string>(DEFAULT_SORT);
-    const [search, setSearch] = useState('');
-    const [debouncedSearch, setDebouncedSearch] = useState('');
-
-    useEffect(() => {
-        const timer = setTimeout(() => setDebouncedSearch(search), 300);
-        return () => clearTimeout(timer);
-    }, [search]);
-
-    // Sort and search are sent to the API; changing them triggers a new request.
-    const { data: apiData, isLoading } = useGetPublicCategories(
-        1,
-        20,
-        sort === 'All' ? undefined : sort.toLowerCase().replace(/\s+/g, '_'),
-        debouncedSearch || undefined,
-    );
-    const categories = useMemo(() => apiData?.data?.data ?? [], [apiData]);
-
-    return (
-        <PublicPageShell>
-            <section className="container-page py-15">
-                <div className="rounded-xl border border-border bg-card p-4 md:p-5">
-                    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                        <div className="relative w-full max-w-xl">
-                            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                            <input
-                                aria-label="Search categories"
-                                placeholder="Search categories..."
-                                value={search}
-                                onChange={e => setSearch(e.target.value)}
-                                className="h-11 w-full rounded-md border border-border bg-background pl-10 pr-3 text-[14px] text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary"
-                            />
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                            {sortFilters.map(f => (
-                                <FilterPill key={f} active={sort === f} onClick={() => setSort(f)}>
-                                    {f}
-                                </FilterPill>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-
-                <div className="mt-10">
-                    {isLoading ? (
-                        <ul className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-8">
-                            {Array.from({ length: 8 }).map((_, i) => (
-                                <li key={i}>
-                                    <div className="flex h-full animate-pulse flex-col items-center justify-center gap-3 rounded-2xl border border-border bg-card px-3 py-6 text-center">
-                                        <span className="h-12 w-12 rounded-2xl bg-muted" />
-                                        <div className="space-y-1.5">
-                                            <div className="h-3 w-20 rounded bg-muted" />
-                                            <div className="h-2.5 w-14 rounded bg-muted" />
-                                        </div>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <ul className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-8">
-                            {categories.map(category => (
-                                <li key={category.id}>
-                                    <Link
-                                        href={`${PATHS.categoryDetails.replace(
-                                            ':slug',
-                                            category.slug,
-                                        )}?category_id=${category.id}`}
-                                        className="group flex h-full flex-col items-center justify-center gap-3 rounded-2xl border border-border bg-card px-3 py-6 text-center transition-all duration-200 hover:-translate-y-1.5 hover:border-primary/50"
-                                    >
-                                        {category.image ? (
-                                            // eslint-disable-next-line @next/next/no-img-element
-                                            <img
-                                                src={category.image}
-                                                alt={category.name}
-                                                className="h-12 w-12 rounded-2xl object-contain p-1 transition-transform duration-200 group-hover:scale-110"
-                                            />
-                                        ) : (
-                                            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary-light text-primary transition-transform duration-200 group-hover:scale-110">
-                                                <LayoutGrid className="h-6 w-6" strokeWidth={2.2} />
-                                            </span>
-                                        )}
-                                        <div>
-                                            <h3 className="font-display text-[13.5px] font-bold text-foreground group-hover:text-primary transition-colors">
-                                                {category.name}
-                                            </h3>
-                                            <p className="mt-0.5 text-[11.5px] font-medium text-muted-foreground line-clamp-1">
-                                                {category.short_description || 'Explore offers'}
-                                            </p>
-                                        </div>
-                                    </Link>
-                                </li>
-                            ))}
-                            {categories.length === 0 && (
-                                <li className="col-span-full p-8 text-center text-sm text-muted-foreground">
-                                    No categories found.
-                                </li>
-                            )}
-                        </ul>
-                    )}
-                </div>
-            </section>
-        </PublicPageShell>
-    );
+    return <CategoriesPageClient />;
 }
