@@ -12,7 +12,7 @@ export function generateStaticParams() {
 export const metadata: Metadata = {
     title: {
         template: '%s | Coupello',
-        default: 'Coupello — Verified Promo Codes, Coupons & Deals',
+        default: 'Coupello - Verified Promo Codes, Coupons & Deals',
     },
     description:
         'Find the latest verified coupon codes, discounts, and daily deals for your favorite online stores.',

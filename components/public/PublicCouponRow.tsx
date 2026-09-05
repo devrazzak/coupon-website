@@ -40,7 +40,7 @@ export function PublicCouponRow({
                 <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2 mb-1.5">
                         <span className="text-[12px] font-semibold text-muted-foreground">
-                            {coupon.store?.name || 'N/A'}
+                            {coupon.store?.name || ''}
                         </span>
                         {coupon.category?.name && (
                             <>
@@ -55,9 +55,11 @@ export function PublicCouponRow({
                     <h3 className="font-display text-[16.5px] font-bold leading-snug text-foreground md:text-[18px] group-hover:text-primary transition-colors">
                         {coupon.title}
                     </h3>
-                    <p className="mt-1 text-[13px] text-muted-foreground line-clamp-1">
-                        {coupon.short_description || 'N/A'}
-                    </p>
+                    {coupon.short_description && (
+                        <p className="mt-1 text-[13px] text-muted-foreground line-clamp-1">
+                            {coupon.short_description || ''}
+                        </p>
+                    )}
 
                     <div className="mt-3 flex flex-wrap items-center gap-x-3.5 gap-y-1 text-[12px] text-muted-foreground">
                         <span className="inline-flex items-center gap-1 font-semibold text-emerald-600">

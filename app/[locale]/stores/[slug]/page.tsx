@@ -32,7 +32,7 @@ export async function generateMetadata({
         title: `${store.name} Coupons & Deals | Coupello`,
         description: `Browse the latest verified coupons and deals for ${store.name}.`,
         alternates: {
-            canonical: `/shops/${slug}`,
+            canonical: `/stores/${slug}`,
         },
     };
 }

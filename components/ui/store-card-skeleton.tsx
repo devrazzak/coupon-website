@@ -7,7 +7,7 @@ interface StoreCardSkeletonProps {
 export function StoreCardSkeleton({ count = 8, horizontal = false }: StoreCardSkeletonProps) {
     const containerClass = horizontal
         ? 'flex gap-3 overflow-x-auto pb-3 pt-1'
-        : 'grid grid-cols-6 gap-4';
+        : 'grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6';
 
     return (
         <div className={containerClass} aria-hidden="true">
