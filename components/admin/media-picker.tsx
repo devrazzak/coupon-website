@@ -23,7 +23,14 @@ export function MediaPicker({
     helpText?: string;
 }) {
     const [pickerOpen, setPickerOpen] = useState(false);
-    const selectedMedia = allMedia.find(m => m.url === value);
+    // Only treat as a real selection when `value` is non-empty AND a media item
+    // actually resolves to that URL. This prevents a media record with a blank
+    // `url` from matching when `value` is momentarily empty and rendering an
+    // `<img src="">` (which makes the browser re-request the page).
+    const valueUrl = String(value ?? '').trim();
+    const selectedMedia = valueUrl
+        ? allMedia.find(m => m.url && m.url.trim() === valueUrl)
+        : undefined;
 
     return (
         <>
@@ -33,11 +40,9 @@ export function MediaPicker({
                 {selectedMedia ? (
                     <div className="relative w-full">
                         <div className="group relative overflow-hidden rounded-xl border border-border bg-surface">
-                            {' '}
-                            {}{' '}
                             <img
                                 src={selectedMedia.url}
-                                alt={selectedMedia.altText}
+                                alt={selectedMedia.altText || selectedMedia.fileName}
                                 className="h-32 w-full object-cover"
                             />
                             <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">

@@ -12,7 +12,7 @@ function slugify(value: string) {
             .toLowerCase()
             .trim()
             .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-+|-+$/g, '') || 'category'
+            .replace(/^-+|-+$/g, '') || ''
     );
 }
 
@@ -44,9 +44,20 @@ export function CreateCategoryModal({
 }: CreateCategoryModalProps) {
     const [form, setForm] = useState<CategoryRecord>(emptyCategory);
     const [error, setError] = useState('');
+    const [slugTouched, setSlugTouched] = useState(false);
 
     const updateField = <K extends keyof CategoryRecord>(key: K, value: CategoryRecord[K]) => {
         setForm(current => ({ ...current, [key]: value }));
+    };
+
+    const handleNameChange = (value: string) => {
+        setForm(current => ({
+            ...current,
+            name: value,
+            // Auto-generate the slug from the name while typing, unless the user
+            // has manually edited the slug field.
+            ...(!slugTouched ? { slug: slugify(value) } : {}),
+        }));
     };
 
     const handleSubmit = () => {
@@ -97,13 +108,7 @@ export function CreateCategoryModal({
                         <span className="mb-2 block">Category Name</span>
                         <input
                             value={form.name}
-                            onChange={event =>
-                                setForm(current => ({
-                                    ...current,
-                                    name: event.target.value,
-                                    slug: current.slug || slugify(event.target.value),
-                                }))
-                            }
+                            onChange={event => handleNameChange(event.target.value)}
                             className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
                     </label>
@@ -111,7 +116,10 @@ export function CreateCategoryModal({
                         <span className="mb-2 block">Slug</span>
                         <input
                             value={form.slug}
-                            onChange={event => updateField('slug', event.target.value)}
+                            onChange={event => {
+                                setSlugTouched(true);
+                                updateField('slug', event.target.value);
+                            }}
                             className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
                     </label>

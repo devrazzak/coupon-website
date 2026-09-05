@@ -149,7 +149,7 @@ function slugify(value: string) {
             .toLowerCase()
             .trim()
             .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-+|-+$/g, '') || 'blog-post'
+            .replace(/^-+|-+$/g, '') || ''
     );
 }
 
@@ -270,9 +270,21 @@ function BlogModal({
             : getDefaultBlogForm(),
     );
     const [error, setError] = useState('');
+    const [slugTouched, setSlugTouched] = useState(false);
 
     const updateField = <K extends keyof BlogFormState>(key: K, value: BlogFormState[K]) => {
         setForm(current => ({ ...current, [key]: value }));
+    };
+
+    const handleTitleChange = (value: string) => {
+        setForm(current => ({
+            ...current,
+            title: value,
+            // Auto-generate the slug from the title while typing, unless the
+            // user has manually edited the slug field.
+            ...(!slugTouched ? { slug: slugify(value) } : {}),
+            metaTitle: current.metaTitle || value,
+        }));
     };
 
     const handleSubmit = () => {
@@ -322,15 +334,7 @@ function BlogModal({
                         <span className="mb-2 block">Post Title</span>
                         <input
                             value={form.title}
-                            onChange={event => {
-                                const title = event.target.value;
-                                setForm(current => ({
-                                    ...current,
-                                    title,
-                                    slug: current.slug || slugify(title),
-                                    metaTitle: current.metaTitle || title,
-                                }));
-                            }}
+                            onChange={event => handleTitleChange(event.target.value)}
                             placeholder="e.g. Top deal strategies"
                             className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
@@ -340,7 +344,10 @@ function BlogModal({
                         <span className="mb-2 block">Slug</span>
                         <input
                             value={form.slug}
-                            onChange={event => updateField('slug', event.target.value)}
+                            onChange={event => {
+                                setSlugTouched(true);
+                                updateField('slug', event.target.value);
+                            }}
                             placeholder="e.g. top-deal-strategies"
                             className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         />
@@ -541,7 +548,14 @@ export default function BlogAdminPage() {
     const blogsResponse = useMemo(() => getBlogsResponse(apiData), [apiData]);
     const categories = useMemo(() => getCategoriesList(blogCategoriesData), [blogCategoriesData]);
     const mediaItems = useMemo(() => getMediaItems(mediaApiData), [mediaApiData]);
-    const allMedia = useMemo(() => [...uploadedMedia, ...mediaItems], [uploadedMedia, mediaItems]);
+    const allMedia = useMemo(() => {
+        const seen = new Set<string>();
+        return [...uploadedMedia, ...mediaItems].filter(item => {
+            if (seen.has(item.id)) return false;
+            seen.add(item.id);
+            return true;
+        });
+    }, [uploadedMedia, mediaItems]);
 
     const posts = useMemo(() => {
         const items: BlogUiRecord[] =

@@ -12,7 +12,7 @@ import { DEFAULT_LANGUAGE, api_base_url, social_api_base_url } from '@/utils/con
 export type RequestProps = {
     serverUrl: string;
     requestHeader: {
-        'Content-Type': string;
+        'Content-Type'?: string;
         'Accept-Language': string;
         Authorization: string;
     };
@@ -37,22 +37,27 @@ function getIRequestProp(
         } catch {}
     }
 
-    // Determine content type based on whether it's a social request or a multipart form request
-    let content_type;
+    const requestHeader: RequestProps['requestHeader'] = {
+        // Don't set a Content-Type for multipart/form-data. If we force
+        // `multipart/form-data` here, the browser/axios won't append the
+        // required `boundary=...`, so the server can't parse the body and the
+        // upload fails. Leaving it unset lets the browser generate the full
+        // `multipart/form-data; boundary=...` header automatically.
+        'Accept-Language': DEFAULT_LANGUAGE,
+        Authorization: idToken ? `Bearer ${idToken}` : '',
+    };
+
+    // Only set an explicit content type for JSON (and url-encoded social) payloads.
     if (isSocial) {
-        content_type = 'application-management/x-www-form-urlencoded';
-    } else {
-        content_type = isMultipart ? 'multipart/form-data' : 'application/json';
-    } // Default content type for JSON
+        requestHeader['Content-Type'] = 'application/x-www-form-urlencoded';
+    } else if (!isMultipart) {
+        requestHeader['Content-Type'] = 'application/json';
+    }
 
     // Return the constructed server URL and request headers
     return {
         serverUrl: serverUrl,
-        requestHeader: {
-            'Content-Type': content_type, // Content type header
-            'Accept-Language': DEFAULT_LANGUAGE, // Language preference for the request
-            Authorization: idToken ? `Bearer ${idToken}` : '', // Authorization header with a Bearer token
-        },
+        requestHeader,
     };
 }
 

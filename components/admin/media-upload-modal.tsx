@@ -105,9 +105,16 @@ export function MediaUploadModal({
                 setProgress(Math.round(((i + 1) / files.length) * 100));
 
                 const response = await mutateAsync({ file, altText: altText || undefined });
-                const uploadedItem = ((response as { data?: unknown })?.data ??
-                    response ??
-                    {}) as Record<string, any>;
+
+                // Unwrap the upload response. The API wraps created resources in an
+                // envelope `{ success, message, data: mediaObject }`, and every other
+                // consumer in this codebase reads fields from `response.data.data`.
+                const responseBody = ((response as { data?: unknown })?.data ?? response) as Record<
+                    string,
+                    any
+                >;
+                const uploadedItem =
+                    (responseBody?.data as Record<string, any> | undefined) ?? responseBody;
 
                 const resolvedUrl = normalizeMediaUrl(
                     uploadedItem?.file_path ?? uploadedItem?.url ?? '',
@@ -128,6 +135,10 @@ export function MediaUploadModal({
                     usedBy: Array.isArray(uploadedItem?.used_by) ? uploadedItem.used_by : [],
                 };
 
+                // Never surface an empty-url record in the library/picker; it renders as a
+                // phantom "no image" tile and can trigger `src=""` warnings.
+                if (!newMedia.url.trim()) continue;
+
                 uploadedMedia.push(newMedia);
             }
 
@@ -140,12 +151,20 @@ export function MediaUploadModal({
         } catch (uploadError) {
             setUploading(false);
             setProgress(0);
-            const message =
-                uploadError && typeof uploadError === 'object' && 'response' in uploadError
-                    ? (uploadError as { response?: { data?: { message?: string } } }).response?.data
-                          ?.message || 'Upload failed.'
-                    : 'Upload failed.';
-            setError(String(message));
+            const err = uploadError as {
+                response?: { status?: number; data?: { message?: string; error?: string } };
+                message?: string;
+            };
+            const serverMessage =
+                err?.response?.data?.message || err?.response?.data?.error || err?.message || '';
+            const status = err?.response?.status;
+            setError(
+                serverMessage
+                    ? serverMessage
+                    : status
+                      ? `Upload failed (${status}).`
+                      : 'Upload failed.',
+            );
         }
     };
 
