@@ -4,8 +4,12 @@ import { Edit3, Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import {
+    AdminModalShell,
     AdminPageHeader,
     ConfirmDeleteModal,
+    FIELD_CONTROL_CLS,
+    FIELD_TEXTAREA_CLS,
+    FieldLabel,
     FilterSelect,
     SearchInput,
     StatusBadge,
@@ -334,289 +338,281 @@ function CouponModal({
     }, [categories, initialData]);
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4">
-            <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-3xl border border-border bg-card p-5 shadow-lift md:p-6">
-                <div className="mb-5 flex items-center justify-between gap-3">
-                    <div>
-                        <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-primary">
-                            Coupon
-                        </p>
-                        <h3 className="mt-1 font-display text-[26px] font-extrabold text-foreground">
-                            {initialData ? 'Edit Coupon' : 'Create Coupon'}
-                        </h3>
-                    </div>
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="rounded-full border border-border p-2 text-muted-foreground hover:bg-muted"
-                    >
-                        ×
-                    </button>
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-3">
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-2">
-                        <span className="mb-2 block">Coupon Title</span>
-                        <input
-                            value={form.title}
-                            onChange={event => handleTitleChange(event.target.value)}
-                            placeholder="e.g. 20% off Summer sale"
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Slug</span>
-                        <input
-                            value={form.slug}
-                            onChange={event => {
-                                setSlugTouched(true);
-                                updateField('slug', event.target.value);
-                            }}
-                            placeholder="e.g. 20-off-summer-sale"
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Store</span>
-                        <select
-                            value={
-                                form.storeId === '' || form.storeId == null
-                                    ? ''
-                                    : String(form.storeId)
-                            }
-                            onChange={event =>
-                                updateField(
-                                    'storeId',
-                                    event.target.value ? Number(event.target.value) : '',
-                                )
-                            }
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        >
-                            <option value="">Select a store</option>
-                            {storeOptions.map(store => (
-                                <option key={store.id} value={String(store.id)}>
-                                    {store.name} (ID: {store.id})
-                                </option>
-                            ))}
-                        </select>
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Category (Optional)</span>
-                        <select
-                            value={
-                                form.categoryId === '' || form.categoryId == null
-                                    ? ''
-                                    : String(form.categoryId)
-                            }
-                            onChange={event =>
-                                updateField(
-                                    'categoryId',
-                                    event.target.value ? Number(event.target.value) : '',
-                                )
-                            }
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        >
-                            <option value="">Select a category</option>
-                            {categoryOptions.map(category => (
-                                <option key={category.id} value={String(category.id)}>
-                                    {category.name} (ID: {category.id})
-                                </option>
-                            ))}
-                        </select>
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Coupon Type</span>
-                        <select
-                            value={form.couponType}
-                            onChange={event => updateField('couponType', event.target.value)}
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        >
-                            <option value="coupon">Coupon (Promo Code)</option>
-                            <option value="deal">Deal (No Code)</option>
-                        </select>
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Coupon Code</span>
-                        <input
-                            value={form.code}
-                            onChange={event => updateField('code', event.target.value)}
-                            placeholder="e.g. SAVE20"
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 font-mono uppercase"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Discount Type</span>
-                        <select
-                            value={form.discountType}
-                            onChange={event => updateField('discountType', event.target.value)}
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        >
-                            <option value="percentage">Percentage (%)</option>
-                            <option value="fixed">Fixed Amount</option>
-                            <option value="cashback">Cashback</option>
-                        </select>
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Discount Value</span>
-                        <input
-                            type="number"
-                            value={form.discountValue}
-                            onChange={event =>
-                                updateField('discountValue', Number(event.target.value) || 0)
-                            }
-                            placeholder="e.g. 20"
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Currency</span>
-                        <input
-                            value={form.currency}
-                            onChange={event => updateField('currency', event.target.value)}
-                            placeholder="e.g. BDT"
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Minimum Order Amount</span>
-                        <input
-                            type="number"
-                            value={form.minimumOrderAmount}
-                            onChange={event =>
-                                updateField('minimumOrderAmount', Number(event.target.value) || 0)
-                            }
-                            placeholder="e.g. 1000"
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Status</span>
-                        <select
-                            value={form.status}
-                            onChange={event => updateField('status', event.target.value)}
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        >
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                            <option value="expired">Expired</option>
-                            <option value="draft">Draft</option>
-                        </select>
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-3">
-                        <span className="mb-2 block">Affiliate URL</span>
-                        <input
-                            value={form.affiliateUrl}
-                            onChange={event => updateField('affiliateUrl', event.target.value)}
-                            placeholder="https://..."
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-3">
-                        <span className="mb-2 block">Short Description</span>
-                        <textarea
-                            value={form.shortDescription}
-                            onChange={event => updateField('shortDescription', event.target.value)}
-                            placeholder="e.g. Get extra savings"
-                            className="min-h-[70px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-3">
-                        <span className="mb-2 block">Terms & Conditions</span>
-                        <textarea
-                            value={form.termsConditions}
-                            onChange={event => updateField('termsConditions', event.target.value)}
-                            placeholder="e.g. Valid on selected products"
-                            className="min-h-[70px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Start Date</span>
-                        <input
-                            type="date"
-                            value={form.startAt}
-                            onChange={event => updateField('startAt', event.target.value)}
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
-                        <span className="mb-2 block">Expiration Date</span>
-                        <input
-                            type="date"
-                            value={form.expiresAt}
-                            onChange={event => updateField('expiresAt', event.target.value)}
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <div className="flex items-center gap-6 pt-6 md:col-span-1">
-                        <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground cursor-pointer">
-                            <input
-                                type="checkbox"
-                                checked={form.isFeatured}
-                                onChange={event => updateField('isFeatured', event.target.checked)}
-                                className="h-4 w-4 rounded border-border text-primary"
-                            />
-                            Featured
-                        </label>
-                        <label className="flex items-center gap-2 text-[13px] font-semibold text-foreground cursor-pointer">
-                            <input
-                                type="checkbox"
-                                checked={form.isVerified}
-                                onChange={event => updateField('isVerified', event.target.checked)}
-                                className="h-4 w-4 rounded border-border text-primary"
-                            />
-                            Verified
-                        </label>
-                    </div>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-3">
-                        <span className="mb-2 block">SEO Title</span>
-                        <input
-                            value={form.seoTitle}
-                            onChange={event => updateField('seoTitle', event.target.value)}
-                            placeholder="e.g. 20% off Summer sale"
-                            className="h-11 w-full rounded-xl border border-border bg-background px-3 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-
-                    <label className="block text-[13px] font-semibold text-foreground md:col-span-3">
-                        <span className="mb-2 block">Meta Description</span>
-                        <textarea
-                            value={form.metaDescription}
-                            onChange={event => updateField('metaDescription', event.target.value)}
-                            placeholder="e.g. Summer offer"
-                            className="min-h-[70px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                        />
-                    </label>
-                </div>
-
-                {error && <p className="mt-4 text-[13px] font-medium text-rose-600">{error}</p>}
-
-                <div className="mt-6 flex justify-end gap-3">
+        <AdminModalShell
+            eyebrow="Coupon"
+            title={initialData ? 'Edit Coupon' : 'Create Coupon'}
+            subtitle={
+                initialData
+                    ? 'Update the details for this coupon or deal.'
+                    : 'Add a new coupon or deal to your catalog.'
+            }
+            onClose={onClose}
+            actions={
+                <>
                     <Button type="button" variant="outline" onClick={onClose}>
                         Cancel
                     </Button>
                     <Button type="button" onClick={handleSubmit}>
                         {initialData ? 'Save Changes' : 'Create Coupon'}
                     </Button>
+                </>
+            }
+        >
+            {error && (
+                <div className="mb-5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-[13px] font-medium text-rose-700">
+                    {error}
+                </div>
+            )}
+
+            <div className="grid gap-5 md:grid-cols-3">
+                <div className="md:col-span-2">
+                    <FieldLabel required>Coupon Title</FieldLabel>
+                    <input
+                        value={form.title}
+                        onChange={event => handleTitleChange(event.target.value)}
+                        placeholder="e.g. 20% off Summer sale"
+                        className={`${FIELD_CONTROL_CLS} mt-2`}
+                    />
+                </div>
+
+                <div className="md:col-span-1">
+                    <FieldLabel>Slug</FieldLabel>
+                    <input
+                        value={form.slug}
+                        onChange={event => {
+                            setSlugTouched(true);
+                            updateField('slug', event.target.value);
+                        }}
+                        placeholder="e.g. 20-off-summer-sale"
+                        className={`${FIELD_CONTROL_CLS} mt-2`}
+                    />
+                </div>
+
+                <div className="md:col-span-1">
+                    <FieldLabel required>Store</FieldLabel>
+                    <select
+                        value={
+                            form.storeId === '' || form.storeId == null ? '' : String(form.storeId)
+                        }
+                        onChange={event =>
+                            updateField(
+                                'storeId',
+                                event.target.value ? Number(event.target.value) : '',
+                            )
+                        }
+                        className={`${FIELD_CONTROL_CLS} mt-2`}
+                    >
+                        <option value="">Select a store</option>
+                        {storeOptions.map(store => (
+                            <option key={store.id} value={String(store.id)}>
+                                {store.name} (ID: {store.id})
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="md:col-span-1">
+                    <FieldLabel>Category</FieldLabel>
+                    <select
+                        value={
+                            form.categoryId === '' || form.categoryId == null
+                                ? ''
+                                : String(form.categoryId)
+                        }
+                        onChange={event =>
+                            updateField(
+                                'categoryId',
+                                event.target.value ? Number(event.target.value) : '',
+                            )
+                        }
+                        className={`${FIELD_CONTROL_CLS} mt-2`}
+                    >
+                        <option value="">Select a category</option>
+                        {categoryOptions.map(category => (
+                            <option key={category.id} value={String(category.id)}>
+                                {category.name} (ID: {category.id})
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="md:col-span-1">
+                    <FieldLabel required>Coupon Type</FieldLabel>
+                    <select
+                        value={form.couponType}
+                        onChange={event => updateField('couponType', event.target.value)}
+                        className={`${FIELD_CONTROL_CLS} mt-2`}
+                    >
+                        <option value="coupon">Coupon (Promo Code)</option>
+                        <option value="deal">Deal (No Code)</option>
+                    </select>
+                </div>
+
+                <div className="md:col-span-1">
+                    <FieldLabel>Coupon Code</FieldLabel>
+                    <input
+                        value={form.code}
+                        onChange={event => updateField('code', event.target.value)}
+                        placeholder="e.g. SAVE20"
+                        className={`${FIELD_CONTROL_CLS} mt-2 font-mono uppercase`}
+                    />
+                </div>
+
+                <div className="md:col-span-1">
+                    <FieldLabel>Discount Type</FieldLabel>
+                    <select
+                        value={form.discountType}
+                        onChange={event => updateField('discountType', event.target.value)}
+                        className={`${FIELD_CONTROL_CLS} mt-2`}
+                    >
+                        <option value="percentage">Percentage (%)</option>
+                        <option value="fixed">Fixed Amount</option>
+                        <option value="cashback">Cashback</option>
+                    </select>
+                </div>
+
+                <div className="md:col-span-1">
+                    <FieldLabel required>Discount Value</FieldLabel>
+                    <input
+                        type="number"
+                        value={form.discountValue}
+                        onChange={event =>
+                            updateField('discountValue', Number(event.target.value) || 0)
+                        }
+                        placeholder="e.g. 20"
+                        className={`${FIELD_CONTROL_CLS} mt-2`}
+                    />
+                </div>
+
+                <div className="md:col-span-1">
+                    <FieldLabel>Currency</FieldLabel>
+                    <input
+                        value={form.currency}
+                        onChange={event => updateField('currency', event.target.value)}
+                        placeholder="e.g. BDT"
+                        className={`${FIELD_CONTROL_CLS} mt-2`}
+                    />
+                </div>
+
+                <div className="md:col-span-1">
+                    <FieldLabel>Minimum Order Amount</FieldLabel>
+                    <input
+                        type="number"
+                        value={form.minimumOrderAmount}
+                        onChange={event =>
+                            updateField('minimumOrderAmount', Number(event.target.value) || 0)
+                        }
+                        placeholder="e.g. 1000"
+                        className={`${FIELD_CONTROL_CLS} mt-2`}
+                    />
+                </div>
+
+                <div className="md:col-span-1">
+                    <FieldLabel>Status</FieldLabel>
+                    <select
+                        value={form.status}
+                        onChange={event => updateField('status', event.target.value)}
+                        className={`${FIELD_CONTROL_CLS} mt-2`}
+                    >
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="expired">Expired</option>
+                        <option value="draft">Draft</option>
+                    </select>
+                </div>
+
+                <div className="md:col-span-3">
+                    <FieldLabel>Affiliate URL</FieldLabel>
+                    <input
+                        value={form.affiliateUrl}
+                        onChange={event => updateField('affiliateUrl', event.target.value)}
+                        placeholder="https://..."
+                        className={`${FIELD_CONTROL_CLS} mt-2`}
+                    />
+                </div>
+
+                <div className="md:col-span-3">
+                    <FieldLabel>Short Description</FieldLabel>
+                    <textarea
+                        value={form.shortDescription}
+                        onChange={event => updateField('shortDescription', event.target.value)}
+                        placeholder="e.g. Get extra savings"
+                        className={`${FIELD_TEXTAREA_CLS} mt-2 resize-none`}
+                    />
+                </div>
+
+                <div className="md:col-span-3">
+                    <FieldLabel>Terms & Conditions</FieldLabel>
+                    <textarea
+                        value={form.termsConditions}
+                        onChange={event => updateField('termsConditions', event.target.value)}
+                        placeholder="e.g. Valid on selected products"
+                        className={`${FIELD_TEXTAREA_CLS} mt-2 resize-none`}
+                    />
+                </div>
+
+                <div className="md:col-span-1">
+                    <FieldLabel>Start Date</FieldLabel>
+                    <input
+                        type="date"
+                        value={form.startAt}
+                        onChange={event => updateField('startAt', event.target.value)}
+                        className={`${FIELD_CONTROL_CLS} mt-2`}
+                    />
+                </div>
+
+                <div className="md:col-span-1">
+                    <FieldLabel>Expiration Date</FieldLabel>
+                    <input
+                        type="date"
+                        value={form.expiresAt}
+                        onChange={event => updateField('expiresAt', event.target.value)}
+                        className={`${FIELD_CONTROL_CLS} mt-2`}
+                    />
+                </div>
+
+                <div className="flex items-end gap-4 md:col-span-1">
+                    <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-border bg-surface/60 px-3 py-2.5 text-[13px] font-semibold text-foreground">
+                        <input
+                            type="checkbox"
+                            checked={form.isFeatured}
+                            onChange={event => updateField('isFeatured', event.target.checked)}
+                            className="h-4 w-4 rounded border-border text-primary focus:ring-primary/20"
+                        />
+                        Featured
+                    </label>
+                    <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-border bg-surface/60 px-3 py-2.5 text-[13px] font-semibold text-foreground">
+                        <input
+                            type="checkbox"
+                            checked={form.isVerified}
+                            onChange={event => updateField('isVerified', event.target.checked)}
+                            className="h-4 w-4 rounded border-border text-primary focus:ring-primary/20"
+                        />
+                        Verified
+                    </label>
+                </div>
+
+                <div className="md:col-span-3">
+                    <FieldLabel>SEO Title</FieldLabel>
+                    <input
+                        value={form.seoTitle}
+                        onChange={event => updateField('seoTitle', event.target.value)}
+                        placeholder="e.g. 20% off Summer sale"
+                        className={`${FIELD_CONTROL_CLS} mt-2`}
+                    />
+                </div>
+
+                <div className="md:col-span-3">
+                    <FieldLabel>Meta Description</FieldLabel>
+                    <textarea
+                        value={form.metaDescription}
+                        onChange={event => updateField('metaDescription', event.target.value)}
+                        placeholder="e.g. Summer offer"
+                        className={`${FIELD_TEXTAREA_CLS} mt-2 resize-none`}
+                    />
                 </div>
             </div>
-        </div>
+        </AdminModalShell>
     );
 }
 
