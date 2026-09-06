@@ -8,7 +8,9 @@ import { PublicCouponRow } from '@/components/public/PublicCouponRow';
 import { Breadcrumbs, PublicPageShell } from '@/components/public/page-layout';
 import { CouponCardSkeleton } from '@/components/ui/coupon-card-skeleton';
 import type { PublicCoupon } from '@/utils/api/coupon';
-import { useGetPublicCoupons } from '@/utils/hooks/coupon';
+import { useInfinitePublicCoupons } from '@/utils/hooks/coupon';
+
+const PAGE_LIMIT = 1;
 
 export function CategoryDetailClient({
     categoryId,
@@ -32,13 +34,13 @@ export function CategoryDetailClient({
         return () => clearTimeout(timer);
     }, [search]);
 
-    const { data: apiData, isLoading } = useGetPublicCoupons({
-        search: debouncedSearch || undefined,
-        categoryIds: categoryId ? [categoryId] : undefined,
-        page: 1,
-        limit: 50,
-    });
-    const coupons = useMemo(() => apiData?.data?.data ?? [], [apiData]);
+    const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
+        useInfinitePublicCoupons({
+            search: debouncedSearch || undefined,
+            categoryIds: categoryId ? [categoryId] : undefined,
+            limit: PAGE_LIMIT,
+        });
+    const coupons = useMemo(() => data?.pages.flatMap(page => page.data.data) ?? [], [data]);
 
     return (
         <PublicPageShell>
@@ -92,6 +94,18 @@ export function CategoryDetailClient({
                                     </li>
                                 )}
                             </ul>
+                        )}
+                        {hasNextPage && (
+                            <div className="mt-8 flex justify-center">
+                                <button
+                                    type="button"
+                                    onClick={() => fetchNextPage()}
+                                    disabled={isFetchingNextPage}
+                                    className="rounded-xl border border-primary bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+                                >
+                                    {isFetchingNextPage ? 'Loading...' : 'Load More Coupons'}
+                                </button>
+                            </div>
                         )}
                     </div>
 

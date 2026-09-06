@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
     createCategory,
@@ -79,5 +79,18 @@ export function useDeleteCategory() {
             queryClient.invalidateQueries({ queryKey: ['GetCategory'] });
             queryClient.invalidateQueries({ queryKey: ['GetPublicCategories'] });
         },
+    });
+}
+
+export function useInfinitePublicCategories(limit = 24, search?: string, sort?: string) {
+    return useInfiniteQuery({
+        queryKey: ['GetInfinitePublicCategories', limit, search, sort],
+        initialPageParam: 1,
+        queryFn: ({ pageParam }) => getPublicCategories(pageParam, limit, sort, search),
+        getNextPageParam: lastPage => {
+            const { currentPage, totalCount } = lastPage.data.meta;
+            return currentPage * limit < totalCount ? currentPage + 1 : undefined;
+        },
+        retry: false,
     });
 }

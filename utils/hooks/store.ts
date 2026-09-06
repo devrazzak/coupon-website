@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
     type PublicStoresQuery,
@@ -15,6 +15,19 @@ export function useGetPublicStores(query: PublicStoresQuery = {}) {
     return useQuery({
         queryKey: ['GetPublicStores', query],
         queryFn: () => getPublicStores(query),
+        retry: false,
+    });
+}
+
+export function useInfinitePublicStores(query: PublicStoresQuery = {}) {
+    return useInfiniteQuery({
+        queryKey: ['GetInfinitePublicStores', query],
+        initialPageParam: 1,
+        queryFn: ({ pageParam }) => getPublicStores({ ...query, page: pageParam }),
+        getNextPageParam: lastPage => {
+            const { currentPage, totalCount } = lastPage.data.meta;
+            return currentPage * (query.limit || 20) < totalCount ? currentPage + 1 : undefined;
+        },
         retry: false,
     });
 }

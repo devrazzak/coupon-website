@@ -10,7 +10,9 @@ import { PublicCouponRow } from '@/components/public/PublicCouponRow';
 import { CouponCardSkeleton } from '@/components/ui/coupon-card-skeleton';
 import type { PublicCoupon } from '@/utils/api/coupon';
 import type { PublicStoreCategory } from '@/utils/api/store';
-import { useGetPublicCoupons } from '@/utils/hooks/coupon';
+import { useInfinitePublicCoupons } from '@/utils/hooks/coupon';
+
+const PAGE_LIMIT = 50;
 
 export function StoreDetailClient({
     storeId,
@@ -36,13 +38,13 @@ export function StoreDetailClient({
         return () => clearTimeout(timer);
     }, [search]);
 
-    const { data: apiData, isLoading } = useGetPublicCoupons({
-        search: debouncedSearch || undefined,
-        storeId,
-        page: 1,
-        limit: 50,
-    });
-    const coupons = useMemo(() => apiData?.data?.data ?? [], [apiData]);
+    const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
+        useInfinitePublicCoupons({
+            search: debouncedSearch || undefined,
+            storeId,
+            limit: PAGE_LIMIT,
+        });
+    const coupons = useMemo(() => data?.pages.flatMap(page => page.data.data) ?? [], [data]);
 
     return (
         <>
@@ -114,6 +116,18 @@ export function StoreDetailClient({
                                     </li>
                                 )}
                             </ul>
+                        )}
+                        {hasNextPage && (
+                            <div className="mt-8 flex justify-center">
+                                <button
+                                    type="button"
+                                    onClick={() => fetchNextPage()}
+                                    disabled={isFetchingNextPage}
+                                    className="rounded-xl border border-primary bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+                                >
+                                    {isFetchingNextPage ? 'Loading...' : 'Load More Coupons'}
+                                </button>
+                            </div>
                         )}
                     </div>
 

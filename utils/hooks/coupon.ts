@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
     type CouponCreatePayload,
@@ -16,6 +16,21 @@ export function useGetPublicCoupons(query: PublicCouponsQuery = {}) {
     return useQuery({
         queryKey: ['GetPublicCoupons', query],
         queryFn: () => getPublicCoupons(query),
+        retry: false,
+    });
+}
+
+export function useInfinitePublicCoupons(query: PublicCouponsQuery = {}) {
+    const limit = query.limit ?? 20;
+
+    return useInfiniteQuery({
+        queryKey: ['GetInfinitePublicCoupons', query],
+        initialPageParam: 1,
+        queryFn: ({ pageParam }) => getPublicCoupons({ ...query, page: pageParam, limit }),
+        getNextPageParam: lastPage => {
+            const { currentPage, totalCount } = lastPage.data.meta;
+            return currentPage * limit < totalCount ? currentPage + 1 : undefined;
+        },
         retry: false,
     });
 }

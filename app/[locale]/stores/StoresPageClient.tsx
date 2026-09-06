@@ -10,17 +10,17 @@ import {
     StoreCard,
 } from '@/components/public/page-layout';
 import { StoreCardSkeleton } from '@/components/ui/store-card-skeleton';
-import { useGetPublicStores } from '@/utils/hooks/store';
+import { useInfinitePublicStores } from '@/utils/hooks/store';
 
 const alphaFilters = ['All', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
-const sortFilters = ['All', 'Popular', 'Featured', 'Newest'] as const;
-type SortFilter = (typeof sortFilters)[number];
-const PAGE_LIMIT = 20;
+// const sortFilters = ['All', 'Popular', 'Featured', 'Newest'] as const;
+// type SortFilter = (typeof sortFilters)[number];
+const PAGE_LIMIT = 24;
 
 export default function StoresPageClient() {
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
-    const [sort, setSort] = useState<SortFilter>('All');
+    // const [sort, setSort] = useState<SortFilter>('All');
     const [letter, setLetter] = useState('All');
 
     useEffect(() => {
@@ -28,16 +28,16 @@ export default function StoresPageClient() {
         return () => clearTimeout(timer);
     }, [search]);
 
-    const { data: apiData, isLoading } = useGetPublicStores({
-        search: debouncedSearch || undefined,
-        page: 1,
-        limit: PAGE_LIMIT,
-        sort: sort === 'All' ? undefined : sort.toLowerCase(),
-        letter: letter === 'All' ? undefined : letter,
-    });
+    const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
+        useInfinitePublicStores({
+            search: debouncedSearch || undefined,
+            limit: PAGE_LIMIT,
+            // sort: sort === 'All' ? undefined : sort.toLowerCase(),
+            letter: letter === 'All' ? undefined : letter,
+        });
 
-    const stores = useMemo(() => apiData?.data?.data ?? [], [apiData]);
-    const totalCount = apiData?.data?.meta?.totalCount ?? 0;
+    const stores = useMemo(() => data?.pages.flatMap(page => page.data.data) ?? [], [data]);
+    const totalCount = data?.pages[0]?.data?.meta?.totalCount ?? 0;
 
     return (
         <PublicPageShell>
@@ -58,7 +58,7 @@ export default function StoresPageClient() {
                                 className="h-11 w-full rounded-md border border-border bg-background pl-10 pr-3 text-[14px] text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary"
                             />
                         </div>
-                        <div className="flex flex-wrap gap-2">
+                        {/* <div className="flex flex-wrap gap-2">
                             {sortFilters.map(filter => (
                                 <FilterPill
                                     key={filter}
@@ -68,7 +68,7 @@ export default function StoresPageClient() {
                                     {filter}
                                 </FilterPill>
                             ))}
-                        </div>
+                        </div> */}
                     </div>
                     <div className="mt-4 pb-1">
                         <div className="flex flex-wrap gap-1">
@@ -96,11 +96,25 @@ export default function StoresPageClient() {
                         <StoreCardSkeleton count={12} />
                     </div>
                 ) : stores.length > 0 ? (
-                    <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-                        {stores.map(store => (
-                            <StoreCard key={store.id} item={store} />
-                        ))}
-                    </div>
+                    <>
+                        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+                            {stores.map(store => (
+                                <StoreCard key={store.id} item={store} />
+                            ))}
+                        </div>
+                        {hasNextPage && (
+                            <div className="mt-8 flex justify-center">
+                                <button
+                                    type="button"
+                                    onClick={() => fetchNextPage()}
+                                    disabled={isFetchingNextPage}
+                                    className="rounded-xl border border-primary bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+                                >
+                                    {isFetchingNextPage ? 'Loading...' : 'Load More'}
+                                </button>
+                            </div>
+                        )}
+                    </>
                 ) : (
                     <div className="mt-4 rounded-xl border border-border bg-card p-10 text-center text-muted-foreground">
                         No stores found.
