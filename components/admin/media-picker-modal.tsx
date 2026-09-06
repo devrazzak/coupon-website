@@ -57,7 +57,7 @@ export function MediaPickerModal({
                             <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-primary">
                                 Media Library
                             </p>
-                            <h3 className="mt-1 font-display text-[22px] font-extrabold text-foreground">
+                            <h3 className="mt-1 font-display text-[22px] font-semibold text-foreground">
                                 Select Image
                             </h3>
                         </div>

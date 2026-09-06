@@ -36,7 +36,7 @@ export function HeroSection() {
                         </div>
 
                         {/* Main Heading */}
-                        <h1 className="mt-5 font-display text-[38px] font-extrabold leading-[1.08] tracking-tight text-foreground sm:text-[46px] md:text-[52px] lg:text-[56px]">
+                        <h1 className="mt-5 font-display text-[38px] font-bold leading-[1.08] tracking-tight text-foreground sm:text-[46px] md:text-[52px] lg:text-[56px]">
                             Never Pay Full Price. <br />
                             <span className="bg-linear-to-r from-primary via-[#FF4D50] to-secondary-brand bg-clip-text text-transparent">
                                 Verified Coupons &amp; Deals
@@ -46,7 +46,7 @@ export function HeroSection() {
                         {/* Subtitle */}
                         <p className="mt-5 max-w-xl text-[16px] leading-relaxed text-muted-foreground sm:text-[17px]">
                             Discover verified promo codes and discounts from top online stores.
-                            Browse the latest offers, copy your code, and redeem it at checkout —
+                            Browse the latest offers, copy your code, and redeem it at checkout -
                             100% free.
                         </p>
                     </div>
@@ -67,7 +67,7 @@ export function HeroSection() {
 
                             <div className="absolute -bottom-5 -right-6 max-w-[350px] flex items-center gap-2.5 rounded-2xl border border-border bg-card p-3 shadow-lift">
                                 <div>
-                                    <p className="text-[14px] font-extrabold text-foreground">
+                                    <p className="text-[14px] font-semibold text-foreground">
                                         How do we make money?
                                     </p>
                                     <p className="font-display text-[11px]  text-foreground">

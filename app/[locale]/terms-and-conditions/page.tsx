@@ -1,29 +1,51 @@
+import type { Metadata } from 'next';
+
 import { PageHeader, PublicPageShell } from '@/components/public/page-layout';
 import siteConfig from '@/utils/SiteConfig';
 
+export const metadata: Metadata = {
+    title: 'Terms & Conditions | Coupello',
+    description:
+        'Review the terms for using Coupello to browse coupons, store deals, categories, and shopping guides.',
+    alternates: {
+        canonical: '/terms-and-conditions',
+    },
+    openGraph: {
+        title: 'Terms & Conditions | Coupello',
+        description:
+            'Review the terms for using Coupello to browse coupons, store deals, categories, and shopping guides.',
+        url: '/terms-and-conditions',
+        siteName: 'Coupello',
+        type: 'website',
+    },
+    robots: {
+        index: true,
+        follow: true,
+    },
+};
+
 const sections = [
     {
-        title: 'Acceptance of terms',
+        title: 'Using Coupello',
         content: `By using ${siteConfig.company_name}, users agree to comply with these terms and conditions. We may update the terms over time to reflect product changes, legal requirements or improvements to services.`,
     },
     {
-        title: 'Coupon and deal information',
-        content: `${siteConfig.company_name} provides savings information for educational and discovery purposes. Offers may vary by merchant, product, region, eligibility or expiration date. Users should always check the retailer’s terms before purchase.`,
+        title: 'Coupons and store offers',
+        content: `${siteConfig.company_name} helps you discover coupons, promo codes, store deals, and shopping information. Offers can change or stop working without notice, and eligibility may depend on the store, product, location, account, or order value. Always check the merchant's terms and the final price before you buy.`,
     },
     {
-        title: 'No automatic application',
+        title: 'You redeem offers yourself',
         content:
-            'The platform does not auto-apply coupons, use browser automation or install extensions. Customers must redeem codes manually on the merchant website when checking out.',
+            'Coupello does not automatically apply coupon codes, use browser automation, or install extensions. When an offer takes you to a merchant, you choose whether to use it and enter any code yourself on the merchant website.',
     },
     {
-        title: 'User responsibility',
-        content:
-            'Users are responsible for confirming the validity and applicability of promotional offers, as well as for their own purchase decisions and account security.',
+        title: 'Your responsibility',
+        content: `Please use accurate information and confirm that an offer suits your order before purchasing. Your purchase is made with the merchant, so the merchant's pricing, shipping, returns, refunds, and customer service policies apply.`,
     },
     {
-        title: 'Service updates',
+        title: 'Content and service updates',
         content:
-            'We may revise, suspend or discontinue access to some features at any time without prior notice. We reserve the right to update the site and support the user experience as needed.',
+            'We work to keep listings and articles useful, but we cannot guarantee that every offer is available, accurate, or error-free at every moment. We may update, pause, or remove pages and features as the site develops. These terms may also change, and the latest version will be posted here.',
     },
 ];
 
@@ -37,7 +59,7 @@ export default function TermsPage() {
             />
 
             <section className="container-page py-8 md:py-10">
-                <div className="mx-auto max-w-4xl rounded-3xl border border-border bg-card p-6 shadow-soft md:p-8">
+                <div className="mx-auto max-w-4xl rounded-xl border border-border bg-card p-6 shadow-soft md:p-8">
                     <div className="space-y-6">
                         {sections.map(section => (
                             <section

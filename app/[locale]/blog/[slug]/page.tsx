@@ -160,7 +160,7 @@ export default async function BlogDetailPage({
                                     className="h-70 w-full object-cover md:h-105"
                                 />
                             ) : (
-                                <div className="flex h-70 w-full items-center justify-center bg-muted text-4xl font-extrabold text-muted-foreground md:h-105">
+                                <div className="flex h-70 w-full items-center justify-center bg-muted text-4xl font-semibold text-muted-foreground md:h-105">
                                     {blog.title.charAt(0).toUpperCase()}
                                 </div>
                             )}

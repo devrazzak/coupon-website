@@ -10,7 +10,7 @@ import Header from '@/components/layout/Header';
 import siteConfig from '@/utils/SiteConfig';
 
 export const metadata: Metadata = {
-    title: `${siteConfig.company_name} - Home | Coupons, Promo Codes & Deals`,
+    title: `${siteConfig.company_name} - Verified Promo Codes, Coupons & Deals`,
     description: `Discover working coupon codes, promo offers, and money-saving tips to help you pay less at your favorite online stores.`,
     keywords: [
         'coupons',
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
         'store vouchers',
     ],
     openGraph: {
-        title: `${siteConfig.company_name} - Home | Coupons, Promo Codes & Deals`,
+        title: `${siteConfig.company_name} - Verified Promo Codes, Coupons & Deals`,
         description: `Discover working coupon codes, promo offers, and money-saving tips to help you pay less at your favorite online stores.`,
         url: '/',
         siteName: siteConfig.company_name,
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: 'summary_large_image',
-        title: `${siteConfig.company_name} - Home | Coupons, Promo Codes & Deals`,
+        title: `${siteConfig.company_name} - Verified Promo Codes, Coupons & Deals`,
         description: `Discover working coupon codes, promo offers, and money-saving tips to help you pay less at your favorite online stores.`,
     },
     robots: {

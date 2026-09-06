@@ -9,45 +9,67 @@ import {
     ShoppingBag,
     Store,
 } from 'lucide-react';
+import type { Metadata } from 'next';
 
 import { PageHeader, PublicPageShell } from '@/components/public/page-layout';
 import siteConfig from '@/utils/SiteConfig';
 
+export const metadata: Metadata = {
+    title: 'How Coupello Works | Find and Use Coupons',
+    description:
+        'See how Coupello helps you find store deals, compare coupon offers, copy a code, and redeem it yourself at checkout.',
+    alternates: {
+        canonical: '/how-it-works',
+    },
+    openGraph: {
+        title: 'How Coupello Works | Find and Use Coupons',
+        description:
+            'See how Coupello helps you find store deals, compare coupon offers, copy a code, and redeem it yourself at checkout.',
+        url: '/how-it-works',
+        siteName: siteConfig.company_name,
+        type: 'website',
+    },
+    robots: {
+        index: true,
+        follow: true,
+    },
+};
+
 const steps = [
     {
-        title: 'Find a store',
+        title: 'Start with a store or category',
         description:
-            'Discover your favorite retailer or browse categories across fashion, travel, beauty and home essentials.',
+            'Search for a retailer you already use, or browse categories to find offers for your next purchase.',
         icon: Store,
     },
     {
-        title: 'Browse available coupons',
+        title: 'Compare the available offers',
         description:
-            'Compare live deals and review the terms so you know what qualifies before checkout.',
+            'Read the discount, expiry date, and any visible conditions before choosing an offer.',
         icon: Search,
     },
     {
-        title: 'Choose a coupon',
+        title: 'Pick the offer that fits',
         description:
-            'Select the best offer for your cart and confirm the discount type, validity and merchant rules.',
+            'Choose the code or deal that best matches your items and the store rules for your order.',
         icon: ShoppingBag,
     },
     {
         title: 'Reveal or copy the code',
         description:
-            'Use our verified code reveal and copy flow to keep the offer ready before you buy.',
+            'Use the button to reveal a code when needed, then copy it so it is ready at checkout.',
         icon: Copy,
     },
     {
-        title: 'Visit the merchant',
+        title: 'Open the store',
         description:
-            'Open the merchant through the provided link to complete your purchase on the retailer site.',
+            'Follow the offer link and complete your shopping on the retailer&apos;s own website.',
         icon: ArrowRight,
     },
     {
-        title: 'Apply the code at checkout',
+        title: 'Apply it at checkout',
         description:
-            'Paste the coupon during checkout to redeem the offer exactly as the merchant allows.',
+            'Paste the code in the store&apos;s coupon field and check that the discount appears before paying.',
         icon: CircleCheckBig,
     },
 ];
@@ -66,7 +88,7 @@ export default function HowItWorksPage() {
                     {steps.map(({ title, description, icon: Icon }, index) => (
                         <div
                             key={title}
-                            className="relative rounded-3xl border border-border bg-card p-5 shadow-soft"
+                            className="relative rounded-xl border border-border bg-card p-5 shadow-soft"
                         >
                             <div className="flex items-center justify-between">
                                 <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-primary-light text-primary">
@@ -86,29 +108,29 @@ export default function HowItWorksPage() {
                     ))}
                 </div>
 
-                <div className="mt-10 rounded-3xl border border-border bg-surface p-6 shadow-soft md:p-8">
+                <div className="mt-10 rounded-xl border border-border bg-surface p-6 shadow-soft md:p-8">
                     <div className="flex items-start gap-3">
                         <span className="grid h-12 w-12 place-items-center rounded-2xl bg-emerald-50 text-emerald-600">
                             <BadgeCheck className="h-5 w-5" />
                         </span>
                         <div>
-                            <h2 className="font-display text-[28px] font-extrabold tracking-tight text-foreground">
-                                Important note
+                            <h2 className="font-display text-[28px] font-semibold tracking-tight text-foreground">
+                                A quick note before you shop
                             </h2>
                             <p className="mt-3 text-[15px] leading-8 text-muted-foreground">
-                                {`${siteConfig.company_name} currently provides coupon discovery and verified promo codes for shoppers. It does not automatically apply discounts, use browser automation or install Chrome extensions. Users can browse offers, reveal or copy a valid code and then complete the purchase on the merchant website as intended.`}
+                                {`${siteConfig.company_name} helps you find and compare offers, but it does not apply codes automatically or complete purchases for you. You stay in control: reveal or copy the code here, then use it yourself on the store's website.`}
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <div className="mt-10 rounded-3xl border border-primary/20 bg-primary-light p-6 text-center shadow-soft md:p-8">
-                    <h2 className="font-display text-[28px] font-extrabold tracking-tight text-foreground">
-                        Start saving with a smarter approach
+                <div className="mt-10 rounded-xl border border-primary/20 bg-primary-light p-6 text-center shadow-soft md:p-8">
+                    <h2 className="font-display text-[28px] font-semibold tracking-tight text-foreground">
+                        Ready to look for a deal?
                     </h2>
                     <p className="mx-auto mt-3 max-w-2xl text-[15px] leading-8 text-muted-foreground">
-                        Explore fresh deals, compare verified offers and complete your purchase with
-                        confidence on the retailer website.
+                        Browse a store or category and see what offers are available before you
+                        check out.
                     </p>
                     <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
                         <Link

@@ -136,7 +136,7 @@ export function CouponCard<T extends CouponCardItem>({
                         height={68}
                         className="rounded-lg border border-border bg-card p-2"
                     />
-                    <span className="inline-flex items-center gap-1 rounded-md bg-primary-light px-2 py-0.5 text-[11px] font-extrabold text-primary">
+                    <span className="inline-flex items-center gap-1 rounded-md bg-primary-light px-2 py-0.5 text-[11px] font-semibold text-primary">
                         <Percent className="h-3 w-3" />
                         {discountText}
                     </span>
@@ -147,7 +147,7 @@ export function CouponCard<T extends CouponCardItem>({
                     <div className="flex flex-wrap items-center gap-2 mb-1.5">
                         {coupon.badge && (
                             <span
-                                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10.5px] font-extrabold uppercase tracking-wide ${
+                                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-wide ${
                                     coupon.badge.tone === 'amber'
                                         ? 'bg-secondary-brand-light text-secondary-brand-strong'
                                         : 'bg-emerald-100 text-emerald-700'
@@ -194,7 +194,7 @@ export function CouponCard<T extends CouponCardItem>({
                             Get Code
                         </span>
                         <span className="absolute right-0 top-0 grid h-full w-[54px] place-items-center overflow-hidden border-l border-dashed border-white/40 bg-black/15 group-hover/btn:bg-black/25 transition-colors">
-                            <span className="truncate px-1 font-mono text-[12px] font-extrabold tracking-wider">
+                            <span className="truncate px-1 font-mono text-[12px] font-semibold tracking-wider">
                                 {coupon.code.slice(0, 3)}…
                             </span>
                         </span>
@@ -262,7 +262,7 @@ export function FilterPill({
 export function StatCard({ value, label }: { value: string; label: string }) {
     return (
         <div className="rounded-2xl border border-border bg-card p-4 shadow-soft">
-            <div className="font-display text-[26px] font-extrabold text-foreground">{value}</div>
+            <div className="font-display text-[26px] font-semibold text-foreground">{value}</div>
             <div className="mt-1 text-[12.5px] text-muted-foreground">{label}</div>
         </div>
     );

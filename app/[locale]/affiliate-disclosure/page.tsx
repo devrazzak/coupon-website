@@ -1,20 +1,42 @@
+import type { Metadata } from 'next';
+
 import { PageHeader, PublicPageShell } from '@/components/public/page-layout';
 import siteConfig from '@/utils/SiteConfig';
 
+export const metadata: Metadata = {
+    title: 'Affiliate Disclosure | Coupello',
+    description:
+        'Learn how Coupello may earn a commission from qualifying purchases made through some store and coupon links.',
+    alternates: {
+        canonical: '/affiliate-disclosure',
+    },
+    openGraph: {
+        title: 'Affiliate Disclosure | Coupello',
+        description:
+            'Learn how Coupello may earn a commission from qualifying purchases made through some store and coupon links.',
+        url: '/affiliate-disclosure',
+        siteName: 'Coupello',
+        type: 'website',
+    },
+    robots: {
+        index: true,
+        follow: true,
+    },
+};
+
 const disclosures = [
     {
-        title: 'Paid partnerships',
-        content: `${siteConfig.company_name} may earn a commission or referral fee when users click through to a partner merchant and complete qualifying purchases.`,
+        title: 'How affiliate links work',
+        content: `Some links on ${siteConfig.company_name} may be affiliate links. If you click one of those links and complete a qualifying purchase with the store, we may receive a commission or referral fee.`,
     },
     {
-        title: 'No impact on pricing',
+        title: 'What this means for you',
         content:
-            'The compensation we may receive does not increase the price paid by shoppers and does not change the offer shown on the site.',
+            'Using an affiliate link does not normally add a fee to your purchase. The store sets the final price, shipping costs, return rules, and eligibility requirements. Please review those details at checkout.',
     },
     {
-        title: 'Clear disclosure',
-        content:
-            'We aim to be transparent about affiliate relationships so users can clearly understand how the platform is supported and maintained.',
+        title: 'Our editorial approach',
+        content: `${siteConfig.company_name} is supported in part by these referrals, which helps us run the site and keep the service free to browse. Affiliate relationships do not guarantee that an offer will work, so we encourage you to compare the details and confirm the terms on the merchant's website.`,
     },
 ];
 
@@ -28,7 +50,7 @@ export default function AffiliateDisclosurePage() {
             />
 
             <section className="container-page py-8 md:py-10">
-                <div className="mx-auto max-w-4xl rounded-3xl border border-border bg-card p-6 shadow-soft md:p-8">
+                <div className="mx-auto max-w-4xl rounded-xl border border-border bg-card p-6 shadow-soft md:p-8">
                     <div className="space-y-6">
                         {disclosures.map(section => (
                             <section

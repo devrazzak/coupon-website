@@ -154,7 +154,7 @@ function BlogCategoryModal({
                         <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-primary">
                             Blog Category
                         </p>
-                        <h3 className="mt-1 font-display text-[26px] font-extrabold text-foreground">
+                        <h3 className="mt-1 font-display text-[26px] font-semibold text-foreground">
                             {initialData ? 'Edit Category' : 'Create Category'}
                         </h3>
                     </div>

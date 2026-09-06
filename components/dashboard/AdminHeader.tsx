@@ -68,7 +68,7 @@ export default function AdminHeader({ sidebarOpen, setSidebarOpen }: AdminHeader
                             <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-primary">
                                 {siteConfig.company_name}
                             </div>
-                            <div className="font-display text-[18px] font-extrabold tracking-[-0.03em] text-foreground">
+                            <div className="font-display text-[18px] font-semibold tracking-[-0.03em] text-foreground">
                                 Admin
                             </div>
                         </div>

@@ -31,7 +31,7 @@ export function PublicCouponRow({
                 {/* Store Logo & Discount Badge */}
                 <div className="flex items-center gap-3.5 md:w-[130px] md:shrink-0 md:flex-col md:items-start md:gap-2">
                     <StoreLogo coupon={coupon} />
-                    <span className="inline-flex items-center gap-1 rounded-md bg-primary-light px-2 py-0.5 text-[11px] font-extrabold text-primary">
+                    <span className="inline-flex items-center gap-1 rounded-md bg-primary-light px-2 py-0.5 text-[11px] font-semibold text-primary">
                         {formatDiscount(coupon)}
                     </span>
                 </div>
@@ -86,7 +86,7 @@ export function PublicCouponRow({
                             Get Code
                         </span>
                         <span className="absolute right-0 top-0 grid h-full w-[54px] place-items-center overflow-hidden border-l border-dashed border-white/40 bg-black/15 group-hover/btn:bg-black/25 transition-colors">
-                            <span className="truncate px-1 font-mono text-[12px] font-extrabold tracking-wider">
+                            <span className="truncate px-1 font-mono text-[12px] font-semibold tracking-wider">
                                 {(coupon.code || '???').slice(0, 3)}…
                             </span>
                         </span>

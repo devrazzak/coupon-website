@@ -59,7 +59,7 @@ export default function ContactForm() {
     return (
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
             <div>
-                <h2 className="font-display text-[24px] font-extrabold text-foreground">
+                <h2 className="font-display text-[24px] font-semibold text-foreground">
                     Send us a message
                 </h2>
                 <p className="mt-1 text-[13px] leading-6 text-muted-foreground">

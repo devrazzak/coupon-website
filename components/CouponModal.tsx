@@ -85,7 +85,7 @@ export function StoreLogo({ coupon, size = 24 }: { coupon: ModalCoupon; size?: n
 
         return (
             <span
-                className="grid place-items-center rounded-lg border border-border bg-card font-extrabold text-muted-foreground shadow-2xs"
+                className="grid place-items-center rounded-lg border border-border bg-card font-semibold text-muted-foreground shadow-2xs"
                 style={{ width: size * 2, height: size * 1.4 }}
             >
                 {name.charAt(0).toUpperCase()}
@@ -97,7 +97,7 @@ export function StoreLogo({ coupon, size = 24 }: { coupon: ModalCoupon; size?: n
     const name = legacy.store || legacy.title || '?';
     return (
         <span
-            className="grid place-items-center rounded-lg border border-border bg-card font-extrabold text-muted-foreground shadow-2xs"
+            className="grid place-items-center rounded-lg border border-border bg-card font-semibold text-muted-foreground shadow-2xs"
             style={{ width: size * 2, height: size * 1.4 }}
         >
             {name.charAt(0).toUpperCase()}

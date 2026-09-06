@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { MessageSquareText } from 'lucide-react';
 import type { Metadata } from 'next';
 
@@ -40,14 +42,20 @@ export default function ContactPage() {
                     </div>
                 </div>
 
-                <div className="mt-10 rounded-3xl border border-border bg-surface p-5 md:p-6">
+                <div className="mt-10 rounded-xl border border-border bg-surface p-5 md:p-6">
                     <div className="flex items-center gap-3">
                         <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary-light text-primary">
                             <MessageSquareText className="h-5 w-5" />
                         </span>
                         <h2 className="font-display text-[26px] font-semibold text-foreground">
-                            Support & FAQ
+                            Support & FAQs
                         </h2>
+                        <Link
+                            href="/faqs"
+                            className="ml-auto text-[13px] font-semibold text-primary hover:text-primary-hover"
+                        >
+                            View all FAQs
+                        </Link>
                     </div>
                     <div className="mt-5 grid gap-4 md:grid-cols-2">
                         <div className="rounded-2xl border border-border bg-card p-4">

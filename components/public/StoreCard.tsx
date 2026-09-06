@@ -23,7 +23,7 @@ export function StoreCard({ item }: { item: PublicStore }) {
                         className="h-full max-w-full object-contain rounded-xl max-h-24"
                     />
                 ) : (
-                    <span className="grid h-14 w-14 place-items-center rounded-2xl bg-primary text-2xl font-extrabold text-primary-foreground">
+                    <span className="grid h-14 w-14 place-items-center rounded-2xl bg-primary text-2xl font-semibold text-primary-foreground">
                         {(item.name || '?').charAt(0).toUpperCase()}
                     </span>
                 )}

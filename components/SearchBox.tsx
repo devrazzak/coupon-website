@@ -328,7 +328,7 @@ function StoreRow({ store, onClose }: { store: StoreView; onClose: () => void })
                         className="h-9 w-9 shrink-0 rounded-lg border border-border bg-card object-contain p-1"
                     />
                 ) : (
-                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-border bg-card text-sm font-extrabold text-muted-foreground">
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-border bg-card text-sm font-semibold text-muted-foreground">
                         {store.name?.charAt(0).toUpperCase() || 'S'}
                     </span>
                 )}
@@ -362,7 +362,7 @@ function CouponRow({ coupon, onSelect }: { coupon: PublicCoupon; onSelect: () =>
                         className="h-9 w-9 shrink-0 rounded-lg border border-border bg-card object-contain p-1"
                     />
                 ) : (
-                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-border bg-card text-sm font-extrabold text-muted-foreground">
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-border bg-card text-sm font-semibold text-muted-foreground">
                         {storeName.charAt(0).toUpperCase() || 'C'}
                     </span>
                 )}

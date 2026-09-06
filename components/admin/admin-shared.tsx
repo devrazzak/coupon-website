@@ -93,7 +93,7 @@ export function AdminModalShell({
                     <div className="min-w-0">
                         {eyebrow && (
                             <p
-                                className={`flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-[0.14em] ${eyebrowClass}`}
+                                className={`flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] ${eyebrowClass}`}
                             >
                                 <span
                                     aria-hidden="true"
@@ -102,7 +102,7 @@ export function AdminModalShell({
                                 {eyebrow}
                             </p>
                         )}
-                        <h3 className="mt-1.5 font-display text-[24px] font-extrabold leading-tight tracking-[-0.02em] text-foreground">
+                        <h3 className="mt-1.5 font-display text-[24px] font-semibold leading-tight tracking-[-0.02em] text-foreground">
                             {title}
                         </h3>
                         {subtitle && (
@@ -241,7 +241,7 @@ export function AdminPageHeader({
                         ))}
                     </div>
                 )}
-                <h1 className="font-display text-[30px] font-extrabold tracking-[-0.04em] text-foreground">
+                <h1 className="font-display text-[30px] font-semibold tracking-[-0.04em] text-foreground">
                     {title}
                 </h1>
                 {subtitle && <p className="mt-2 text-[14px] text-muted-foreground">{subtitle}</p>}

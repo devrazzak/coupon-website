@@ -90,7 +90,7 @@ export function PopularStores() {
                                             />
                                         ) : (
                                             <div className="flex h-full w-full items-center justify-center pb-3">
-                                                <span className="text-2xl font-extrabold text-muted-foreground">
+                                                <span className="text-2xl font-semibold text-muted-foreground">
                                                     {(store.name || '?').charAt(0).toUpperCase()}
                                                 </span>
                                             </div>
