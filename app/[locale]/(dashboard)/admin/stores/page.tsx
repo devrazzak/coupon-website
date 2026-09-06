@@ -27,7 +27,7 @@ export interface StoreApiItem {
     slug: string;
     logo: string | null;
     logo_alt_txt: string | null;
-    categories: number[];
+    categories: (number | { id: number; name?: string; slug?: string })[];
     website_url: string | null;
     affiliate_url: string | null;
     short_description: string | null;
@@ -547,6 +547,11 @@ export default function StoresAdminPage() {
     }, [uploadedMedia, mediaItems]);
     const categories = useMemo(() => getCategoriesList(categoriesApiData), [categoriesApiData]);
 
+    const toStoreCategoryIds = (value: StoreApiItem['categories'] | null | undefined): string[] =>
+        (Array.isArray(value) ? value : []).map(item =>
+            String(Number.isInteger(item as number) ? item : (item as { id?: number })?.id),
+        );
+
     const stores = useMemo(() => {
         const items =
             storesResponse?.data.map(store => ({
@@ -557,7 +562,7 @@ export default function StoresAdminPage() {
                 coverImage: '',
                 shortDescription: store.short_description ?? '',
                 description: store.description ?? '',
-                categories: store.categories.map(String),
+                categories: toStoreCategoryIds(store.categories),
                 websiteUrl: store.website_url ?? '',
                 affiliateUrl: store.affiliate_url ?? '',
                 status: store.is_active ? 'active' : 'inactive',
