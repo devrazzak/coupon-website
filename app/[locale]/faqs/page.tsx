@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import { PageHeader, PublicPageShell } from '@/components/public/page-layout';
+import { JsonLd } from '@/components/seo/JsonLd';
 import siteConfig from '@/utils/SiteConfig';
 
 export const metadata: Metadata = {
@@ -60,8 +61,22 @@ const faqs = [
 ];
 
 export default function FaqsPage() {
+    const faqSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqs.map(faq => ({
+            '@type': 'Question',
+            name: faq.question,
+            acceptedAnswer: {
+                '@type': 'Answer',
+                text: faq.answer,
+            },
+        })),
+    };
+
     return (
         <PublicPageShell>
+            <JsonLd data={faqSchema} />
             <PageHeader
                 eyebrow="FAQs"
                 title="Questions about coupons?"

@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 
 import { BlogShareButtons } from '@/components/blog/BlogShareButtons';
 import { Breadcrumbs, PublicPageShell } from '@/components/public/page-layout';
+import { JsonLd } from '@/components/seo/JsonLd';
 import siteConfig from '@/utils/SiteConfig';
 import { getPublicBlogBySlug } from '@/utils/api/blog';
 import { getPublicBlogCategories } from '@/utils/api/blog-category';
@@ -141,9 +142,37 @@ export default async function BlogDetailPage({
         .map(p => p.trim())
         .filter(Boolean);
     const categories = categoriesResponse?.data?.data ?? [];
+    const pageUrl = `${siteConfig.site_url}/blog/${blog.slug}`;
+    const breadcrumbSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.site_url },
+            { '@type': 'ListItem', position: 2, name: 'Blog', item: `${siteConfig.site_url}/blog` },
+            { '@type': 'ListItem', position: 3, name: blog.title, item: pageUrl },
+        ],
+    };
+    const articleSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        '@id': `${pageUrl}#article`,
+        headline: blog.title,
+        description: blog.short_description || blog.meta_description,
+        mainEntityOfPage: pageUrl,
+        datePublished: blog.created_at,
+        author: { '@type': 'Organization', name: siteConfig.company_name },
+        publisher: {
+            '@type': 'Organization',
+            name: siteConfig.company_name,
+            url: siteConfig.site_url,
+        },
+        ...(blog.thumbnail ? { image: blog.thumbnail } : {}),
+    };
 
     return (
         <PublicPageShell>
+            <JsonLd data={breadcrumbSchema} />
+            <JsonLd data={articleSchema} />
             <section className="container-page py-15">
                 <Breadcrumbs
                     items={[

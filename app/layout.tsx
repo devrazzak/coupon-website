@@ -2,6 +2,7 @@ import { Inter } from 'next/font/google';
 
 import { Metadata } from 'next';
 
+import { JsonLd } from '@/components/seo/JsonLd';
 import ogImage from '@/public/images/Coupola-logo-social.png';
 import siteConfig from '@/utils/SiteConfig';
 
@@ -42,9 +43,28 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+    const organizationSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        '@id': `${siteConfig.site_url}/#organization`,
+        name: siteConfig.company_name,
+        url: siteConfig.site_url,
+        logo: `${siteConfig.site_url}${ogImage.src}`,
+    };
+    const websiteSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        '@id': `${siteConfig.site_url}/#website`,
+        name: siteConfig.company_name,
+        url: siteConfig.site_url,
+        publisher: { '@id': `${siteConfig.site_url}/#organization` },
+    };
+
     return (
         <html lang="en" suppressHydrationWarning className={inter.variable}>
             <body className="font-sans antialiased" suppressHydrationWarning>
+                <JsonLd data={organizationSchema} />
+                <JsonLd data={websiteSchema} />
                 <Providers>{children}</Providers>
             </body>
         </html>

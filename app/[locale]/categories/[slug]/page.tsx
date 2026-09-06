@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 
 import { CategoryDetailClient } from '@/components/public/CategoryDetailClient';
+import { JsonLd } from '@/components/seo/JsonLd';
 import siteConfig from '@/utils/SiteConfig';
 import {
     type PublicCategory,
@@ -94,13 +95,32 @@ export default async function CategoryDetailPage({
         notFound();
     }
 
+    const pageUrl = `${siteConfig.site_url}/categories/${category.slug}`;
+    const breadcrumbSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.site_url },
+            {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Categories',
+                item: `${siteConfig.site_url}/categories`,
+            },
+            { '@type': 'ListItem', position: 3, name: category.name, item: pageUrl },
+        ],
+    };
+
     return (
-        <CategoryDetailClient
-            categorySlug={category.slug}
-            categoryName={category.name}
-            categoryImage={category.image || undefined}
-            categoryShortDescription={category.short_description || undefined}
-            categoryDescription={category.description || undefined}
-        />
+        <>
+            <JsonLd data={breadcrumbSchema} />
+            <CategoryDetailClient
+                categorySlug={category.slug}
+                categoryName={category.name}
+                categoryImage={category.image || undefined}
+                categoryShortDescription={category.short_description || undefined}
+                categoryDescription={category.description || undefined}
+            />
+        </>
     );
 }

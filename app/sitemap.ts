@@ -5,6 +5,59 @@ import { getPublicBlogs } from '@/utils/api/blog';
 import { getPublicCategories } from '@/utils/api/category';
 import { getPublicStores } from '@/utils/api/store';
 
+const PAGE_SIZE = 500;
+
+async function getAllStores() {
+    const items = [];
+    let page = 1;
+
+    while (true) {
+        const response = await getPublicStores({ page, limit: PAGE_SIZE });
+        const data = response?.data?.data ?? [];
+        const meta = response?.data?.meta;
+        items.push(...data);
+
+        if (!meta || data.length === 0 || page * PAGE_SIZE >= meta.totalCount) break;
+        page += 1;
+    }
+
+    return items;
+}
+
+async function getAllCategories() {
+    const items = [];
+    let page = 1;
+
+    while (true) {
+        const response = await getPublicCategories(page, PAGE_SIZE);
+        const data = response?.data?.data ?? [];
+        const meta = response?.data?.meta;
+        items.push(...data);
+
+        if (!meta || data.length === 0 || page * PAGE_SIZE >= meta.totalCount) break;
+        page += 1;
+    }
+
+    return items;
+}
+
+async function getAllBlogs() {
+    const items = [];
+    let page = 1;
+
+    while (true) {
+        const response = await getPublicBlogs({ page, limit: PAGE_SIZE });
+        const data = response?.data?.data ?? [];
+        const meta = response?.data?.meta;
+        items.push(...data);
+
+        if (!meta || data.length === 0 || page * PAGE_SIZE >= (meta.totalCount || 0)) break;
+        page += 1;
+    }
+
+    return items;
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = siteConfig.site_url;
 
@@ -35,15 +88,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
     try {
-        const [storesResponse, categoriesResponse, blogsResponse] = await Promise.all([
-            getPublicStores({ page: 1, limit: 500 }),
-            getPublicCategories(1, 500),
-            getPublicBlogs({ page: 1, limit: 500 }),
+        const [stores, categories, blogs] = await Promise.all([
+            getAllStores(),
+            getAllCategories(),
+            getAllBlogs(),
         ]);
-
-        const stores = storesResponse?.data?.data ?? [];
-        const categories = categoriesResponse?.data?.data ?? [];
-        const blogs = blogsResponse?.data?.data ?? [];
 
         sitemapEntries.push(
             ...stores.map(store => ({

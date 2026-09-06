@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 
 import { StoreDetailClient } from '@/components/public/StoreDetailClient';
 import { PublicPageShell } from '@/components/public/page-layout';
+import { JsonLd } from '@/components/seo/JsonLd';
 import siteConfig from '@/utils/SiteConfig';
 import { type PublicStore, getPublicStoreBySlug, getPublicStores } from '@/utils/api/store';
 
@@ -98,8 +99,25 @@ export default async function StoreDetailPage({
         notFound();
     }
 
+    const pageUrl = `${siteConfig.site_url}/stores/${store.slug}`;
+    const breadcrumbSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: siteConfig.site_url },
+            {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Stores',
+                item: `${siteConfig.site_url}/stores`,
+            },
+            { '@type': 'ListItem', position: 3, name: store.name, item: pageUrl },
+        ],
+    };
+
     return (
         <PublicPageShell>
+            <JsonLd data={breadcrumbSchema} />
             <StoreDetailClient
                 storeSlug={store.slug}
                 storeName={store.name}
