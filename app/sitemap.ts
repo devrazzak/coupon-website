@@ -1,11 +1,12 @@
 import { MetadataRoute } from 'next';
 
+import siteConfig from '@/utils/SiteConfig';
 import { getPublicBlogs } from '@/utils/api/blog';
 import { getPublicCategories } from '@/utils/api/category';
 import { getPublicStores } from '@/utils/api/store';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = 'https://coupola.com/'.replace(/\/$/, '');
+    const baseUrl = siteConfig.site_url;
 
     if (!baseUrl) {
         throw new Error('NEXT_PUBLIC_SITE_URL must be configured to generate the sitemap.');

@@ -19,7 +19,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-    metadataBase: new URL('https://www.coupola.com'),
+    metadataBase: new URL(siteConfig.site_url),
     title: `${siteConfig.company_name} - Coupons, Promo Codes & Money-Saving Deals`,
     description:
         'Discover working coupon codes, promo offers, and money-saving tips to help you pay less at your favorite online stores.',

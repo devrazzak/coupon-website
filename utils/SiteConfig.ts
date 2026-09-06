@@ -1,5 +1,6 @@
 const siteConfig = {
     company_name: 'Coupola',
+    site_url: (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.coupola.com').replace(/\/$/, ''),
     logo: '',
     white_logo: '',
     avatar: '',

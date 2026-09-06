@@ -114,9 +114,6 @@ export function CategoryDetailClient({
                         <div className="overflow-hidden rounded-md border border-border bg-card shadow-soft">
                             <div className="p-5">
                                 <div className="flex items-center justify-between gap-3">
-                                    <span className="rounded-full bg-primary-light px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-primary">
-                                        Category guide
-                                    </span>
                                     <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700">
                                         <TicketPercent className="h-3.5 w-3.5" />
                                         {coupons.length} active offers
