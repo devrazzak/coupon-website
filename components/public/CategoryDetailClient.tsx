@@ -11,7 +11,7 @@ import siteConfig from '@/utils/SiteConfig';
 import type { PublicCoupon } from '@/utils/api/coupon';
 import { useInfinitePublicCoupons } from '@/utils/hooks/coupon';
 
-const PAGE_LIMIT = 1;
+const PAGE_LIMIT = 24;
 
 export function CategoryDetailClient({
     categoryId,
