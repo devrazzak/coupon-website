@@ -11,7 +11,7 @@ import type { PublicStore } from '@/utils/api/store';
 import { useGetPublicCategories } from '@/utils/hooks/category';
 import { useGetPublicStores } from '@/utils/hooks/store';
 
-import { BrandMark } from '../Logo';
+import { Logo } from '../Logo';
 
 const staticColumns = [
     {
@@ -104,10 +104,7 @@ const Footer = () => {
                 <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.4fr_repeat(4,1fr)]">
                     <div>
                         <div className="flex items-center gap-2">
-                            <BrandMark className="h-9 w-9" />
-                            <span className="font-display text-xl font-extrabold tracking-tight">
-                                {siteConfig.company_name}
-                            </span>
+                            <Logo variant="white" />
                         </div>
                         <p className="mt-4 max-w-xs text-[13px] leading-relaxed text-primary-foreground/60">
                             Your trusted destination for verified coupons, promo codes &amp; best

@@ -2,6 +2,7 @@ import { Inter } from 'next/font/google';
 
 import { Metadata } from 'next';
 
+import ogImage from '@/public/images/Coupola-logo-social.png';
 import siteConfig from '@/utils/SiteConfig';
 
 import { Providers } from './providers';
@@ -18,9 +19,25 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-    title: `${siteConfig.company_name} - 250,000+ Verified Promo Codes, Coupons & Cash Back Deals`,
+    title: `${siteConfig.company_name} - Coupons, Promo Codes & Money-Saving Deals`,
     description:
-        'Find the best promo codes, coupons, and cash back deals from your favorite online stores.',
+        'Discover working coupon codes, promo offers, and money-saving tips to help you pay less at your favorite online stores.',
+    keywords: ['promo codes', 'coupons', 'cash back', 'deals', 'discounts'],
+    authors: [{ name: siteConfig.company_name }],
+    openGraph: {
+        title: `${siteConfig.company_name} - Coupons, Promo Codes & Money-Saving Deals`,
+        description:
+            'Discover working coupon codes, promo offers, and money-saving tips to help you pay less at your favorite online stores.',
+        siteName: siteConfig.company_name,
+        images: [
+            {
+                url: ogImage.src,
+                alt: `${siteConfig.company_name} Logo`,
+            },
+        ],
+        locale: 'en_US',
+        type: 'website',
+    },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
