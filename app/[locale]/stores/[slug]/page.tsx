@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import { StoreDetailClient } from '@/components/public/StoreDetailClient';
 import { PublicPageShell } from '@/components/public/page-layout';
+import siteConfig from '@/utils/SiteConfig';
 import { type PublicStore, getPublicStoreBySlug, getPublicStores } from '@/utils/api/store';
 
 type ResolvedStore = Pick<PublicStore, 'name' | 'slug'> &
@@ -56,7 +57,7 @@ export async function generateMetadata({
     const { slug } = await params;
     const store = await resolveStore(slug);
 
-    const title = store.seo_title || `${store.name} Coupons & Deals | Coupello`;
+    const title = store.seo_title || `${store.name} Coupons & Deals | ${siteConfig.company_name}`;
     const description =
         store.meta_description ||
         `Browse verified coupon codes, promo offers, and the latest deals for ${store.name}.`;
@@ -71,7 +72,7 @@ export async function generateMetadata({
             title,
             description,
             url: `/stores/${slug}`,
-            siteName: 'Coupello',
+            siteName: siteConfig.company_name,
             type: 'website',
         },
         robots: {

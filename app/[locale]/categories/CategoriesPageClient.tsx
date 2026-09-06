@@ -1,10 +1,10 @@
 'use client';
 
-import { Search } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 import { CategoryCard } from '@/components/public/CategoryCard';
 import { PageHeader, PublicPageShell } from '@/components/public/page-layout';
+import siteConfig from '@/utils/SiteConfig';
 import { useInfinitePublicCategories } from '@/utils/hooks/category';
 
 const PAGE_LIMIT = 48;
@@ -100,10 +100,7 @@ export default function CategoriesPageClient() {
                     </h2>
                     <div className="mt-3 space-y-3 text-sm leading-7 text-muted-foreground">
                         <p>
-                            Explore Coupello categories to find verified coupons, promo codes, and
-                            special offers for the products you shop for most. From fashion and
-                            electronics to travel, food, and home essentials, our category pages
-                            make it easier to discover relevant deals in less time.
+                            {`Explore ${siteConfig.company_name} categories to find verified coupons, promo codes, and special offers for the products you shop for most. From fashion and electronics to travel, food, and home essentials, our category pages make it easier to discover relevant deals in less time.`}
                         </p>
                         <p>
                             Choose a category to compare current discounts from trusted online

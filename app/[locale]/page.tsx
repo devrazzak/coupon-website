@@ -7,11 +7,11 @@ import { HeroSection } from '@/components/HeroSection';
 import { PopularStores } from '@/components/PopularStores';
 import Footer from '@/components/layout/Footer';
 import Header from '@/components/layout/Header';
+import siteConfig from '@/utils/SiteConfig';
 
 export const metadata: Metadata = {
-    title: 'Coupello - 250,000+ Verified Promo Codes, Coupons & Cash Back Deals',
-    description:
-        'Never pay full price. Coupello automatically finds, tests & applies verified coupon codes, promo codes, and discount deals across 50,000+ top online stores.',
+    title: `${siteConfig.company_name} - 250,000+ Verified Promo Codes, Coupons & Cash Back Deals`,
+    description: `Never pay full price. ${siteConfig.company_name} automatically finds, tests & applies verified coupon codes, promo codes, and discount deals across 50,000+ top online stores.`,
     keywords: [
         'coupons',
         'promo codes',
@@ -23,18 +23,16 @@ export const metadata: Metadata = {
         'store vouchers',
     ],
     openGraph: {
-        title: 'Coupello - 250,000+ Verified Promo Codes, Coupons & Cash Back Deals',
-        description:
-            'Never pay full price. Coupello automatically finds, tests & applies verified coupon codes, promo codes, and discount deals across 50,000+ top online stores.',
+        title: `${siteConfig.company_name} - 250,000+ Verified Promo Codes, Coupons & Cash Back Deals`,
+        description: `Never pay full price. ${siteConfig.company_name} automatically finds, tests & applies verified coupon codes, promo codes, and discount deals across 50,000+ top online stores.`,
         url: '/',
-        siteName: 'Coupello',
+        siteName: siteConfig.company_name,
         type: 'website',
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'Coupello - 250,000+ Verified Promo Codes, Coupons & Cash Back Deals',
-        description:
-            'Never pay full price. Coupello automatically finds, tests & applies verified coupon codes, promo codes, and discount deals across 50,000+ top online stores.',
+        title: `${siteConfig.company_name} - 250,000+ Verified Promo Codes, Coupons & Cash Back Deals`,
+        description: `Never pay full price. ${siteConfig.company_name} automatically finds, tests & applies verified coupon codes, promo codes, and discount deals across 50,000+ top online stores.`,
     },
     robots: {
         index: true,

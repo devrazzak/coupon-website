@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { CouponModal } from '@/components/CouponModal';
 import { PublicCouponRow } from '@/components/public/PublicCouponRow';
 import { CouponCardSkeleton } from '@/components/ui/coupon-card-skeleton';
+import siteConfig from '@/utils/SiteConfig';
 import type { PublicCoupon } from '@/utils/api/coupon';
 import type { PublicStoreCategory } from '@/utils/api/store';
 import { useInfinitePublicCoupons } from '@/utils/hooks/coupon';
@@ -205,10 +206,7 @@ export function StoreDetailClient({
                     </h2>
                     <div className="mt-3 space-y-3 text-sm leading-7 text-muted-foreground">
                         <p>
-                            Looking for {storeName} coupons and promo codes? Coupello collects
-                            verified offers and current deals to help you save on your next
-                            purchase. Browse the available {storeName} discounts or search the list
-                            to find an offer that fits your order.
+                            {`Looking for ${storeName} coupons and promo codes? ${siteConfig.company_name} collects verified offers and current deals to help you save on your next purchase. Browse the available ${storeName} discounts or search the list to find an offer that fits your order.`}
                         </p>
                         <p>
                             Review the deal details and expiration information before checkout, then

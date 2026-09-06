@@ -1,15 +1,14 @@
 import { PageHeader, PublicPageShell } from '@/components/public/page-layout';
+import siteConfig from '@/utils/SiteConfig';
 
 const sections = [
     {
         title: 'Acceptance of terms',
-        content:
-            'By using Coupello, users agree to comply with these terms and conditions. We may update the terms over time to reflect product changes, legal requirements or improvements to services.',
+        content: `By using ${siteConfig.company_name}, users agree to comply with these terms and conditions. We may update the terms over time to reflect product changes, legal requirements or improvements to services.`,
     },
     {
         title: 'Coupon and deal information',
-        content:
-            'Coupello provides savings information for educational and discovery purposes. Offers may vary by merchant, product, region, eligibility or expiration date. Users should always check the retailer’s terms before purchase.',
+        content: `${siteConfig.company_name} provides savings information for educational and discovery purposes. Offers may vary by merchant, product, region, eligibility or expiration date. Users should always check the retailer’s terms before purchase.`,
     },
     {
         title: 'No automatic application',
@@ -34,7 +33,7 @@ export default function TermsPage() {
             <PageHeader
                 eyebrow="Terms & conditions"
                 title="Website terms of use"
-                description="These terms set out the rules for using Coupello and explain how coupon discovery and merchant information should be interpreted."
+                description={`These terms set out the rules for using ${siteConfig.company_name} and explain how coupon discovery and merchant information should be interpreted.`}
             />
 
             <section className="container-page py-8 md:py-10">

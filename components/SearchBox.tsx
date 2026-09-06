@@ -3,13 +3,13 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { Scissors, Search, SearchX, Store as StoreIcon } from 'lucide-react';
+import { Search, SearchX, Store as StoreIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 import { CouponModal } from '@/components/CouponSection';
 import PATHS from '@/routes/path';
 import type { PublicCategory } from '@/utils/api/category';
-import type { PublicCoupon } from '@/utils/api/coupon';
+import type { PublicCoupon, PublicStoreRef } from '@/utils/api/coupon';
 import type { SearchCoupon } from '@/utils/api/search';
 import { useGetPublicCategories } from '@/utils/hooks/category';
 import { useGetPublicCoupons } from '@/utils/hooks/coupon';
@@ -231,9 +231,9 @@ export function SearchBox({ compact = false, className = '' }: SearchBoxProps) {
                                     count={rawCoupon.length}
                                     viewHref={PATHS.coupons}
                                 >
-                                    <ul className="grid grid-cols-2 gap-2 px-4 py-3 sm:grid-cols-3">
+                                    <ul className="divide-y divide-border/60 border-y border-border/60 px-2">
                                         {coupons.map(coupon => (
-                                            <CouponChip
+                                            <CouponRow
                                                 key={coupon.id}
                                                 coupon={coupon}
                                                 onSelect={() => {
@@ -342,18 +342,38 @@ function StoreRow({ store, onClose }: { store: StoreView; onClose: () => void })
     );
 }
 
-function CouponChip({ coupon, onSelect }: { coupon: PublicCoupon; onSelect: () => void }) {
-    // Only surface the coupon code (compact chip), not the full coupon card.
-    const label = coupon.code?.trim() || 'Get Deal';
+function CouponRow({ coupon, onSelect }: { coupon: PublicCoupon; onSelect: () => void }) {
+    // Store-style row: brand image on the left, store name + coupon title on the right.
+    const store = (coupon.store ?? undefined) as (PublicStoreRef & { logo?: string }) | undefined;
+    const logo = store?.logo;
+    const storeName = store?.name || 'Store';
     return (
         <li>
             <button
                 type="button"
                 onClick={onSelect}
-                className="group flex w-full items-center justify-center gap-1.5 rounded-md border border-border bg-background px-2.5 py-2 font-mono text-[12.5px] font-bold text-foreground transition-colors hover:border-primary/50 hover:text-primary"
+                className="group flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-surface"
             >
-                <Scissors className="h-3.5 w-3.5 shrink-0 text-primary" />
-                <span className="truncate">{label}</span>
+                {logo ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                        src={logo}
+                        alt={`${storeName} logo`}
+                        className="h-9 w-9 shrink-0 rounded-lg border border-border bg-card object-contain p-1"
+                    />
+                ) : (
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-border bg-card text-sm font-extrabold text-muted-foreground">
+                        {storeName.charAt(0).toUpperCase() || 'C'}
+                    </span>
+                )}
+                <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[12.5px] font-medium text-muted-foreground group-hover:text-primary">
+                        {storeName}
+                    </span>
+                    <span className="block truncate text-[14px] font-semibold text-foreground group-hover:text-primary transition-colors">
+                        {coupon.title}
+                    </span>
+                </span>
             </button>
         </li>
     );

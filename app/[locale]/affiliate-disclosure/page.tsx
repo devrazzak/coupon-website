@@ -1,10 +1,10 @@
 import { PageHeader, PublicPageShell } from '@/components/public/page-layout';
+import siteConfig from '@/utils/SiteConfig';
 
 const disclosures = [
     {
         title: 'Paid partnerships',
-        content:
-            'Coupello may earn a commission or referral fee when users click through to a partner merchant and complete qualifying purchases.',
+        content: `${siteConfig.company_name} may earn a commission or referral fee when users click through to a partner merchant and complete qualifying purchases.`,
     },
     {
         title: 'No impact on pricing',
@@ -24,7 +24,7 @@ export default function AffiliateDisclosurePage() {
             <PageHeader
                 eyebrow="Affiliate disclosure"
                 title="Transparency about merchant relationships"
-                description="This page explains how Coupello may be compensated when users discover and visit stores through the platform."
+                description={`This page explains how ${siteConfig.company_name} may be compensated when users discover and visit stores through the platform.`}
             />
 
             <section className="container-page py-8 md:py-10">

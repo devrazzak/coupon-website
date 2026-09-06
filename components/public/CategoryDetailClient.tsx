@@ -7,6 +7,7 @@ import { CouponModal } from '@/components/CouponModal';
 import { PublicCouponRow } from '@/components/public/PublicCouponRow';
 import { Breadcrumbs, PublicPageShell } from '@/components/public/page-layout';
 import { CouponCardSkeleton } from '@/components/ui/coupon-card-skeleton';
+import siteConfig from '@/utils/SiteConfig';
 import type { PublicCoupon } from '@/utils/api/coupon';
 import { useInfinitePublicCoupons } from '@/utils/hooks/coupon';
 
@@ -158,9 +159,7 @@ export function CategoryDetailClient({
                     </h2>
                     <div className="mt-3 space-y-3 text-sm leading-7 text-muted-foreground">
                         <p>
-                            Find verified {categoryName} coupon codes, promo offers, and current
-                            deals on Coupello. Browse the latest discounts from trusted online
-                            stores and use the search box to find an offer for the product you need.
+                            {`Find verified ${categoryName} coupon codes, promo offers, and current deals on ${siteConfig.company_name}. Browse the latest discounts from trusted online stores and use the search box to find an offer for the product you need.`}
                         </p>
                         {categoryShortDescription && <p>{categoryShortDescription}</p>}
                         <p>

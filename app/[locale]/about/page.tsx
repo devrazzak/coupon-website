@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { BadgeCheck, ShieldCheck, Sparkles, Target, TrendingUp } from 'lucide-react';
 
 import { PageHeader, PublicPageShell, StatCard } from '@/components/public/page-layout';
+import siteConfig from '@/utils/SiteConfig';
 
 const trustPoints = [
     {
@@ -29,9 +30,9 @@ export default function AboutPage() {
     return (
         <PublicPageShell>
             <PageHeader
-                eyebrow="About Coupello"
+                eyebrow={`About ${siteConfig.company_name}`}
                 title="The smarter way to discover coupons"
-                description="Coupello helps shoppers compare trusted deals, browse useful offers and save on everyday purchases without the noise of aggressive or confusing promotions."
+                description={`${siteConfig.company_name} helps shoppers compare trusted deals, browse useful offers and save on everyday purchases without the noise of aggressive or confusing promotions.`}
             />
 
             <section className="container-page py-8 md:py-10">
@@ -44,13 +45,10 @@ export default function AboutPage() {
                 <div className="mt-10 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
                     <div className="rounded-3xl border border-border bg-card p-6 shadow-soft md:p-8">
                         <h2 className="font-display text-[28px] font-extrabold tracking-tight text-foreground">
-                            What is Coupello?
+                            {`What is ${siteConfig.company_name}?`}
                         </h2>
                         <p className="mt-4 text-[15px] leading-8 text-muted-foreground">
-                            Coupello is a deal discovery platform built for shoppers who want a
-                            cleaner, more transparent way to find savings. We surface verified
-                            offers from trusted merchants and make it easy to compare discount
-                            types, categories and store-specific promotions.
+                            {`${siteConfig.company_name} is a deal discovery platform built for shoppers who want a cleaner, more transparent way to find savings. We surface verified offers from trusted merchants and make it easy to compare discount types, categories and store-specific promotions.`}
                         </p>
                         <p className="mt-4 text-[15px] leading-8 text-muted-foreground">
                             Our mission is simple: help people save more without the friction,
@@ -77,7 +75,7 @@ export default function AboutPage() {
 
                 <div className="mt-10">
                     <h2 className="font-display text-[28px] font-extrabold tracking-tight text-foreground">
-                        How Coupello helps shoppers
+                        {`How ${siteConfig.company_name} helps shoppers`}
                     </h2>
                     <div className="mt-5 grid gap-4 md:grid-cols-3">
                         {trustPoints.map(({ title, description, icon: Icon }) => (
@@ -122,13 +120,10 @@ export default function AboutPage() {
 
                     <div className="rounded-3xl border border-border bg-card p-6 shadow-soft md:p-8">
                         <h2 className="font-display text-[28px] font-extrabold tracking-tight text-foreground">
-                            How Coupello makes money
+                            {`How ${siteConfig.company_name} makes money`}
                         </h2>
                         <p className="mt-4 text-[15px] leading-8 text-muted-foreground">
-                            Coupello may receive compensation from select merchant referrals and
-                            affiliate relationships. This helps support the platform and keep the
-                            service free for shoppers while preserving transparency around merchant
-                            partnerships.
+                            {`${siteConfig.company_name} may receive compensation from select merchant referrals and affiliate relationships. This helps support the platform and keep the service free for shoppers while preserving transparency around merchant partnerships.`}
                         </p>
                     </div>
                 </div>
@@ -140,7 +135,7 @@ export default function AboutPage() {
                         </span>
                         <div>
                             <h2 className="font-display text-[28px] font-extrabold tracking-tight text-foreground">
-                                Why shoppers can trust Coupello
+                                {`Why shoppers can trust ${siteConfig.company_name}`}
                             </h2>
                             <p className="mt-3 text-[15px] leading-8 text-muted-foreground">
                                 We focus on clarity, verification and transparent disclosure. No

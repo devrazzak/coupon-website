@@ -1,6 +1,7 @@
 import { Mail, MapPin, MessageSquareText, Phone } from 'lucide-react';
 
 import { PageHeader, PublicPageShell } from '@/components/public/page-layout';
+import siteConfig from '@/utils/SiteConfig';
 
 export default function ContactPage() {
     return (
@@ -8,7 +9,7 @@ export default function ContactPage() {
             <PageHeader
                 eyebrow="Contact"
                 title="We’re here to help"
-                description="Reach out for support, partnership questions or general feedback about how Coupello helps shoppers discover better deals."
+                description={`Reach out for support, partnership questions or general feedback about how ${siteConfig.company_name} helps shoppers discover better deals.`}
             />
 
             <section className="container-page py-8 md:py-10">
@@ -62,7 +63,7 @@ export default function ContactPage() {
                                         Office
                                     </p>
                                     <p className="mt-1 text-[15px] font-semibold text-foreground">
-                                        Coupello HQ, New York, NY
+                                        {`${siteConfig.company_name} HQ, New York, NY`}
                                     </p>
                                 </div>
                             </div>

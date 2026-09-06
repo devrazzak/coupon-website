@@ -3,6 +3,8 @@ import blog2 from '@/public/images/blog-2.jpg';
 import blog3 from '@/public/images/blog-3.jpg';
 import blog4 from '@/public/images/blog-4.jpg';
 
+import siteConfig from './SiteConfig';
+
 export type CouponListItem = {
     id: string;
     slug: string;
@@ -698,15 +700,15 @@ export const blogPosts: BlogPostItem[] = [
 
 export const faqs = [
     {
-        question: 'How do I redeem a coupon on Coupello?',
+        question: `How do I redeem a coupon on ${siteConfig.company_name}?`,
         answer: 'Browse an offer, reveal or copy the code, then visit the merchant through the provided link and apply the code in checkout.',
     },
     {
         question: 'Are all coupons verified?',
-        answer: 'Coupello highlights verified codes and deals, while ensuring offers are clearly labeled and current before they appear in the catalog.',
+        answer: `${siteConfig.company_name} highlights verified codes and deals, while ensuring offers are clearly labeled and current before they appear in the catalog.`,
     },
     {
-        question: 'Does Coupello auto-apply discounts?',
+        question: `Does ${siteConfig.company_name} auto-apply discounts?`,
         answer: 'No. The platform helps users discover and copy valid coupons, but discounts are applied by the shopper at checkout on the merchant website.',
     },
 ];
@@ -719,7 +721,7 @@ export const legalSections = {
     ],
     terms: [
         'Users are responsible for checking terms, exclusions and expiration dates before using any offer.',
-        'Coupello is a discovery and informational platform and does not guarantee offers remain valid after publication.',
+        `${siteConfig.company_name} is a discovery and informational platform and does not guarantee offers remain valid after publication.`,
         'We may update these terms at any time to reflect changes in our service, policies or legal requirements.',
     ],
     cookies: [
@@ -728,7 +730,7 @@ export const legalSections = {
         'Certain essential cookies are required for the website to work properly and maintain security.',
     ],
     affiliate: [
-        'Some offers and merchant links may generate compensation to Coupello through affiliate relationships.',
+        `Some offers and merchant links may generate compensation to ${siteConfig.company_name} through affiliate relationships.`,
         'This compensation does not affect the price you pay and does not change the coupon availability shown on the site.',
         'We disclose affiliate partnerships clearly so users can understand how the platform operates.',
     ],

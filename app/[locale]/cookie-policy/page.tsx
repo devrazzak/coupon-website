@@ -1,4 +1,5 @@
 import { PageHeader, PublicPageShell } from '@/components/public/page-layout';
+import siteConfig from '@/utils/SiteConfig';
 
 const sections = [
     {
@@ -29,7 +30,7 @@ export default function CookiePolicyPage() {
             <PageHeader
                 eyebrow="Cookie policy"
                 title="How we use cookies"
-                description="This policy explains the cookies used on Coupello and how they help support the website experience while protecting user privacy."
+                description={`This policy explains the cookies used on ${siteConfig.company_name} and how they help support the website experience while protecting user privacy.`}
             />
 
             <section className="container-page py-8 md:py-10">

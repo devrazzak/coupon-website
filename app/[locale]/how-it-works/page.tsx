@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 
 import { PageHeader, PublicPageShell } from '@/components/public/page-layout';
+import siteConfig from '@/utils/SiteConfig';
 
 const steps = [
     {
@@ -57,7 +58,7 @@ export default function HowItWorksPage() {
             <PageHeader
                 eyebrow="How it works"
                 title="Coupon discovery that keeps things simple"
-                description="Coupello helps shoppers discover verified codes, compare deals and redeem savings on the merchant website. It does not auto-apply coupons or use browser automation."
+                description={`${siteConfig.company_name} helps shoppers discover verified codes, compare deals and redeem savings on the merchant website. It does not auto-apply coupons or use browser automation.`}
             />
 
             <section className="container-page py-8 md:py-10">
@@ -95,11 +96,7 @@ export default function HowItWorksPage() {
                                 Important note
                             </h2>
                             <p className="mt-3 text-[15px] leading-8 text-muted-foreground">
-                                Coupello currently provides coupon discovery and verified promo
-                                codes for shoppers. It does not automatically apply discounts, use
-                                browser automation or install Chrome extensions. Users can browse
-                                offers, reveal or copy a valid code and then complete the purchase
-                                on the merchant website as intended.
+                                {`${siteConfig.company_name} currently provides coupon discovery and verified promo codes for shoppers. It does not automatically apply discounts, use browser automation or install Chrome extensions. Users can browse offers, reveal or copy a valid code and then complete the purchase on the merchant website as intended.`}
                             </p>
                         </div>
                     </div>

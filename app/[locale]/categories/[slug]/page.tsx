@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import { CategoryDetailClient } from '@/components/public/CategoryDetailClient';
+import siteConfig from '@/utils/SiteConfig';
 import {
     type PublicCategory,
     getPublicCategories,
@@ -53,7 +54,8 @@ export async function generateMetadata({
     const { slug } = await params;
     const category = await resolveCategory(slug);
 
-    const title = category.seo_title || `${category.name} Coupons & Deals | Coupello`;
+    const title =
+        category.seo_title || `${category.name} Coupons & Deals | ${siteConfig.company_name}`;
     const description =
         category.meta_description ||
         `Browse verified coupon codes, promo offers, and the latest deals in ${category.name}.`;
@@ -68,7 +70,7 @@ export async function generateMetadata({
             title,
             description,
             url: `/categories/${slug}`,
-            siteName: 'Coupello',
+            siteName: siteConfig.company_name,
             type: 'website',
         },
         robots: {

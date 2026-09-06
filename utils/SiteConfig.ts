@@ -1,5 +1,5 @@
 const siteConfig = {
-    company_name: 'Donation App',
+    company_name: 'Coupola',
     logo: '',
     white_logo: '',
     avatar: '',

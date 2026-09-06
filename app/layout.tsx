@@ -2,6 +2,8 @@ import { Inter } from 'next/font/google';
 
 import { Metadata } from 'next';
 
+import siteConfig from '@/utils/SiteConfig';
+
 import { Providers } from './providers';
 
 import './globals.css';
@@ -16,7 +18,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-    title: 'Coupello - 250,000+ Verified Promo Codes, Coupons & Cash Back Deals',
+    title: `${siteConfig.company_name} - 250,000+ Verified Promo Codes, Coupons & Cash Back Deals`,
     description:
         'Find the best promo codes, coupons, and cash back deals from your favorite online stores.',
 };

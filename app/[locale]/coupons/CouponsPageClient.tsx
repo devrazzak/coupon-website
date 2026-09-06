@@ -7,6 +7,7 @@ import { CouponModal } from '@/components/CouponModal';
 import { PublicCouponRow } from '@/components/public/PublicCouponRow';
 import { PageHeader, PublicPageShell } from '@/components/public/page-layout';
 import { CouponCardSkeleton } from '@/components/ui/coupon-card-skeleton';
+import siteConfig from '@/utils/SiteConfig';
 import type { PublicCoupon } from '@/utils/api/coupon';
 import { useInfinitePublicCoupons } from '@/utils/hooks/coupon';
 
@@ -35,7 +36,7 @@ export default function CouponsPageClient() {
         <PublicPageShell>
             <PageHeader
                 title="Coupons & Promo Codes"
-                description="Discover verified coupon codes, promo offers, and exclusive discounts from popular online stores. Search the latest deals and save more on every purchase with Coupello."
+                description={`Discover verified coupon codes, promo offers, and exclusive discounts from popular online stores. Search the latest deals and save more on every purchase with ${siteConfig.company_name}.`}
             />
             <section className="container-page py-12">
                 {/* <div className="rounded-xl border border-border bg-card p-4 md:p-5"> */}
@@ -108,10 +109,7 @@ export default function CouponsPageClient() {
                     </h2>
                     <div className="mt-3 space-y-3 text-sm leading-7 text-muted-foreground">
                         <p>
-                            Looking for a simple way to save money online? Coupello brings together
-                            verified coupons, discount codes, and special offers from trusted stores
-                            in one convenient place. Browse the latest deals or search for a store
-                            to find an offer that matches your purchase.
+                            {`Looking for a simple way to save money online? ${siteConfig.company_name} brings together verified coupons, discount codes, and special offers from trusted stores in one convenient place. Browse the latest deals or search for a store to find an offer that matches your purchase.`}
                         </p>
                         <p>
                             Before you check out, compare available promo codes and choose the

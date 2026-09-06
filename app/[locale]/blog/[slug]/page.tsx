@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 
 import { BlogShareButtons } from '@/components/blog/BlogShareButtons';
 import { Breadcrumbs, PublicPageShell } from '@/components/public/page-layout';
+import siteConfig from '@/utils/SiteConfig';
 import { getPublicBlogBySlug } from '@/utils/api/blog';
 import { getPublicBlogCategories } from '@/utils/api/blog-category';
 
@@ -39,17 +40,17 @@ export async function generateMetadata({
 
     if (!blog) {
         return {
-            title: 'Blog | Coupello',
+            title: `Blog | ${siteConfig.company_name}`,
             description: 'Savings guides and tips.',
         };
     }
 
-    const title = blog.meta_title || `${blog.title} | Coupello Blog`;
+    const title = blog.meta_title || `${blog.title} | ${siteConfig.company_name} Blog`;
     const description =
         blog.meta_description ||
         blog.short_description ||
         blog.description?.replace(/\s+/g, ' ').trim().slice(0, 160) ||
-        `Read ${blog.title} and discover practical shopping tips from Coupello.`;
+        `Read ${blog.title} and discover practical shopping tips from ${siteConfig.company_name}.`;
 
     return {
         title,
@@ -61,7 +62,7 @@ export async function generateMetadata({
             title,
             description,
             url: `/blog/${blog.slug}`,
-            siteName: 'Coupello',
+            siteName: siteConfig.company_name,
             type: 'article',
             ...(blog.thumbnail ? { images: [{ url: blog.thumbnail, alt: blog.title }] } : {}),
         },
@@ -140,7 +141,7 @@ export default async function BlogDetailPage({
                                         <p className="font-semibold text-foreground">
                                             {blog.view_count
                                                 ? `${blog.view_count} views`
-                                                : 'Coupello'}
+                                                : siteConfig.company_name}
                                         </p>
                                         <p>{blog.tags?.length ? blog.tags.join(', ') : 'Guide'}</p>
                                     </div>

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { PageHeader, PublicPageShell, StoreCard } from '@/components/public/page-layout';
 import { StoreCardSkeleton } from '@/components/ui/store-card-skeleton';
+import siteConfig from '@/utils/SiteConfig';
 import { useInfinitePublicStores } from '@/utils/hooks/store';
 
 // const alphaFilters = ['All', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
@@ -125,9 +126,7 @@ export default function StoresPageClient() {
                     </h2>
                     <div className="mt-3 space-y-3 text-sm leading-7 text-muted-foreground">
                         <p>
-                            Browse popular online stores on Coupello to find verified coupon codes,
-                            discount offers, and ways to save on your next order. Search by store or
-                            brand to quickly find deals that match what you want to buy.
+                            {`Browse popular online stores on ${siteConfig.company_name} to find verified coupon codes, discount offers, and ways to save on your next order. Search by store or brand to quickly find deals that match what you want to buy.`}
                         </p>
                         <p>
                             Each store page brings its latest available offers together in one

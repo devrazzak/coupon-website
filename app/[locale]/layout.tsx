@@ -4,6 +4,7 @@ import { Suspense } from 'react';
 
 import { CouponQueryModal } from '@/components/CouponQueryModal';
 import { locales } from '@/i18n';
+import siteConfig from '@/utils/SiteConfig';
 
 export function generateStaticParams() {
     return locales.map(locale => ({ locale }));
@@ -12,7 +13,7 @@ export function generateStaticParams() {
 export const metadata: Metadata = {
     title: {
         template: '%s',
-        default: 'Coupello - Verified Promo Codes, Coupons & Deals',
+        default: `${siteConfig.company_name} - Verified Promo Codes, Coupons & Deals`,
     },
     description:
         'Find the latest verified coupon codes, discounts, and daily deals for your favorite online stores.',

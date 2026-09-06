@@ -5,7 +5,8 @@ import Image from 'next/image';
 import { Flame } from 'lucide-react';
 import { useState } from 'react';
 
-import HeroImage from '@/public/images/hero-savings.jpg';
+import HeroImage from '@/public/images/hero-banner.svg';
+import siteConfig from '@/utils/SiteConfig';
 
 export function HeroSection() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -31,22 +32,22 @@ export function HeroSection() {
                             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
                                 <Flame className="h-3 w-3" />
                             </span>
-                            <span>250,000+ Codes &amp; Cash Back Deals Verified Today</span>
+                            <span>Thousands of Verified Codes &amp; Deals, Updated Daily</span>
                         </div>
 
                         {/* Main Heading */}
                         <h1 className="mt-5 font-display text-[38px] font-extrabold leading-[1.08] tracking-tight text-foreground sm:text-[46px] md:text-[52px] lg:text-[56px]">
                             Never Pay Full Price. <br />
                             <span className="bg-linear-to-r from-primary via-[#FF4D50] to-secondary-brand bg-clip-text text-transparent">
-                                Auto-Apply Coupons
+                                Verified Coupons &amp; Deals
                             </span>
                         </h1>
 
                         {/* Subtitle */}
                         <p className="mt-5 max-w-xl text-[16px] leading-relaxed text-muted-foreground sm:text-[17px]">
-                            Coupello automatically tests &amp; applies the best promo codes at
-                            checkout on 50,000+ stores — plus gives you instant cash back. 100%
-                            free.
+                            Discover verified promo codes and discounts from top online stores.
+                            Browse the latest offers, copy your code, and redeem it at checkout —
+                            100% free.
                         </p>
                     </div>
 
@@ -70,9 +71,7 @@ export function HeroSection() {
                                         How do we make money?
                                     </p>
                                     <p className="font-display text-[11px]  text-foreground">
-                                        Coupello earns a commission when you shop through our links,
-                                        and we share part of it back with you as cash back.
-                                        That&apos;s why using Coupello is always free.
+                                        {`${siteConfig.company_name} is free to use. We earn a commission when you shop through our links, so finding and using coupons never costs you anything extra.`}
                                     </p>
                                 </div>
                             </div>

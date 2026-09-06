@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { PageHeader, PublicPageShell } from '@/components/public/page-layout';
 import PATHS from '@/routes/path';
+import siteConfig from '@/utils/SiteConfig';
 import { useGetPublicBlogs } from '@/utils/hooks/blog';
 
 const PAGE_LIMIT = 12;
@@ -63,7 +64,7 @@ export default function BlogPage() {
         <PublicPageShell>
             <PageHeader
                 title="Savings Guides & Tips"
-                description="Read practical shopping guides, coupon tips, and money-saving advice to help you find better deals and make smarter online purchases with Coupello."
+                description={`Read practical shopping guides, coupon tips, and money-saving advice to help you find better deals and make smarter online purchases with ${siteConfig.company_name}.`}
             />
             <section className="container-page py-15">
                 <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

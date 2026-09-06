@@ -9,6 +9,7 @@ import { useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { locales } from '@/i18n';
+import siteConfig from '@/utils/SiteConfig';
 
 import DropdownMenu, { DropdownItem, DropdownSeparator } from './DropdownMenu';
 
@@ -65,7 +66,7 @@ export default function AdminHeader({ sidebarOpen, setSidebarOpen }: AdminHeader
                         </span>
                         <div>
                             <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-primary">
-                                Coupello
+                                {siteConfig.company_name}
                             </div>
                             <div className="font-display text-[18px] font-extrabold tracking-[-0.03em] text-foreground">
                                 Admin

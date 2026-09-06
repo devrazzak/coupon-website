@@ -1,4 +1,5 @@
 import { PageHeader, PublicPageShell } from '@/components/public/page-layout';
+import siteConfig from '@/utils/SiteConfig';
 
 const sections = [
     {
@@ -13,8 +14,7 @@ const sections = [
     },
     {
         title: 'Cookies and analytics',
-        content:
-            'Coupello uses cookies and analytics tools to understand behavior, improve performance and remember essential preferences. You can manage settings in your browser to limit or disable non-essential cookies.',
+        content: `${siteConfig.company_name} uses cookies and analytics tools to understand behavior, improve performance and remember essential preferences. You can manage settings in your browser to limit or disable non-essential cookies.`,
     },
     {
         title: 'Sharing and security',
@@ -34,7 +34,7 @@ export default function PrivacyPolicyPage() {
             <PageHeader
                 eyebrow="Privacy policy"
                 title="Your privacy matters"
-                description="This privacy policy explains how Coupello handles information and keeps the shopping and deal discovery experience secure and transparent."
+                description={`This privacy policy explains how ${siteConfig.company_name} handles information and keeps the shopping and deal discovery experience secure and transparent.`}
             />
 
             <section className="container-page py-8 md:py-10">

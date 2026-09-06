@@ -19,7 +19,7 @@ import {
 import { MediaPicker } from '@/components/admin/media-picker';
 import { Button } from '@/components/ui/button';
 import { type MediaRecord } from '@/utils/admin-data';
-import { type BlogCreatePayload } from '@/utils/api/blog';
+import { type BlogCreatePayload, getPublicBlogBySlug } from '@/utils/api/blog';
 import { file_base_url } from '@/utils/config';
 import { useCreateBlog, useDeleteBlog, useGetBlogs, useUpdateBlog } from '@/utils/hooks/blog';
 import { useGetBlogCategories } from '@/utils/hooks/blog-category';
@@ -530,6 +530,8 @@ export default function BlogAdminPage() {
     const [page, setPage] = useState(1);
     const [modalOpen, setModalOpen] = useState(false);
     const [editing, setEditing] = useState<BlogUiRecord | null>(null);
+    // Slug of the post currently being loaded (full content fetch) before opening Edit.
+    const [busyEdit, setBusyEdit] = useState<string | null>(null);
     const [deleteTarget, setDeleteTarget] = useState<BlogUiRecord | null>(null);
     const [toast, setToast] = useState('');
 
@@ -708,6 +710,46 @@ export default function BlogAdminPage() {
         }
     };
 
+    // The admin list payload omits the full blog body + SEO fields (only id, title,
+    // slug, short_description, thumbnail, etc.). When opening a post for editing,
+    // hydrate those fields from the full record so the form isn't blank.
+    const handleEdit = async (post: BlogUiRecord) => {
+        // The list payload may omit the full body + SEO fields, so if the row
+        // appears to lack any of them we hydrate from the full record first.
+        const needsFull =
+            post.slug && (!post.description || !post.metaTitle || !post.metaDescription);
+
+        if (!needsFull) {
+            setEditing(post);
+            setModalOpen(true);
+            return;
+        }
+
+        setBusyEdit(post.id);
+        try {
+            const res = await getPublicBlogBySlug(post.slug);
+            const item = (res?.data?.data ?? null) as Partial<BlogApiItem> | null;
+            if (item) {
+                setEditing({
+                    ...post,
+                    shortDescription: (item.short_description as string) ?? post.shortDescription,
+                    description: (item.description as string) ?? post.description,
+                    metaTitle: (item.meta_title as string) ?? post.metaTitle,
+                    metaDescription: (item.meta_description as string) ?? post.metaDescription,
+                    canonicalUrl: (item.canonical_url as string) ?? post.canonicalUrl,
+                });
+            } else {
+                setEditing(post);
+            }
+        } catch {
+            // Fall back to the summary record if the full fetch fails.
+            setEditing(post);
+        } finally {
+            setBusyEdit(null);
+            setModalOpen(true);
+        }
+    };
+
     const handleDelete = async () => {
         if (!deleteTarget) return;
 
@@ -878,13 +920,15 @@ export default function BlogAdminPage() {
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    onClick={() => {
-                                                        setEditing(post);
-                                                        setModalOpen(true);
-                                                    }}
+                                                    onClick={() => handleEdit(post)}
+                                                    disabled={busyEdit === post.id}
                                                     title="Edit"
                                                 >
-                                                    <Edit3 className="h-4 w-4" />
+                                                    {busyEdit === post.id ? (
+                                                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-border border-t-primary" />
+                                                    ) : (
+                                                        <Edit3 className="h-4 w-4" />
+                                                    )}
                                                 </Button>
                                                 <Button
                                                     variant="ghost"

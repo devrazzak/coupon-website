@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { BadgePercent } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
+import siteConfig from '@/utils/SiteConfig';
+
 export function BrandMark({ className = 'h-9 w-9' }: { className?: string }) {
     return (
         <span
@@ -24,11 +26,11 @@ export function Logo() {
         <Link
             href="/"
             className="group flex shrink-0 items-center gap-2.5"
-            aria-label="Coupello home"
+            aria-label={`${siteConfig.company_name} home`}
         >
             <BrandMark className="h-9 w-9 transition-transform group-hover:scale-105" />
             <span className="font-display text-[21px] font-extrabold tracking-tight text-foreground">
-                Coup<span className="text-primary">ello</span>
+                {siteConfig.company_name}
             </span>
         </Link>
     );
