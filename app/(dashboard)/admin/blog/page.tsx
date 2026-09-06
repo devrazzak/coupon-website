@@ -3,7 +3,6 @@
 import Link from 'next/link';
 
 import { Edit3, Eye, EyeOff, FolderOpen, Plus, Trash2 } from 'lucide-react';
-import { useLocale } from 'next-intl';
 import { useMemo, useState } from 'react';
 
 import {
@@ -521,7 +520,6 @@ function BlogModal({
 }
 
 export default function BlogAdminPage() {
-    const locale = useLocale();
     const [blogOverrides, setBlogOverrides] = useState<Record<string, BlogUiRecord | null>>({});
     const [uploadedMedia, setUploadedMedia] = useState<MediaRecord[]>([]);
     const [search, setSearch] = useState('');
@@ -793,7 +791,7 @@ export default function BlogAdminPage() {
                 breadcrumb={['Dashboard', 'Blog']}
                 action={
                     <div className="flex items-center gap-3">
-                        <Link href={`/${locale}/admin/blog/categories`}>
+                        <Link href="/admin/blog/categories">
                             <Button variant="outline">
                                 <FolderOpen className="mr-2 h-4 w-4" /> Categories
                             </Button>

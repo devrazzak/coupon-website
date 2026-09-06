@@ -1,14 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
 
-import { BellDot, ChevronDown, Globe, LogOut, Menu, Settings, Sparkles, User } from 'lucide-react';
-import { useLocale } from 'next-intl';
+import { BellDot, ChevronDown, LogOut, Menu, Settings, Sparkles, User } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
-import { locales } from '@/i18n';
 import siteConfig from '@/utils/SiteConfig';
 
 import DropdownMenu, { DropdownItem, DropdownSeparator } from './DropdownMenu';
@@ -19,30 +16,7 @@ interface AdminHeaderProps {
 }
 
 export default function AdminHeader({ sidebarOpen, setSidebarOpen }: AdminHeaderProps) {
-    const router = useRouter();
-    const pathname = usePathname();
-    const locale = useLocale();
-    const pathnameLocale = pathname.split('/')[1];
-    const selectedLocale = locales.includes(pathnameLocale) ? pathnameLocale : locale;
     const { logout, user } = useAuth();
-
-    const languages = [
-        { code: 'en', name: 'English' },
-        { code: 'es', name: 'Español' },
-        { code: 'bn', name: 'বাংলা' },
-    ];
-
-    const switchLanguage = (newLocale: string) => {
-        if (newLocale === selectedLocale) return;
-
-        const segments = pathname.split('/');
-        const currentPath = locales.includes(segments[1])
-            ? `/${segments.slice(2).join('/')}`
-            : pathname;
-        const normalizedPath = currentPath === '//' ? '/' : currentPath;
-
-        router.push(normalizedPath === '/' ? `/${newLocale}` : `/${newLocale}${normalizedPath}`);
-    };
 
     const handleLogout = () => {
         logout();
@@ -76,35 +50,6 @@ export default function AdminHeader({ sidebarOpen, setSidebarOpen }: AdminHeader
                 </div>
 
                 <div className="flex items-center gap-2 sm:gap-3">
-                    <DropdownMenu
-                        trigger={
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="flex items-center gap-1 rounded-full"
-                            >
-                                <Globe className="h-4 w-4" />
-                                <ChevronDown className="h-3.5 w-3.5" />
-                            </Button>
-                        }
-                        className="w-32"
-                        align="right"
-                    >
-                        {languages.map(lang => (
-                            <DropdownItem
-                                key={lang.code}
-                                onClick={() => switchLanguage(lang.code)}
-                                className={
-                                    selectedLocale === lang.code
-                                        ? 'bg-primary-light text-primary'
-                                        : ''
-                                }
-                            >
-                                {lang.name}
-                            </DropdownItem>
-                        ))}
-                    </DropdownMenu>
-
                     <Button variant="ghost" size="icon" className="rounded-full">
                         <BellDot className="h-4 w-4" />
                     </Button>
@@ -138,13 +83,13 @@ export default function AdminHeader({ sidebarOpen, setSidebarOpen }: AdminHeader
                             </div>
                             <div className="text-xs text-muted-foreground">{user?.email}</div>
                         </div>
-                        <Link href={`/${locale}/admin/profile`} passHref>
+                        <Link href="/admin/profile" passHref>
                             <DropdownItem>
                                 <User className="h-4 w-4" />
                                 <span className="ml-2">Profile</span>
                             </DropdownItem>
                         </Link>
-                        <Link href={`/${locale}/admin/settings`} passHref>
+                        <Link href="/admin/settings" passHref>
                             <DropdownItem>
                                 <Settings className="h-4 w-4" />
                                 <span className="ml-2">Settings</span>

@@ -47,11 +47,7 @@ async function resolveStore(slug: string): Promise<ResolvedStore | null> {
     return null;
 }
 
-export async function generateMetadata({
-    params,
-}: {
-    params: Promise<{ locale: string; slug: string }>;
-}) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
     const store = await resolveStore(slug);
 
@@ -87,11 +83,7 @@ export async function generateMetadata({
     } satisfies Metadata;
 }
 
-export default async function StoreDetailPage({
-    params,
-}: {
-    params: Promise<{ locale: string; slug: string }>;
-}) {
+export default async function StoreDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
     const store = await resolveStore(slug);
 

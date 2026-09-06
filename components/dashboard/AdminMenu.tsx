@@ -4,10 +4,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { ChevronDown } from 'lucide-react';
-import { useLocale } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import { locales } from '@/i18n';
 import { cn } from '@/utils/cn';
 
 import { menuItems } from './menuItems';
@@ -55,13 +53,9 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
     parentIds = [],
 }) => {
     const pathname = usePathname();
-    const locale = useLocale();
     const isOpen = openMenus.includes(item.id);
 
-    const segments = pathname.split('/');
-    const normalizedPathname = locales.includes(segments[1])
-        ? `/${segments.slice(2).join('/')}`
-        : pathname;
+    const normalizedPathname = pathname;
 
     const checkActive = (menuItem: MenuItem): boolean => {
         if (menuItem.path && normalizedPathname === menuItem.path) return true;
@@ -149,7 +143,7 @@ const MenuDropdown: React.FC<MenuDropdownProps> = ({
         <div className="relative">
             {item.path ? (
                 <Link
-                    href={`/${locale}${item.path}`}
+                    href={item.path}
                     className={cn(menuItemClasses, 'rounded-xl py-2.5 hover:bg-primary-light', {
                         'bg-primary-light font-medium': isActive,
                     })}
@@ -234,10 +228,7 @@ const findActiveMenuPath = (items: MenuItem[], targetPath: string): string[] => 
 export default function AdminMenu() {
     const pathname = usePathname();
 
-    const segments = pathname.split('/');
-    const normalizedPathname = locales.includes(segments[1])
-        ? `/${segments.slice(2).join('/')}`
-        : pathname;
+    const normalizedPathname = pathname;
 
     const [openMenus, setOpenMenus] = useState<string[]>(
         () => findActiveMenuPath(menuItems, normalizedPathname) || [],

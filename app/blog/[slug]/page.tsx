@@ -73,11 +73,7 @@ async function fetchBlog(slug: string) {
     }
 }
 
-export async function generateMetadata({
-    params,
-}: {
-    params: Promise<{ locale: string; slug: string }>;
-}) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
     const blog = await fetchBlog(slug);
 
@@ -122,11 +118,7 @@ export async function generateMetadata({
     } satisfies Metadata;
 }
 
-export default async function BlogDetailPage({
-    params,
-}: {
-    params: Promise<{ locale: string; slug: string }>;
-}) {
+export default async function BlogDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
     const [blog, categoriesResponse] = await Promise.all([
         fetchBlog(slug),

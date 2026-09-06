@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation';
 
-import { useLocale } from 'next-intl';
 import { useEffect } from 'react';
 
 import { LoginForm } from '@/components/auth/LoginForm';
@@ -11,17 +10,16 @@ import { useAuth } from '@/hooks/useAuth';
 export default function AdminLoginPage() {
     const { isAuthenticated, user } = useAuth();
     const router = useRouter();
-    const locale = useLocale();
 
     useEffect(() => {
         if (isAuthenticated && user) {
             if (user.role === 'admin') {
-                router.push(`/${locale}/admin`);
+                router.push('/admin');
             } else {
-                router.push(`/${locale}/${user.role}`);
+                router.push(`/${user.role}`);
             }
         }
-    }, [isAuthenticated, user, router, locale]);
+    }, [isAuthenticated, user, router]);
 
     return (
         <div className="space-y-6">

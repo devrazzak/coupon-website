@@ -1,7 +1,9 @@
 import { Inter } from 'next/font/google';
 
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 
+import { CouponQueryModal } from '@/components/CouponQueryModal';
 import { JsonLd } from '@/components/seo/JsonLd';
 import ogImage from '@/public/images/Coupola-logo-social.png';
 import siteConfig from '@/utils/SiteConfig';
@@ -21,7 +23,10 @@ const inter = Inter({
 
 export const metadata: Metadata = {
     metadataBase: new URL(siteConfig.site_url),
-    title: `${siteConfig.company_name} - Coupons, Promo Codes & Money-Saving Deals`,
+    title: {
+        template: '%s',
+        default: `${siteConfig.company_name} - Coupons, Promo Codes & Money-Saving Deals`,
+    },
     description:
         'Discover working coupon codes, promo offers, and money-saving tips to help you pay less at your favorite online stores.',
     keywords: ['promo codes', 'coupons', 'cash back', 'deals', 'discounts'],
@@ -65,7 +70,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <body className="font-sans antialiased" suppressHydrationWarning>
                 <JsonLd data={organizationSchema} />
                 <JsonLd data={websiteSchema} />
-                <Providers>{children}</Providers>
+                <Providers>
+                    {children}
+                    <Suspense fallback={null}>
+                        <CouponQueryModal />
+                    </Suspense>
+                </Providers>
             </body>
         </html>
     );

@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation';
 
-import { useLocale } from 'next-intl';
 import { useEffect } from 'react';
 
 import { useAuth } from '@/hooks/useAuth';
@@ -10,23 +9,22 @@ import { useAuth } from '@/hooks/useAuth';
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
     const { isAuthenticated, user } = useAuth();
     const router = useRouter();
-    const locale = useLocale();
 
     useEffect(() => {
         if (isAuthenticated && user) {
             switch (user.role) {
                 case 'admin':
-                    router.push(`/${locale}/admin`);
+                    router.push('/admin');
                     break;
                 case 'partner':
-                    router.push(`/${locale}/partner`);
+                    router.push('/partner');
                     break;
                 case 'user':
-                    router.push(`/${locale}/user`);
+                    router.push('/user');
                     break;
             }
         }
-    }, [isAuthenticated, user, router, locale]);
+    }, [isAuthenticated, user, router]);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
