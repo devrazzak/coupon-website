@@ -3,6 +3,7 @@ import {
     FolderOpen,
     Image as ImageIcon,
     LayoutDashboard,
+    MessageSquareText,
     Store,
     Tag,
 } from 'lucide-react';
@@ -63,5 +64,11 @@ export const menuItems: MenuItem[] = [
         title: 'Media',
         icon: <ImageIcon className="h-5 w-5" />,
         path: '/admin/media',
+    },
+    {
+        id: 'contact',
+        title: 'Contact Requests',
+        icon: <MessageSquareText className="h-5 w-5" />,
+        path: '/admin/contact',
     },
 ];
