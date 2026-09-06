@@ -23,10 +23,7 @@ type ResolvedStore = Pick<PublicStore, 'name' | 'slug'> &
         >
     >;
 
-async function resolveStore(
-    slug: string,
-    queryStoreId?: string | null,
-): Promise<ResolvedStore | null> {
+async function resolveStore(slug: string): Promise<ResolvedStore | null> {
     try {
         const detailResponse = await getPublicStoreBySlug(slug);
         if (detailResponse?.data?.data) {
@@ -44,11 +41,6 @@ async function resolveStore(
         }
     } catch {
         /* fall through */
-    }
-
-    // Keep the explicit id available when the public store lookup fails.
-    if (queryStoreId && !Number.isNaN(Number(queryStoreId))) {
-        return { id: Number(queryStoreId), name: slug, slug };
     }
 
     return null;
@@ -96,13 +88,11 @@ export async function generateMetadata({
 
 export default async function StoreDetailPage({
     params,
-    searchParams,
 }: {
     params: Promise<{ locale: string; slug: string }>;
-    searchParams: Promise<{ store_id?: string | null }>;
 }) {
-    const [{ slug }, sp] = await Promise.all([params, searchParams]);
-    const store = await resolveStore(slug, sp.store_id);
+    const { slug } = await params;
+    const store = await resolveStore(slug);
 
     if (!store) {
         notFound();
@@ -111,7 +101,7 @@ export default async function StoreDetailPage({
     return (
         <PublicPageShell>
             <StoreDetailClient
-                storeId={store.id}
+                storeSlug={store.slug}
                 storeName={store.name}
                 storeDescription={store.short_description}
                 storeFullDescription={store.description}

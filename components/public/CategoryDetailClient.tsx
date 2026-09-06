@@ -14,13 +14,13 @@ import { useInfinitePublicCoupons } from '@/utils/hooks/coupon';
 const PAGE_LIMIT = 24;
 
 export function CategoryDetailClient({
-    categoryId,
+    categorySlug,
     categoryName,
     categoryImage,
     categoryShortDescription,
     categoryDescription,
 }: {
-    categoryId?: number;
+    categorySlug: string;
     categoryName: string;
     categoryImage?: string;
     categoryShortDescription?: string;
@@ -38,7 +38,7 @@ export function CategoryDetailClient({
     const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
         useInfinitePublicCoupons({
             search: debouncedSearch || undefined,
-            categoryIds: categoryId ? [categoryId] : undefined,
+            category_slug: categorySlug,
             limit: PAGE_LIMIT,
         });
     const coupons = useMemo(() => data?.pages.flatMap(page => page.data.data) ?? [], [data]);

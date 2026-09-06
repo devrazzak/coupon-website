@@ -16,14 +16,14 @@ import { useInfinitePublicCoupons } from '@/utils/hooks/coupon';
 const PAGE_LIMIT = 50;
 
 export function StoreDetailClient({
-    storeId,
+    storeSlug,
     storeName,
     storeDescription,
     storeFullDescription,
     storeHowToUse,
     storeCategories = [],
 }: {
-    storeId?: number;
+    storeSlug: string;
     storeName: string;
     storeDescription?: string;
     storeFullDescription?: string;
@@ -42,7 +42,7 @@ export function StoreDetailClient({
     const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
         useInfinitePublicCoupons({
             search: debouncedSearch || undefined,
-            storeId,
+            store_slug: storeSlug,
             limit: PAGE_LIMIT,
         });
     const coupons = useMemo(() => data?.pages.flatMap(page => page.data.data) ?? [], [data]);

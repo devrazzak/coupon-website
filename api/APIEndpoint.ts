@@ -49,17 +49,16 @@ export const API_END_POINTS = {
         COUPON: {
             GET: (
                 search?: string,
-                categoryIds?: number[],
-                storeId?: number,
+                categorySlug?: string,
+                storeSlug?: string,
                 page = 1,
                 limit = 20,
                 sort?: string,
             ) => {
                 const params = new URLSearchParams();
                 if (search) params.set('search', search);
-                if (categoryIds && categoryIds.length)
-                    params.set('category_id', categoryIds.join(','));
-                if (storeId) params.set('store_id', String(storeId));
+                if (categorySlug) params.set('category_slug', categorySlug);
+                if (storeSlug) params.set('store_slug', storeSlug);
                 if (sort && sort !== 'All') params.set('sort', sort);
                 params.set('page', String(page));
                 params.set('limit', String(limit));

@@ -10,7 +10,7 @@ import type { PublicCategory } from '@/utils/api/category';
 export function CategoryCard({ category }: { category: PublicCategory }) {
     return (
         <Link
-            href={`${PATHS.categoryDetails.replace(':slug', category.slug)}?category_id=${category.id}`}
+            href={PATHS.categoryDetails.replace(':slug', category.slug)}
             className="group flex h-full flex-col items-center justify-center gap-3 rounded-xl border border-border bg-card px-2 py-4 text-center transition-all duration-200 hover:border-primary/50"
             aria-label={`View all ${category.name} coupons and offers`}
         >

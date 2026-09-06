@@ -312,7 +312,7 @@ function Section({
 
 function StoreRow({ store, onClose }: { store: StoreView; onClose: () => void }) {
     const logo = store.logo || store.image;
-    const href = `${PATHS.stores}/${encodeURIComponent(store.slug)}?store_id=${store.id}`;
+    const href = `${PATHS.stores}/${encodeURIComponent(store.slug)}`;
     return (
         <li>
             <Link
@@ -380,7 +380,7 @@ function CouponRow({ coupon, onSelect }: { coupon: PublicCoupon; onSelect: () =>
 }
 
 function CategoryChip({ category, onClose }: { category: PublicCategory; onClose: () => void }) {
-    const href = `${PATHS.categories}/${encodeURIComponent(category.slug)}?category_id=${category.id}`;
+    const href = `${PATHS.categories}/${encodeURIComponent(category.slug)}`;
     return (
         <li>
             <Link

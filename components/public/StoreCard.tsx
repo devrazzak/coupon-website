@@ -8,7 +8,7 @@ import { type PublicStore } from '@/utils/api/store';
 export function StoreCard({ item }: { item: PublicStore }) {
     return (
         <Link
-            href={`${PATHS.shopDetails.replace(':slug', item.slug)}?store_id=${item.id}`}
+            href={PATHS.shopDetails.replace(':slug', item.slug)}
             className="group relative flex flex-col items-center justify-between overflow-hidden rounded-2xl border border-border bg-card p-3 text-center shadow-soft transition-all duration-200  hover:border-primary/50 hover:shadow-lift"
             aria-label={`View verified coupons and deals for ${item.name} store`}
         >

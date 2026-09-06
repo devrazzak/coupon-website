@@ -18,10 +18,7 @@ type ResolvedCategory = Pick<PublicCategory, 'name' | 'slug'> &
         >
     >;
 
-async function resolveCategory(
-    slug: string,
-    queryCategoryId?: string | null,
-): Promise<ResolvedCategory | null> {
+async function resolveCategory(slug: string): Promise<ResolvedCategory | null> {
     try {
         const detailResponse = await getPublicCategoryBySlug(slug);
         if (detailResponse?.data?.data) {
@@ -39,10 +36,6 @@ async function resolveCategory(
         }
     } catch {
         /* fall through */
-    }
-
-    if (queryCategoryId && !Number.isNaN(Number(queryCategoryId))) {
-        return { id: Number(queryCategoryId), name: slug, slug };
     }
 
     return null;
@@ -91,13 +84,11 @@ export async function generateMetadata({
 
 export default async function CategoryDetailPage({
     params,
-    searchParams,
 }: {
     params: Promise<{ locale: string; slug: string }>;
-    searchParams: Promise<{ category_id?: string | null }>;
 }) {
-    const [{ slug }, sp] = await Promise.all([params, searchParams]);
-    const category = await resolveCategory(slug, sp.category_id);
+    const { slug } = await params;
+    const category = await resolveCategory(slug);
 
     if (!category) {
         notFound();
@@ -105,7 +96,7 @@ export default async function CategoryDetailPage({
 
     return (
         <CategoryDetailClient
-            categoryId={category.id}
+            categorySlug={category.slug}
             categoryName={category.name}
             categoryImage={category.image || undefined}
             categoryShortDescription={category.short_description || undefined}

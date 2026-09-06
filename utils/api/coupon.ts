@@ -73,8 +73,8 @@ export type PublicCouponDetailResponse = {
 
 export type PublicCouponsQuery = {
     search?: string;
-    categoryIds?: number[];
-    storeId?: number;
+    category_slug?: string;
+    store_slug?: string;
     page?: number;
     limit?: number;
     sort?: string;
@@ -82,14 +82,14 @@ export type PublicCouponsQuery = {
 
 export const getPublicCoupons = ({
     search,
-    categoryIds,
-    storeId,
+    category_slug,
+    store_slug,
     page = 1,
     limit = 20,
     sort,
 }: PublicCouponsQuery = {}) => {
     return AxiosServices.get<PublicCouponsResponse>(
-        API_END_POINTS.PUBLIC.COUPON.GET(search, categoryIds, storeId, page, limit, sort),
+        API_END_POINTS.PUBLIC.COUPON.GET(search, category_slug, store_slug, page, limit, sort),
         {},
     );
 };

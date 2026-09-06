@@ -90,12 +90,12 @@ const Footer = () => {
 
     const popularStoreRows: FooterLink[] = stores.slice(0, 5).map(store => ({
         label: store.name,
-        href: `${PATHS.stores}/${encodeURIComponent(store.slug)}?store_id=${store.id}`,
+        href: `${PATHS.stores}/${encodeURIComponent(store.slug)}`,
     }));
 
     const categoryRows: FooterLink[] = categories.slice(0, 4).map(category => ({
         label: category.name,
-        href: `${PATHS.categories}/${encodeURIComponent(category.slug)}?category_id=${category.id}`,
+        href: `${PATHS.categories}/${encodeURIComponent(category.slug)}`,
     }));
 
     return (
