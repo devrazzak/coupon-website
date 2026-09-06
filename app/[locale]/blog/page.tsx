@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 
 import { PageHeader, PublicPageShell } from '@/components/public/page-layout';
 import PATHS from '@/routes/path';
@@ -24,6 +24,41 @@ function formatDate(dateStr?: string): string {
 }
 
 export default function BlogPage() {
+    return (
+        <Suspense
+            fallback={
+                <PublicPageShell>
+                    <PageHeader
+                        title="Savings Guides & Tips"
+                        description={`Read practical shopping guides, coupon tips, and money-saving advice to help you find better deals and make smarter online purchases with ${siteConfig.company_name}.`}
+                    />
+                    <section className="container-page py-15">
+                        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                            {Array.from({ length: 8 }).map((_, i) => (
+                                <div
+                                    key={i}
+                                    className="flex animate-pulse flex-col overflow-hidden rounded-2xl border border-border bg-card"
+                                >
+                                    <div className="aspect-16/11 w-full bg-muted" />
+                                    <div className="flex flex-1 flex-col p-4">
+                                        <div className="h-4 w-24 rounded bg-muted" />
+                                        <div className="mt-2.5 h-4 w-full rounded bg-muted" />
+                                        <div className="mt-1.5 h-4 w-3/4 rounded bg-muted" />
+                                        <div className="mt-auto pt-3 h-3 w-32 rounded bg-muted" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                </PublicPageShell>
+            }
+        >
+            <BlogPageContent />
+        </Suspense>
+    );
+}
+
+function BlogPageContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [search, setSearch] = useState('');
