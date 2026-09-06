@@ -43,6 +43,9 @@ export const API_END_POINTS = {
         SEARCH: {
             GET: (q: string) => `/api/v1/search?q=${encodeURIComponent(q)}`,
         },
+        CONTACT: {
+            POST: '/api/v1/contact-us',
+        },
         COUPON: {
             GET: (
                 search?: string,
@@ -87,6 +90,15 @@ export const API_END_POINTS = {
         },
     },
     DASHBOARD: {
+        CONTACT: {
+            GET: (page = 1, limit = 20, isReply?: boolean) => {
+                const params = new URLSearchParams();
+                params.set('page', String(page));
+                params.set('limit', String(limit));
+                if (typeof isReply === 'boolean') params.set('is_reply', String(isReply));
+                return `/api/v1/admin/contact-us?${params.toString()}`;
+            },
+        },
         MEDIA: {
             GET: (page: number, limit: number) => `/api/v1/admin/media?page=${page}&limit=${limit}`,
             POST: '/api/v1/admin/media',
