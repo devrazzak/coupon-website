@@ -867,7 +867,6 @@ export default function BlogAdminPage() {
                                     >
                                         <td className="px-4 py-3">
                                             {post.thumbnail ? (
-                                                /* eslint-disable-next-line @next/next/no-img-element */
                                                 <img
                                                     src={post.thumbnail}
                                                     alt={post.title}

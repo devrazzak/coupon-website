@@ -224,7 +224,6 @@ export default async function BlogDetailPage({
 
                         <div className="overflow-hidden">
                             {blog.thumbnail ? (
-                                // eslint-disable-next-line @next/next/no-img-element
                                 <img
                                     src={blog.thumbnail}
                                     alt={blog.title}

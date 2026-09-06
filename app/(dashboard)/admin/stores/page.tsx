@@ -801,7 +801,6 @@ export default function StoresAdminPage() {
                                     >
                                         <td className="px-4 py-3">
                                             {store.logo ? (
-                                                /* eslint-disable-next-line @next/next/no-img-element */
                                                 <img
                                                     src={store.logo}
                                                     alt={store.name}
