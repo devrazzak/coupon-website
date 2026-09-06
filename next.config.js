@@ -40,6 +40,27 @@ const nextConfig = {
                     },
                 ],
             },
+            // Document (HTML) and RSC payload responses must never be held by the
+            // hosting/CDN cache for a long TTL. Without this, a stale homepage keeps
+            // being served after every deploy (404s on removed routes, old layout).
+            // We scope to text/html + RSC flight requests so hashed static assets
+            // (_next/static/*) still stay cached forever.
+            {
+                source: '/:path*',
+                has: [
+                    {
+                        type: 'header',
+                        key: 'accept',
+                        value: '.*(text/html|application/rsc\\+json).*',
+                    },
+                ],
+                headers: [
+                    {
+                        key: 'Cache-Control',
+                        value: 'public, no-cache, must-revalidate',
+                    },
+                ],
+            },
         ];
     },
 };
