@@ -3,9 +3,10 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { Menu, Search, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
+import { SearchBox } from '@/components/SearchBox';
 import PATH from '@/routes/path';
 
 import { Logo } from '../Logo';
@@ -63,15 +64,9 @@ export function Header() {
                     </ul>
                 </nav>
 
-                <div className="ml-auto flex items-center gap-2 md:gap-3 w-100">
-                    <div className="relative hidden xl:block w-full">
-                        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-subtle-foreground" />
-                        <input
-                            type="search"
-                            aria-label="Search coupons and stores"
-                            placeholder="Search for stores & offers or coupon"
-                            className="h-11 w-full rounded-sm border border-border pl-9 pr-3 text-base text-foreground outline-none transition-all placeholder:text-subtle-foreground focus:border-primary focus:outline-none"
-                        />
+                <div className="ml-auto flex w-100 items-center gap-2 md:gap-3">
+                    <div className="hidden w-full xl:block">
+                        <SearchBox />
                     </div>
                     <button
                         type="button"
@@ -89,13 +84,7 @@ export function Header() {
                 <div className="border-t border-border bg-background lg:hidden">
                     <div className="container-page py-4">
                         <div className="relative mb-4 md:hidden">
-                            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-accent" />
-                            <input
-                                type="search"
-                                aria-label="Search coupons and stores"
-                                placeholder="Search coupons, stores..."
-                                className="h-10 w-full rounded-sm border border-border bg-background pl-9 pr-3 text-sm outline-none placeholder:text-accent focus:border-primary"
-                            />
+                            <SearchBox compact />
                         </div>
                         <ul className="grid gap-1">
                             {navItems.map(item => {

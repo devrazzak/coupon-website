@@ -40,6 +40,9 @@ export const API_END_POINTS = {
             },
             GET_BY_SLUG: (slug: string) => `/api/v1/stores/${encodeURIComponent(slug)}`,
         },
+        SEARCH: {
+            GET: (q: string) => `/api/v1/search?q=${encodeURIComponent(q)}`,
+        },
         COUPON: {
             GET: (
                 search?: string,
