@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 
 import {
@@ -27,7 +26,6 @@ import Footer from '@/components/layout/Footer';
 import Header from '@/components/layout/Header';
 import { StoreCard } from '@/components/public/StoreCard';
 import Nike from '@/public/images/shops/nike.jpg';
-import PATHS from '@/routes/path';
 import { Coupon } from '@/utils/coupello';
 import { type CouponListItem } from '@/utils/public-content';
 
@@ -129,7 +127,7 @@ export function CouponCard<T extends CouponCardItem>({
             <div className="flex flex-col gap-4 px-5 py-4 md:flex-row md:items-center md:gap-6">
                 {/* Store Logo & Discount Badge */}
                 <div className="flex items-center gap-3.5 md:w-[130px] md:shrink-0 md:flex-col md:items-start md:gap-2">
-                    <Image
+                    <img
                         src={Nike.src}
                         alt={coupon.store}
                         width={96}

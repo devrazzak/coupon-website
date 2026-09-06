@@ -1,7 +1,5 @@
 'use client';
 
-import Image from 'next/image';
-
 import { Flame } from 'lucide-react';
 import { useState } from 'react';
 
@@ -56,11 +54,9 @@ export function HeroSection() {
                         {/* Background glow and decorative framing */}
                         <div className="relative mx-auto max-w-115">
                             <div className="overflow-hidden rounded-xl">
-                                <Image
+                                <img
                                     alt="Hero Image"
-                                    src={HeroImage}
-                                    width={HeroImage.width}
-                                    height={HeroImage.height}
+                                    src={HeroImage.src}
                                     className="h-auto w-full object-cover"
                                 />
                             </div>

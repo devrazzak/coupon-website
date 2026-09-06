@@ -30,11 +30,10 @@ export function Logo({ variant = 'main' }: { variant?: 'main' | 'white' }) {
             className="group flex shrink-0 items-center gap-2.5"
             aria-label={`${siteConfig.company_name} home`}
         >
-            <Image
+            <img
                 src={variant === 'main' ? mainLogo.src : whiteLogo.src}
                 alt={`${siteConfig.company_name} logo`}
                 width={160}
-                height={40}
                 className="transition-transform group-hover:scale-105"
             />
         </Link>
