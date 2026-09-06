@@ -11,7 +11,7 @@ export function generateStaticParams() {
 
 export const metadata: Metadata = {
     title: {
-        template: '%s | Coupello',
+        template: '%s',
         default: 'Coupello - Verified Promo Codes, Coupons & Deals',
     },
     description:

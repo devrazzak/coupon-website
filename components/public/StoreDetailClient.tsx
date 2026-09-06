@@ -195,6 +195,28 @@ export function StoreDetailClient({
                         </div>
                     </aside>
                 </div>
+
+                <section aria-labelledby="store-seo-title" className="mt-16 max-w-3xl">
+                    <h2
+                        id="store-seo-title"
+                        className="font-display text-xl font-semibold tracking-[-0.02em] text-foreground"
+                    >
+                        Save More at {storeName}
+                    </h2>
+                    <div className="mt-3 space-y-3 text-sm leading-7 text-muted-foreground">
+                        <p>
+                            Looking for {storeName} coupons and promo codes? Coupello collects
+                            verified offers and current deals to help you save on your next
+                            purchase. Browse the available {storeName} discounts or search the list
+                            to find an offer that fits your order.
+                        </p>
+                        <p>
+                            Review the deal details and expiration information before checkout, then
+                            apply the best available {storeName} coupon code. New offers may be
+                            added over time, so return to this page whenever you plan to shop.
+                        </p>
+                    </div>
+                </section>
             </section>
 
             <CouponModal coupon={selected} onClose={() => setSelected(null)} />

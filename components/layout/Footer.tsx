@@ -1,6 +1,8 @@
 'use client';
 
-import { ArrowUp, X } from 'lucide-react';
+import Link from 'next/link';
+
+import { ArrowUp } from 'lucide-react';
 
 import { BrandMark } from '../Logo';
 
@@ -47,8 +49,6 @@ const columns = [
     },
 ];
 
-const socials = [X, X, X, X];
-
 const Footer = () => {
     return (
         <footer className="bg-foreground text-primary-foreground">
@@ -65,19 +65,6 @@ const Footer = () => {
                             Your trusted destination for verified coupons, promo codes &amp; best
                             deals. Save more on every purchase.
                         </p>
-                        <ul className="mt-5 flex gap-2.5">
-                            {socials.map((Icon, i) => (
-                                <li key={i}>
-                                    <a
-                                        href="#"
-                                        aria-label={`Coupello on social network ${i + 1}`}
-                                        className="grid h-8 w-8 place-items-center rounded-full bg-primary-foreground/10 transition-colors hover:bg-primary"
-                                    >
-                                        <Icon className="h-3.5 w-3.5" />
-                                    </a>
-                                </li>
-                            ))}
-                        </ul>
                     </div>
 
                     {columns.map(column => (
@@ -86,12 +73,13 @@ const Footer = () => {
                             <ul className="mt-4 grid gap-2.5">
                                 {column.links.map(link => (
                                     <li key={link.label}>
-                                        <a
+                                        <Link
                                             href={link.href}
                                             className="text-[13px] text-primary-foreground/60 transition-colors hover:text-primary-foreground"
+                                            aria-label={link.label}
                                         >
                                             {link.label}
-                                        </a>
+                                        </Link>
                                     </li>
                                 ))}
                             </ul>

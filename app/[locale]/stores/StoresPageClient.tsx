@@ -3,16 +3,11 @@
 import { Search } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
-import {
-    FilterPill,
-    PageHeader,
-    PublicPageShell,
-    StoreCard,
-} from '@/components/public/page-layout';
+import { PageHeader, PublicPageShell, StoreCard } from '@/components/public/page-layout';
 import { StoreCardSkeleton } from '@/components/ui/store-card-skeleton';
 import { useInfinitePublicStores } from '@/utils/hooks/store';
 
-const alphaFilters = ['All', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
+// const alphaFilters = ['All', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
 // const sortFilters = ['All', 'Popular', 'Featured', 'Newest'] as const;
 // type SortFilter = (typeof sortFilters)[number];
 const PAGE_LIMIT = 24;
@@ -45,20 +40,20 @@ export default function StoresPageClient() {
                 title="Stores"
                 description="Discover popular online stores and find verified coupon codes, promo offers, and money-saving deals to help you shop smarter every day."
             />
-            <section className="container-page py-15">
-                <div className="rounded-xl border border-border bg-card p-4 md:p-5">
-                    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                        <div className="relative w-full max-w-xl">
-                            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                            <input
-                                aria-label="Search stores"
-                                placeholder="Search stores, categories, brands..."
-                                value={search}
-                                onChange={event => setSearch(event.target.value)}
-                                className="h-11 w-full rounded-md border border-border bg-background pl-10 pr-3 text-[14px] text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary"
-                            />
-                        </div>
-                        {/* <div className="flex flex-wrap gap-2">
+            <section className="container-page py-12">
+                {/* <div className="rounded-xl border border-border bg-card p-4 md:p-5"> */}
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                    <div className="relative w-full max-w-xl">
+                        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <input
+                            aria-label="Search stores"
+                            placeholder="Search stores, categories, brands..."
+                            value={search}
+                            onChange={event => setSearch(event.target.value)}
+                            className="h-11 w-full rounded-md border border-border bg-background pl-10 pr-3 text-[14px] text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary"
+                        />
+                    </div>
+                    {/* <div className="flex flex-wrap gap-2">
                             {sortFilters.map(filter => (
                                 <FilterPill
                                     key={filter}
@@ -69,8 +64,8 @@ export default function StoresPageClient() {
                                 </FilterPill>
                             ))}
                         </div> */}
-                    </div>
-                    <div className="mt-4 pb-1">
+                </div>
+                {/* <div className="mt-4 pb-1">
                         <div className="flex flex-wrap gap-1">
                             {alphaFilters.map(letterOption => (
                                 <FilterPill
@@ -82,12 +77,12 @@ export default function StoresPageClient() {
                                 </FilterPill>
                             ))}
                         </div>
-                    </div>
-                </div>
+                    </div> */}
+                {/* </div> */}
 
                 <p className="mt-6 text-sm text-muted-foreground">
                     {totalCount > 0
-                        ? `${totalCount} store${totalCount === 1 ? '' : 's'} found`
+                        ? `${totalCount} Store${totalCount === 1 ? '' : 's'} found`
                         : ''}
                 </p>
 
@@ -120,6 +115,28 @@ export default function StoresPageClient() {
                         No stores found.
                     </div>
                 )}
+
+                <section aria-labelledby="stores-guide-title" className="mt-16 max-w-3xl">
+                    <h2
+                        id="stores-guide-title"
+                        className="font-display text-xl font-semibold tracking-[-0.02em] text-foreground"
+                    >
+                        Find Coupons for Your Favorite Stores
+                    </h2>
+                    <div className="mt-3 space-y-3 text-sm leading-7 text-muted-foreground">
+                        <p>
+                            Browse popular online stores on Coupello to find verified coupon codes,
+                            discount offers, and ways to save on your next order. Search by store or
+                            brand to quickly find deals that match what you want to buy.
+                        </p>
+                        <p>
+                            Each store page brings its latest available offers together in one
+                            place, with useful details to help you choose the right promotion.
+                            Compare the available deals, copy a coupon code, and shop with
+                            confidence.
+                        </p>
+                    </div>
+                </section>
             </section>
         </PublicPageShell>
     );

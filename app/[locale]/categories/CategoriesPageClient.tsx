@@ -7,7 +7,7 @@ import { CategoryCard } from '@/components/public/CategoryCard';
 import { PageHeader, PublicPageShell } from '@/components/public/page-layout';
 import { useInfinitePublicCategories } from '@/utils/hooks/category';
 
-const PAGE_LIMIT = 24;
+const PAGE_LIMIT = 48;
 
 export default function CategoriesPageClient() {
     const [search, setSearch] = useState('');
@@ -29,8 +29,8 @@ export default function CategoriesPageClient() {
                 title="Categories"
                 description="Browse shopping categories to discover verified coupons, promo codes, and money-saving deals curated for everyday purchases."
             />
-            <section className="container-page py-15">
-                <div className="rounded-xl border border-border bg-card p-4 md:p-5">
+            <section className="container-page py-12">
+                {/* <div className="rounded-xl border border-border bg-card p-4 md:p-5">
                     <div className="relative w-full max-w-xl">
                         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <input
@@ -41,12 +41,10 @@ export default function CategoriesPageClient() {
                             className="h-11 w-full rounded-md border border-border bg-background pl-10 pr-3 text-[14px] text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-primary"
                         />
                     </div>
-                </div>
+                </div> */}
 
-                <p className="mt-6 text-sm text-muted-foreground">
-                    {totalCount > 0
-                        ? `${totalCount} categor${totalCount === 1 ? 'y' : 'ies'} found`
-                        : ''}
+                <p className="text-sm text-muted-foreground">
+                    {totalCount > 0 ? `${totalCount} Categories found` : ''}
                 </p>
 
                 <div className="mt-4">
@@ -92,6 +90,28 @@ export default function CategoriesPageClient() {
                         </div>
                     )}
                 </div>
+
+                <section aria-labelledby="categories-guide-title" className="mt-16 max-w-3xl">
+                    <h2
+                        id="categories-guide-title"
+                        className="font-display text-xl font-semibold tracking-[-0.02em] text-foreground"
+                    >
+                        Shop by Category and Save More
+                    </h2>
+                    <div className="mt-3 space-y-3 text-sm leading-7 text-muted-foreground">
+                        <p>
+                            Explore Coupello categories to find verified coupons, promo codes, and
+                            special offers for the products you shop for most. From fashion and
+                            electronics to travel, food, and home essentials, our category pages
+                            make it easier to discover relevant deals in less time.
+                        </p>
+                        <p>
+                            Choose a category to compare current discounts from trusted online
+                            stores. Check the offer details before you shop and use the best
+                            available coupon code to get more value from every purchase.
+                        </p>
+                    </div>
+                </section>
             </section>
         </PublicPageShell>
     );

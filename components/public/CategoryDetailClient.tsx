@@ -148,6 +148,28 @@ export function CategoryDetailClient({
                         </div>
                     </aside>
                 </div>
+
+                <section aria-labelledby="category-seo-title" className="mt-16 max-w-3xl">
+                    <h2
+                        id="category-seo-title"
+                        className="font-display text-xl font-semibold tracking-[-0.02em] text-foreground"
+                    >
+                        {categoryName} Coupons and Deals
+                    </h2>
+                    <div className="mt-3 space-y-3 text-sm leading-7 text-muted-foreground">
+                        <p>
+                            Find verified {categoryName} coupon codes, promo offers, and current
+                            deals on Coupello. Browse the latest discounts from trusted online
+                            stores and use the search box to find an offer for the product you need.
+                        </p>
+                        {categoryShortDescription && <p>{categoryShortDescription}</p>}
+                        <p>
+                            Compare the available {categoryName} deals before checkout and choose
+                            the coupon that gives you the best value. Offers can change over time,
+                            so check the details and expiration information before using a code.
+                        </p>
+                    </div>
+                </section>
             </section>
 
             <CouponModal coupon={selected} onClose={() => setSelected(null)} />

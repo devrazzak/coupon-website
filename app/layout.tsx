@@ -16,8 +16,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-    title: 'Dashboard App',
-    description: 'A modern dashboard application',
+    title: 'Coupello - 250,000+ Verified Promo Codes, Coupons & Cash Back Deals',
+    description:
+        'Find the best promo codes, coupons, and cash back deals from your favorite online stores.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

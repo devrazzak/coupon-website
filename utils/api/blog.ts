@@ -37,6 +37,9 @@ export type PublicBlog = {
     slug: string;
     short_description?: string;
     description?: string;
+    meta_title?: string;
+    meta_description?: string;
+    canonical_url?: string;
     thumbnail?: string;
     tags?: string[];
     category?: PublicBlogCategoryRef;
