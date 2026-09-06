@@ -6,6 +6,9 @@ import { getPublicCategories } from '@/utils/api/category';
 import { getPublicStores } from '@/utils/api/store';
 
 const PAGE_SIZE = 500;
+const MAX_PAGES = 100;
+
+export const dynamic = 'force-dynamic';
 
 async function getAllStores() {
     const items = [];
@@ -17,7 +20,14 @@ async function getAllStores() {
         const meta = response?.data?.meta;
         items.push(...data);
 
-        if (!meta || data.length === 0 || page * PAGE_SIZE >= meta.totalCount) break;
+        if (
+            !meta ||
+            data.length === 0 ||
+            !Number.isFinite(meta.totalCount) ||
+            page >= MAX_PAGES ||
+            page * PAGE_SIZE >= meta.totalCount
+        )
+            break;
         page += 1;
     }
 
@@ -34,7 +44,14 @@ async function getAllCategories() {
         const meta = response?.data?.meta;
         items.push(...data);
 
-        if (!meta || data.length === 0 || page * PAGE_SIZE >= meta.totalCount) break;
+        if (
+            !meta ||
+            data.length === 0 ||
+            !Number.isFinite(meta.totalCount) ||
+            page >= MAX_PAGES ||
+            page * PAGE_SIZE >= meta.totalCount
+        )
+            break;
         page += 1;
     }
 
@@ -51,7 +68,14 @@ async function getAllBlogs() {
         const meta = response?.data?.meta;
         items.push(...data);
 
-        if (!meta || data.length === 0 || page * PAGE_SIZE >= (meta.totalCount || 0)) break;
+        if (
+            !meta ||
+            data.length === 0 ||
+            !Number.isFinite(meta.totalCount) ||
+            page >= MAX_PAGES ||
+            page * PAGE_SIZE >= meta.totalCount
+        )
+            break;
         page += 1;
     }
 
