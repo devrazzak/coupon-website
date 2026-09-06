@@ -7,18 +7,18 @@ import { PageHeader, PublicPageShell } from '@/components/public/page-layout';
 import siteConfig from '@/utils/SiteConfig';
 
 export const metadata: Metadata = {
-    title: 'About Coupello | Find Coupons and Store Deals',
+    title: 'About Coupola | Find Coupons and Store Deals',
     description:
-        'Learn how Coupello helps shoppers find coupons, compare store offers, and make informed savings decisions without automatic code application.',
+        'Learn how Coupola helps shoppers find coupons, compare store offers, and make informed savings decisions without automatic code application.',
     alternates: {
         canonical: '/about',
     },
     openGraph: {
-        title: 'About Coupello | Find Coupons and Store Deals',
+        title: 'About Coupola | Find Coupons and Store Deals',
         description:
-            'Learn how Coupello helps shoppers find coupons, compare store offers, and make informed savings decisions without automatic code application.',
+            'Learn how Coupola helps shoppers find coupons, compare store offers, and make informed savings decisions without automatic code application.',
         url: '/about',
-        siteName: 'Coupello',
+        siteName: siteConfig.company_name,
         type: 'website',
     },
     robots: {

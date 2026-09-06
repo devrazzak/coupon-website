@@ -4,16 +4,16 @@ import { PageHeader, PublicPageShell } from '@/components/public/page-layout';
 import siteConfig from '@/utils/SiteConfig';
 
 export const metadata: Metadata = {
-    title: 'FAQs | Coupello Coupons and Store Deals',
+    title: 'FAQs | Coupola Coupons and Store Deals',
     description:
-        'Find answers about Coupello coupons, promo codes, store offers, checkout, expired deals, and affiliate links.',
+        'Find answers about Coupola coupons, promo codes, store offers, checkout, expired deals, and affiliate links.',
     alternates: {
         canonical: '/faqs',
     },
     openGraph: {
-        title: 'FAQs | Coupello Coupons and Store Deals',
+        title: 'FAQs | Coupola Coupons and Store Deals',
         description:
-            'Find answers about Coupello coupons, promo codes, store offers, checkout, expired deals, and affiliate links.',
+            'Find answers about Coupola coupons, promo codes, store offers, checkout, expired deals, and affiliate links.',
         url: '/faqs',
         siteName: siteConfig.company_name,
         type: 'website',
@@ -30,7 +30,7 @@ const faqs = [
         answer: 'Open the offer you want, reveal or copy the code, and follow the link to the store. Enter the code in the coupon or promo field during checkout, then make sure the discount appears before placing your order.',
     },
     {
-        question: 'Do I need an account to use Coupello?',
+        question: 'Do I need an account to use Coupola?',
         answer: `No. You can browse ${siteConfig.company_name}, view store offers, and use coupon codes without creating a shopper account or signing in.`,
     },
     {
@@ -42,12 +42,12 @@ const faqs = [
         answer: 'No. We try to keep offer information useful and remove deals that are clearly expired, but merchants can change or end promotions at any time. The store checkout is the final place to confirm the price and terms.',
     },
     {
-        question: 'Does Coupello apply codes automatically?',
-        answer: 'No. Coupello does not auto-apply coupons, install browser extensions, or complete purchases for you. You choose the offer and enter the code yourself on the merchant website.',
+        question: 'Does Coupola apply codes automatically?',
+        answer: 'No. Coupola does not auto-apply coupons, install browser extensions, or complete purchases for you. You choose the offer and enter the code yourself on the merchant website.',
     },
     {
-        question: 'Does Coupello sell the products or process my order?',
-        answer: 'No. Coupello only helps you discover offers. Your order, payment, delivery, returns, refunds, and customer support are handled directly by the store you visit.',
+        question: 'Does Coupola sell the products or process my order?',
+        answer: 'No. Coupola only helps you discover offers. Your order, payment, delivery, returns, refunds, and customer support are handled directly by the store you visit.',
     },
     {
         question: 'How can I report a problem with an offer?',
@@ -55,7 +55,7 @@ const faqs = [
     },
     {
         question: 'What are affiliate links?',
-        answer: 'Some store links may be affiliate links. If you click one and make a qualifying purchase, Coupello may receive a commission at no extra cost to you. This does not guarantee that the offer will work or change the store price.',
+        answer: 'Some store links may be affiliate links. If you click one and make a qualifying purchase, Coupola may receive a commission at no extra cost to you. This does not guarantee that the offer will work or change the store price.',
     },
 ];
 

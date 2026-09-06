@@ -24,7 +24,7 @@ export function Header() {
     const pathname = usePathname();
 
     const isActive = (href: string) => {
-        const normalizedPath = (pathname || '/').replace(/^\/(en|es|bn)(?=\/|$)/, '') || '/';
+        const normalizedPath = (pathname || '/').replace(/^\/en(?=\/|$)/, '') || '/';
 
         if (href === '/') {
             return normalizedPath === '/';

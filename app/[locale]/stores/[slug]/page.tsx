@@ -1,3 +1,5 @@
+import { notFound } from 'next/navigation';
+
 import type { Metadata } from 'next';
 
 import { StoreDetailClient } from '@/components/public/StoreDetailClient';
@@ -21,7 +23,10 @@ type ResolvedStore = Pick<PublicStore, 'name' | 'slug'> &
         >
     >;
 
-async function resolveStore(slug: string, queryStoreId?: string | null): Promise<ResolvedStore> {
+async function resolveStore(
+    slug: string,
+    queryStoreId?: string | null,
+): Promise<ResolvedStore | null> {
     try {
         const detailResponse = await getPublicStoreBySlug(slug);
         if (detailResponse?.data?.data) {
@@ -46,7 +51,7 @@ async function resolveStore(slug: string, queryStoreId?: string | null): Promise
         return { id: Number(queryStoreId), name: slug, slug };
     }
 
-    return { id: undefined, name: slug, slug };
+    return null;
 }
 
 export async function generateMetadata({
@@ -56,6 +61,13 @@ export async function generateMetadata({
 }) {
     const { slug } = await params;
     const store = await resolveStore(slug);
+
+    if (!store) {
+        return {
+            title: `Store coupons | ${siteConfig.company_name}`,
+            robots: { index: false, follow: true },
+        } satisfies Metadata;
+    }
 
     const title = store.seo_title || `${store.name} Coupons & Deals | ${siteConfig.company_name}`;
     const description =
@@ -91,6 +103,10 @@ export default async function StoreDetailPage({
 }) {
     const [{ slug }, sp] = await Promise.all([params, searchParams]);
     const store = await resolveStore(slug, sp.store_id);
+
+    if (!store) {
+        notFound();
+    }
 
     return (
         <PublicPageShell>

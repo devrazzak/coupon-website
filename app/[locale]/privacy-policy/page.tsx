@@ -4,18 +4,18 @@ import { PageHeader, PublicPageShell } from '@/components/public/page-layout';
 import siteConfig from '@/utils/SiteConfig';
 
 export const metadata: Metadata = {
-    title: 'Privacy Policy | Coupello',
+    title: 'Privacy Policy | Coupola',
     description:
-        'Read how Coupello handles account, contact, and website usage information while you browse coupons and store deals.',
+        'Read how Coupola handles account, contact, and website usage information while you browse coupons and store deals.',
     alternates: {
         canonical: '/privacy-policy',
     },
     openGraph: {
-        title: 'Privacy Policy | Coupello',
+        title: 'Privacy Policy | Coupola',
         description:
-            'Read how Coupello handles account, contact, and website usage information while you browse coupons and store deals.',
+            'Read how Coupola handles account, contact, and website usage information while you browse coupons and store deals.',
         url: '/privacy-policy',
-        siteName: 'Coupello',
+        siteName: siteConfig.company_name,
         type: 'website',
     },
     robots: {

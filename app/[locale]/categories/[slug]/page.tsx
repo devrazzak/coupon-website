@@ -1,3 +1,5 @@
+import { notFound } from 'next/navigation';
+
 import type { Metadata } from 'next';
 
 import { CategoryDetailClient } from '@/components/public/CategoryDetailClient';
@@ -19,7 +21,7 @@ type ResolvedCategory = Pick<PublicCategory, 'name' | 'slug'> &
 async function resolveCategory(
     slug: string,
     queryCategoryId?: string | null,
-): Promise<ResolvedCategory> {
+): Promise<ResolvedCategory | null> {
     try {
         const detailResponse = await getPublicCategoryBySlug(slug);
         if (detailResponse?.data?.data) {
@@ -43,7 +45,7 @@ async function resolveCategory(
         return { id: Number(queryCategoryId), name: slug, slug };
     }
 
-    return { id: undefined, name: slug, slug };
+    return null;
 }
 
 export async function generateMetadata({
@@ -53,6 +55,13 @@ export async function generateMetadata({
 }) {
     const { slug } = await params;
     const category = await resolveCategory(slug);
+
+    if (!category) {
+        return {
+            title: `Category coupons | ${siteConfig.company_name}`,
+            robots: { index: false, follow: true },
+        } satisfies Metadata;
+    }
 
     const title =
         category.seo_title || `${category.name} Coupons & Deals | ${siteConfig.company_name}`;
@@ -89,6 +98,10 @@ export default async function CategoryDetailPage({
 }) {
     const [{ slug }, sp] = await Promise.all([params, searchParams]);
     const category = await resolveCategory(slug, sp.category_id);
+
+    if (!category) {
+        notFound();
+    }
 
     return (
         <CategoryDetailClient

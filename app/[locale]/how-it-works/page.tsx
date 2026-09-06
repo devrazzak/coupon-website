@@ -15,16 +15,16 @@ import { PageHeader, PublicPageShell } from '@/components/public/page-layout';
 import siteConfig from '@/utils/SiteConfig';
 
 export const metadata: Metadata = {
-    title: 'How Coupello Works | Find and Use Coupons',
+    title: 'How Coupola Works | Find and Use Coupons',
     description:
-        'See how Coupello helps you find store deals, compare coupon offers, copy a code, and redeem it yourself at checkout.',
+        'See how Coupola helps you find store deals, compare coupon offers, copy a code, and redeem it yourself at checkout.',
     alternates: {
         canonical: '/how-it-works',
     },
     openGraph: {
-        title: 'How Coupello Works | Find and Use Coupons',
+        title: 'How Coupola Works | Find and Use Coupons',
         description:
-            'See how Coupello helps you find store deals, compare coupon offers, copy a code, and redeem it yourself at checkout.',
+            'See how Coupola helps you find store deals, compare coupon offers, copy a code, and redeem it yourself at checkout.',
         url: '/how-it-works',
         siteName: siteConfig.company_name,
         type: 'website',

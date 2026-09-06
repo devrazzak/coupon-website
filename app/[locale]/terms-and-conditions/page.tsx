@@ -4,18 +4,18 @@ import { PageHeader, PublicPageShell } from '@/components/public/page-layout';
 import siteConfig from '@/utils/SiteConfig';
 
 export const metadata: Metadata = {
-    title: 'Terms & Conditions | Coupello',
+    title: 'Terms & Conditions | Coupola',
     description:
-        'Review the terms for using Coupello to browse coupons, store deals, categories, and shopping guides.',
+        'Review the terms for using Coupola to browse coupons, store deals, categories, and shopping guides.',
     alternates: {
         canonical: '/terms-and-conditions',
     },
     openGraph: {
-        title: 'Terms & Conditions | Coupello',
+        title: 'Terms & Conditions | Coupola',
         description:
-            'Review the terms for using Coupello to browse coupons, store deals, categories, and shopping guides.',
+            'Review the terms for using Coupola to browse coupons, store deals, categories, and shopping guides.',
         url: '/terms-and-conditions',
-        siteName: 'Coupello',
+        siteName: siteConfig.company_name,
         type: 'website',
     },
     robots: {
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 
 const sections = [
     {
-        title: 'Using Coupello',
+        title: 'Using Coupola',
         content: `By using ${siteConfig.company_name}, users agree to comply with these terms and conditions. We may update the terms over time to reflect product changes, legal requirements or improvements to services.`,
     },
     {
@@ -36,7 +36,7 @@ const sections = [
     {
         title: 'You redeem offers yourself',
         content:
-            'Coupello does not automatically apply coupon codes, use browser automation, or install extensions. When an offer takes you to a merchant, you choose whether to use it and enter any code yourself on the merchant website.',
+            'Coupola does not automatically apply coupon codes, use browser automation, or install extensions. When an offer takes you to a merchant, you choose whether to use it and enter any code yourself on the merchant website.',
     },
     {
         title: 'Your responsibility',

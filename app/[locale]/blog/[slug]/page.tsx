@@ -21,6 +21,48 @@ function formatDate(dateStr?: string): string {
     });
 }
 
+function renderArticleContent(content: string) {
+    const lines = content.split(/\r?\n/).map(line => line.trim());
+    const blocks: React.ReactNode[] = [];
+    let listItems: string[] = [];
+
+    const flushList = () => {
+        if (listItems.length === 0) return;
+        blocks.push(
+            <ul key={`list-${blocks.length}`} className="list-disc space-y-2 pl-6">
+                {listItems.map((item, index) => (
+                    <li key={`${item}-${index}`}>{item}</li>
+                ))}
+            </ul>,
+        );
+        listItems = [];
+    };
+
+    lines.forEach((line, index) => {
+        if (!line) {
+            flushList();
+            return;
+        }
+
+        if (/^[-*]\s+/.test(line)) {
+            listItems.push(line.replace(/^[-*]\s+/, ''));
+            return;
+        }
+
+        flushList();
+        if (line.startsWith('## ')) {
+            blocks.push(<h2 key={`heading-${index}`}>{line.slice(3)}</h2>);
+        } else if (line.startsWith('### ')) {
+            blocks.push(<h3 key={`heading-${index}`}>{line.slice(4)}</h3>);
+        } else {
+            blocks.push(<p key={`paragraph-${index}`}>{line}</p>);
+        }
+    });
+
+    flushList();
+    return blocks;
+}
+
 async function fetchBlog(slug: string) {
     try {
         const res = await getPublicBlogBySlug(slug);
@@ -157,6 +199,9 @@ export default async function BlogDetailPage({
                                 <img
                                     src={blog.thumbnail}
                                     alt={blog.title}
+                                    width={1280}
+                                    height={720}
+                                    decoding="async"
                                     className="h-70 w-full object-cover md:h-105"
                                 />
                             ) : (
@@ -169,11 +214,7 @@ export default async function BlogDetailPage({
                         <div className="p-8">
                             <div className="prose max-w-none text-[15px] leading-8 text-foreground prose-headings:font-display prose-headings:tracking-[-0.03em] prose-p:text-muted-foreground prose-a:text-primary prose-strong:text-foreground prose-li:text-muted-foreground">
                                 {paragraphs.length > 0 ? (
-                                    paragraphs.map((p, index) => (
-                                        <p key={index} className={index === 0 ? 'mt-0' : ''}>
-                                            {p}
-                                        </p>
-                                    ))
+                                    renderArticleContent(blog.description || '')
                                 ) : (
                                     <p className="mt-0">
                                         {blog.short_description || 'No content yet.'}

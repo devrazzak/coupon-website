@@ -28,7 +28,7 @@ const staticColumns = [
         title: 'Help & Support',
         links: [
             { label: 'How It Works', href: '/how-it-works' },
-            { label: 'FAQs', href: '/contact' },
+            { label: 'FAQs', href: '/faqs' },
             { label: 'Coupon Directory', href: '/coupons' },
             { label: 'Store Directory', href: '/stores' },
             { label: 'Blog', href: '/blog' },

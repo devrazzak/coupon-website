@@ -2,8 +2,6 @@
 
 import Link from 'next/link';
 
-import { BadgeCheck } from 'lucide-react';
-
 import PATHS from '@/routes/path';
 import { type PublicStore } from '@/utils/api/store';
 
@@ -20,6 +18,10 @@ export function StoreCard({ item }: { item: PublicStore }) {
                     <img
                         src={item.logo}
                         alt={`${item.name} logo`}
+                        width={96}
+                        height={96}
+                        loading="lazy"
+                        decoding="async"
                         className="h-full max-w-full object-contain rounded-xl max-h-24"
                     />
                 ) : (

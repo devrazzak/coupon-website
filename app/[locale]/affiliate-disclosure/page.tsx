@@ -4,18 +4,18 @@ import { PageHeader, PublicPageShell } from '@/components/public/page-layout';
 import siteConfig from '@/utils/SiteConfig';
 
 export const metadata: Metadata = {
-    title: 'Affiliate Disclosure | Coupello',
+    title: 'Affiliate Disclosure | Coupola',
     description:
-        'Learn how Coupello may earn a commission from qualifying purchases made through some store and coupon links.',
+        'Learn how Coupola may earn a commission from qualifying purchases made through some store and coupon links.',
     alternates: {
         canonical: '/affiliate-disclosure',
     },
     openGraph: {
-        title: 'Affiliate Disclosure | Coupello',
+        title: 'Affiliate Disclosure | Coupola',
         description:
-            'Learn how Coupello may earn a commission from qualifying purchases made through some store and coupon links.',
+            'Learn how Coupola may earn a commission from qualifying purchases made through some store and coupon links.',
         url: '/affiliate-disclosure',
-        siteName: 'Coupello',
+        siteName: siteConfig.company_name,
         type: 'website',
     },
     robots: {
