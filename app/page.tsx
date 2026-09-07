@@ -30,7 +30,7 @@ export const metadata: Metadata = {
         type: 'website',
         images: [
             {
-                url: '/images/Coupola-logo-social.png',
+                url: '/images/Coupola-logo-social.png?v=2',
                 alt: `${siteConfig.company_name} Logo`,
             },
         ],
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
         card: 'summary_large_image',
         title: `${siteConfig.company_name} - Verified Promo Codes, Coupons & Deals`,
         description: `Discover working coupon codes, promo offers, and money-saving tips to help you pay less at your favorite online stores.`,
-        images: ['/images/Coupola-logo-social.png'],
+        images: ['/images/Coupola-logo-social.png?v=2'],
     },
     robots: {
         index: true,

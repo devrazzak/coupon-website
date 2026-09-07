@@ -38,7 +38,7 @@ export const metadata: Metadata = {
         siteName: siteConfig.company_name,
         images: [
             {
-                url: '/images/Coupola-logo-social.png',
+                url: '/images/Coupola-logo-social.png?v=2',
                 alt: `${siteConfig.company_name} Logo`,
             },
         ],
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
         title: `${siteConfig.company_name} - Coupons, Promo Codes & Money-Saving Deals`,
         description:
             'Discover working coupon codes, promo offers, and money-saving tips to help you pay less at your favorite online stores.',
-        images: ['/images/Coupola-logo-social.png'],
+        images: ['/images/Coupola-logo-social.png?v=2'],
     },
 };
 
