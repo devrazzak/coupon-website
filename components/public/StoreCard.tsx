@@ -14,7 +14,6 @@ export function StoreCard({ item }: { item: PublicStore }) {
         >
             <div className="flex min-h-15 w-full items-center justify-center rounded-xl transition-colors">
                 {item.logo ? (
-                    // eslint-disable-next-line @next/next/no-img-element
                     <img
                         src={item.logo}
                         alt={`${item.name} logo`}

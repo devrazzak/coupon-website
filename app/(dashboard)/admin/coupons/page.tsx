@@ -1,7 +1,7 @@
 'use client';
 
 import { Edit3, Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
     AdminModalShell,
@@ -621,6 +621,7 @@ export default function CouponsAdminPage() {
         {},
     );
     const [search, setSearch] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [typeFilter, setTypeFilter] = useState('all');
     const [featuredFilter, setFeaturedFilter] = useState('all');
@@ -631,7 +632,35 @@ export default function CouponsAdminPage() {
     const [deleteTarget, setDeleteTarget] = useState<CouponUiRecord | null>(null);
     const [toast, setToast] = useState('');
 
-    const { data: apiData } = useGetCoupons(page, pageSize);
+    // Debounce the typed search so the API is only hit after a short pause.
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedSearch(search), 300);
+        return () => clearTimeout(timer);
+    }, [search]);
+
+    // Map the UI filters to server-side query params. Pagination is server driven:
+    // `page` is part of the query key below, so Next/Prev issues a new request with
+    // `?page=..&limit=..&search=..&status=..&coupon_type=..&is_featured=..&is_verified=..`.
+    const couponQuery = useMemo(() => {
+        const query: {
+            search?: string;
+            status?: string;
+            coupon_type?: string;
+            is_featured?: boolean;
+            is_verified?: boolean;
+        } = {};
+        const term = debouncedSearch.trim();
+        if (term) query.search = term;
+        if (statusFilter && statusFilter !== 'all') query.status = statusFilter;
+        if (typeFilter && typeFilter !== 'all') query.coupon_type = typeFilter;
+        if (featuredFilter === 'featured') query.is_featured = true;
+        else if (featuredFilter === 'non-featured') query.is_featured = false;
+        if (verifiedFilter === 'verified') query.is_verified = true;
+        else if (verifiedFilter === 'non-verified') query.is_verified = false;
+        return query;
+    }, [debouncedSearch, featuredFilter, statusFilter, typeFilter, verifiedFilter]);
+
+    const { data: apiData } = useGetCoupons(page, pageSize, couponQuery);
     const { data: storesApiData } = useGetStores(1, 100);
     const { data: categoriesApiData } = useGetCategories(1, 100);
 
@@ -709,13 +738,18 @@ export default function CouponsAdminPage() {
         });
     }, [categories, couponOverrides, couponsResponse, stores]);
 
-    const filteredCoupons = useMemo(() => {
+    // Safety-net client filter on the current page rows so local overrides still
+    // respect the active search/filter (the server is the source of truth for
+    // pagination and the total count).
+    const visibleCoupons = useMemo(() => {
         return coupons.filter(coupon => {
+            const term = debouncedSearch.toLowerCase().trim();
             const matchesSearch =
-                coupon.title.toLowerCase().includes(search.toLowerCase()) ||
-                coupon.code.toLowerCase().includes(search.toLowerCase()) ||
-                coupon.storeName.toLowerCase().includes(search.toLowerCase()) ||
-                coupon.slug.toLowerCase().includes(search.toLowerCase());
+                !term ||
+                coupon.title.toLowerCase().includes(term) ||
+                coupon.code.toLowerCase().includes(term) ||
+                coupon.storeName.toLowerCase().includes(term) ||
+                coupon.slug.toLowerCase().includes(term);
             const matchesStatus = statusFilter === 'all' || coupon.status === statusFilter;
             const matchesType = typeFilter === 'all' || coupon.couponType === typeFilter;
             const matchesFeatured =
@@ -728,10 +762,10 @@ export default function CouponsAdminPage() {
                 matchesSearch && matchesStatus && matchesType && matchesFeatured && matchesVerified
             );
         });
-    }, [coupons, featuredFilter, search, statusFilter, typeFilter, verifiedFilter]);
+    }, [coupons, debouncedSearch, featuredFilter, statusFilter, typeFilter, verifiedFilter]);
 
-    const totalPages = Math.max(1, Math.ceil(filteredCoupons.length / pageSize));
-    const visibleCoupons = filteredCoupons.slice((page - 1) * pageSize, page * pageSize);
+    const totalCount = couponsResponse?.meta.totalCount ?? 0;
+    const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
 
     const handleSave = async (form: CouponFormState) => {
         try {
@@ -871,13 +905,19 @@ export default function CouponsAdminPage() {
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                     <SearchInput
                         value={search}
-                        onChange={setSearch}
+                        onChange={value => {
+                            setSearch(value);
+                            setPage(1);
+                        }}
                         placeholder="Search coupons by title, code or store"
                     />
                     <div className="flex flex-col gap-3 sm:flex-row">
                         <FilterSelect
                             value={statusFilter}
-                            onChange={setStatusFilter}
+                            onChange={value => {
+                                setStatusFilter(value);
+                                setPage(1);
+                            }}
                             placeholder="Status"
                             options={[
                                 { value: 'all', label: 'All statuses' },
@@ -889,7 +929,10 @@ export default function CouponsAdminPage() {
                         />
                         <FilterSelect
                             value={typeFilter}
-                            onChange={setTypeFilter}
+                            onChange={value => {
+                                setTypeFilter(value);
+                                setPage(1);
+                            }}
                             placeholder="Type"
                             options={[
                                 { value: 'all', label: 'All types' },
@@ -899,7 +942,10 @@ export default function CouponsAdminPage() {
                         />
                         <FilterSelect
                             value={featuredFilter}
-                            onChange={setFeaturedFilter}
+                            onChange={value => {
+                                setFeaturedFilter(value);
+                                setPage(1);
+                            }}
                             placeholder="Featured"
                             options={[
                                 { value: 'all', label: 'All featured' },
@@ -909,7 +955,10 @@ export default function CouponsAdminPage() {
                         />
                         <FilterSelect
                             value={verifiedFilter}
-                            onChange={setVerifiedFilter}
+                            onChange={value => {
+                                setVerifiedFilter(value);
+                                setPage(1);
+                            }}
                             placeholder="Verified"
                             options={[
                                 { value: 'all', label: 'All verification' },
@@ -1041,7 +1090,7 @@ export default function CouponsAdminPage() {
 
             <div className="mt-6 flex items-center justify-between">
                 <div className="text-[13px] text-muted-foreground">
-                    Showing {visibleCoupons.length} of {filteredCoupons.length} coupons
+                    Showing {visibleCoupons.length} of {totalCount} coupons
                 </div>
                 <div className="flex items-center gap-2">
                     <Button

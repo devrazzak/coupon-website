@@ -59,9 +59,18 @@ export const getCategory = (page = 1, limit = 20) => {
     return getPublicCategories(page, limit);
 };
 
-// Axios service for get categories (admin dashboard with pagination)
-export const getCategories = (page: number, limit: number) => {
-    return AxiosServices.get(API_END_POINTS.DASHBOARD.CATEGORY.GET(page, limit), {});
+// Axios service for get categories (admin dashboard with pagination + optional filters)
+export type AdminCategoryQuery = {
+    search?: string;
+    is_active?: boolean;
+    is_featured?: boolean;
+};
+export const getCategories = (page: number, limit: number, query: AdminCategoryQuery = {}) => {
+    const params: Record<string, string | number | boolean | undefined> = {};
+    if (query.search) params.search = query.search;
+    if (query.is_active !== undefined) params.is_active = query.is_active;
+    if (query.is_featured !== undefined) params.is_featured = query.is_featured;
+    return AxiosServices.get(API_END_POINTS.DASHBOARD.CATEGORY.GET(page, limit, params), {});
 };
 
 // Axios service for create category

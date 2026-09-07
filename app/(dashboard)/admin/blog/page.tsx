@@ -3,7 +3,7 @@
 import Link from 'next/link';
 
 import { Edit3, Eye, EyeOff, FolderOpen, Plus, Trash2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
     AdminModalShell,
@@ -523,6 +523,7 @@ export default function BlogAdminPage() {
     const [blogOverrides, setBlogOverrides] = useState<Record<string, BlogUiRecord | null>>({});
     const [uploadedMedia, setUploadedMedia] = useState<MediaRecord[]>([]);
     const [search, setSearch] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [featuredFilter, setFeaturedFilter] = useState('all');
     const [page, setPage] = useState(1);
@@ -533,7 +534,26 @@ export default function BlogAdminPage() {
     const [deleteTarget, setDeleteTarget] = useState<BlogUiRecord | null>(null);
     const [toast, setToast] = useState('');
 
-    const { data: apiData } = useGetBlogs(page, pageSize);
+    // Debounce the typed search so the API is only hit after a short pause.
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedSearch(search), 300);
+        return () => clearTimeout(timer);
+    }, [search]);
+
+    // Pagination is server driven: `page` is part of the query key below, so
+    // Next/Prev issues a new request with `?page=..&limit=..&search=..`.
+    const blogQuery = useMemo(() => {
+        const query: { search?: string; is_active?: boolean; is_featured?: boolean } = {};
+        const term = debouncedSearch.trim();
+        if (term) query.search = term;
+        if (statusFilter === 'active') query.is_active = true;
+        else if (statusFilter === 'inactive') query.is_active = false;
+        if (featuredFilter === 'featured') query.is_featured = true;
+        else if (featuredFilter === 'non-featured') query.is_featured = false;
+        return query;
+    }, [debouncedSearch, featuredFilter, statusFilter]);
+
+    const { data: apiData } = useGetBlogs(page, pageSize, blogQuery);
     const { data: blogCategoriesData } = useGetBlogCategories(1, 100);
     const { data: mediaApiData } = useGetMedia(1, 100);
 
@@ -611,13 +631,17 @@ export default function BlogAdminPage() {
         });
     }, [blogOverrides, blogsResponse, categories]);
 
-    const filteredPosts = useMemo(() => {
+    // Safety-net client filter on the page rows so local overrides still respect
+    // the active search/filter. Server owns pagination + counts via meta.
+    const visiblePosts = useMemo(() => {
         return posts.filter(post => {
+            const term = debouncedSearch.toLowerCase().trim();
             const matchesSearch =
-                post.title.toLowerCase().includes(search.toLowerCase()) ||
-                post.author.toLowerCase().includes(search.toLowerCase()) ||
-                post.categoryName.toLowerCase().includes(search.toLowerCase()) ||
-                post.slug.toLowerCase().includes(search.toLowerCase());
+                !term ||
+                post.title.toLowerCase().includes(term) ||
+                post.author.toLowerCase().includes(term) ||
+                post.categoryName.toLowerCase().includes(term) ||
+                post.slug.toLowerCase().includes(term);
             const matchesStatus =
                 statusFilter === 'all' ||
                 (statusFilter === 'active'
@@ -630,10 +654,10 @@ export default function BlogAdminPage() {
                 (featuredFilter === 'featured' ? post.isFeatured : !post.isFeatured);
             return matchesSearch && matchesStatus && matchesFeatured;
         });
-    }, [featuredFilter, posts, search, statusFilter]);
+    }, [debouncedSearch, featuredFilter, posts, statusFilter]);
 
-    const totalPages = Math.max(1, Math.ceil(filteredPosts.length / pageSize));
-    const visiblePosts = filteredPosts.slice((page - 1) * pageSize, page * pageSize);
+    const totalCount = blogsResponse?.meta?.totalCount ?? 0;
+    const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
 
     const handleSave = async (form: BlogFormState) => {
         try {
@@ -812,13 +836,19 @@ export default function BlogAdminPage() {
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                     <SearchInput
                         value={search}
-                        onChange={setSearch}
+                        onChange={value => {
+                            setSearch(value);
+                            setPage(1);
+                        }}
                         placeholder="Search posts by title, author, category or slug"
                     />
                     <div className="flex flex-col gap-3 sm:flex-row">
                         <FilterSelect
                             value={statusFilter}
-                            onChange={setStatusFilter}
+                            onChange={value => {
+                                setStatusFilter(value);
+                                setPage(1);
+                            }}
                             placeholder="Status"
                             options={[
                                 { value: 'all', label: 'All statuses' },
@@ -828,7 +858,10 @@ export default function BlogAdminPage() {
                         />
                         <FilterSelect
                             value={featuredFilter}
-                            onChange={setFeaturedFilter}
+                            onChange={value => {
+                                setFeaturedFilter(value);
+                                setPage(1);
+                            }}
                             placeholder="Featured"
                             options={[
                                 { value: 'all', label: 'All items' },
@@ -948,7 +981,7 @@ export default function BlogAdminPage() {
 
             <div className="mt-6 flex items-center justify-between">
                 <div className="text-[13px] text-muted-foreground">
-                    Showing {visiblePosts.length} of {filteredPosts.length} posts
+                    Showing {visiblePosts.length} of {totalCount} posts
                 </div>
                 <div className="flex items-center gap-2">
                     <Button

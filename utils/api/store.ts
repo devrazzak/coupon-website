@@ -89,8 +89,19 @@ export const getPublicStoreBySlug = (slug: string) => {
     );
 };
 
-export const getStores = (page: number, limit: number) => {
-    return AxiosServices.get(API_END_POINTS.DASHBOARD.STORE.GET(page, limit), {});
+export type AdminStoreQuery = {
+    search?: string;
+    status?: 'active' | 'inactive';
+    is_featured?: boolean;
+    is_active?: boolean;
+};
+export const getStores = (page: number, limit: number, query: AdminStoreQuery = {}) => {
+    const params: Record<string, string | number | boolean | undefined> = {};
+    if (query.search) params.search = query.search;
+    if (query.status) params.status = query.status;
+    if (query.is_featured !== undefined) params.is_featured = query.is_featured;
+    if (query.is_active !== undefined) params.is_active = query.is_active;
+    return AxiosServices.get(API_END_POINTS.DASHBOARD.STORE.GET(page, limit, params), {});
 };
 
 export const createStore = (data: StoreCreatePayload) => {

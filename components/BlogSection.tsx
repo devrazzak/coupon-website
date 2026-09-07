@@ -57,7 +57,6 @@ export function BlogSection() {
                                     aria-label={`Read blog post: ${post.title}`}
                                 >
                                     {post.thumbnail ? (
-                                        // eslint-disable-next-line @next/next/no-img-element
                                         <img
                                             src={post.thumbnail}
                                             alt={post.title}

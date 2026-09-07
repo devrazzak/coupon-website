@@ -1,7 +1,7 @@
 'use client';
 
 import { Edit3, Eye, EyeOff, Plus, Sparkles, Trash2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
     AdminModalShell,
@@ -317,6 +317,7 @@ export default function CategoriesAdminPage() {
     >({});
     const [uploadedMedia, setUploadedMedia] = useState<MediaRecord[]>([]);
     const [search, setSearch] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [featuredFilter, setFeaturedFilter] = useState('all');
     const [page, setPage] = useState(1);
@@ -325,10 +326,34 @@ export default function CategoriesAdminPage() {
     const [deleteTarget, setDeleteTarget] = useState<CategoryRecord | null>(null);
     const [toast, setToast] = useState('');
 
-    const pageSize = 6;
+    const pageSize = 10;
+
+    // Debounce the typed search so the API is only hit after a short pause.
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedSearch(search), 300);
+        return () => clearTimeout(timer);
+    }, [search]);
+
+    // Map the UI filters to server-side query params. Pagination is fully driven
+    // by the API: the page state is part of the query key, so clicking Next/Prev
+    // issues a new request with `?page=..&limit=..&search=..&is_active=..&is_featured=..`.
+    const categoryQuery = useMemo(() => {
+        const query: {
+            search?: string;
+            is_active?: boolean;
+            is_featured?: boolean;
+        } = {};
+        const term = debouncedSearch.trim();
+        if (term) query.search = term;
+        if (statusFilter === 'active') query.is_active = true;
+        else if (statusFilter === 'inactive') query.is_active = false;
+        if (featuredFilter === 'featured') query.is_featured = true;
+        else if (featuredFilter === 'non-featured') query.is_featured = false;
+        return query;
+    }, [debouncedSearch, featuredFilter, statusFilter]);
 
     // API hooks
-    const { data: apiData, isFetching } = useGetCategories(page, pageSize);
+    const { data: apiData, isFetching } = useGetCategories(page, pageSize, categoryQuery);
     const { data: mediaApiData } = useGetMedia(1, 100);
     const { mutateAsync: createCategoryMutation } = useCreateCategory();
     const { mutateAsync: updateCategoryMutation } = useUpdateCategory();
@@ -344,6 +369,8 @@ export default function CategoriesAdminPage() {
         });
     }, [uploadedMedia, mediaItems]);
 
+    // categories = rows returned by the API for the current page (with any local
+    // create/edit/delete overrides applied on top for a smooth UX).
     const categories = useMemo(() => {
         const items =
             categoriesResponse?.data.map(category => ({
@@ -367,11 +394,16 @@ export default function CategoriesAdminPage() {
         });
     }, [categoriesResponse, categoryOverrides]);
 
-    const filteredCategories = useMemo(() => {
+    // A safety-net client filter so any local overrides still respect the active
+    // search/filter on the current page (the server is the source of truth for
+    // counts and which rows belong to this page).
+    const visibleCategories = useMemo(() => {
         return categories.filter(category => {
+            const term = debouncedSearch.toLowerCase().trim();
             const matchesSearch =
-                category.name.toLowerCase().includes(search.toLowerCase()) ||
-                category.slug.toLowerCase().includes(search.toLowerCase());
+                !term ||
+                category.name.toLowerCase().includes(term) ||
+                category.slug.toLowerCase().includes(term);
             const matchesStatus =
                 statusFilter === 'all' ||
                 (statusFilter === 'active' && category.status === true) ||
@@ -381,11 +413,10 @@ export default function CategoriesAdminPage() {
                 (featuredFilter === 'featured' ? category.featured : !category.featured);
             return matchesSearch && matchesStatus && matchesFeatured;
         });
-    }, [categories, featuredFilter, search, statusFilter]);
+    }, [categories, debouncedSearch, featuredFilter, statusFilter]);
 
-    const totalCount = categoriesResponse?.meta.totalCount ?? filteredCategories.length;
+    const totalCount = categoriesResponse?.meta.totalCount ?? 0;
     const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
-    const visibleCategories = filteredCategories;
 
     const handleSave = async (payload: CategoryRecord) => {
         try {
@@ -518,13 +549,19 @@ export default function CategoriesAdminPage() {
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                     <SearchInput
                         value={search}
-                        onChange={setSearch}
+                        onChange={value => {
+                            setSearch(value);
+                            setPage(1);
+                        }}
                         placeholder="Search categories"
                     />
                     <div className="flex flex-col gap-3 sm:flex-row">
                         <FilterSelect
                             value={statusFilter}
-                            onChange={setStatusFilter}
+                            onChange={value => {
+                                setStatusFilter(value);
+                                setPage(1);
+                            }}
                             placeholder="All statuses"
                             options={[
                                 { value: 'all', label: 'All statuses' },
@@ -535,7 +572,10 @@ export default function CategoriesAdminPage() {
                         />
                         <FilterSelect
                             value={featuredFilter}
-                            onChange={setFeaturedFilter}
+                            onChange={value => {
+                                setFeaturedFilter(value);
+                                setPage(1);
+                            }}
                             placeholder="Featured filter"
                             options={[
                                 { value: 'all', label: 'All items' },

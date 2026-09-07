@@ -1,7 +1,7 @@
 'use client';
 
 import { Edit3, Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
     AdminModalShell,
@@ -127,7 +127,7 @@ function getCategoriesList(response: unknown): { id: number; name: string }[] {
     }));
 }
 
-const pageSize = 6;
+const pageSize = 10;
 
 function normalizeStoreLogoUrl(value: string | null | undefined): string {
     const normalized = String(value ?? '').trim();
@@ -519,6 +519,7 @@ export default function StoresAdminPage() {
     const [storeOverrides, setStoreOverrides] = useState<Record<string, StoreRecord | null>>({});
     const [uploadedMedia, setUploadedMedia] = useState<MediaRecord[]>([]);
     const [search, setSearch] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [featuredFilter, setFeaturedFilter] = useState('all');
     const [popularFilter, setPopularFilter] = useState('all');
@@ -529,7 +530,26 @@ export default function StoresAdminPage() {
     const [deleteTarget, setDeleteTarget] = useState<StoreRecord | null>(null);
     const [toast, setToast] = useState('');
 
-    const { data: apiData } = useGetStores(page, pageSize);
+    // Debounce the typed search so the API is only hit after a short pause.
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedSearch(search), 300);
+        return () => clearTimeout(timer);
+    }, [search]);
+
+    // Pagination is server driven: `page` is part of the query key below, so
+    // Next/Prev issues a new request with `?page=..&limit=..&search=..&is_active=..`.
+    const storeQuery = useMemo(() => {
+        const query: { search?: string; is_active?: boolean; is_featured?: boolean } = {};
+        const term = debouncedSearch.trim();
+        if (term) query.search = term;
+        if (statusFilter === 'active') query.is_active = true;
+        else if (statusFilter === 'inactive') query.is_active = false;
+        if (featuredFilter === 'featured') query.is_featured = true;
+        else if (featuredFilter === 'non-featured') query.is_featured = false;
+        return query;
+    }, [debouncedSearch, featuredFilter, statusFilter]);
+
+    const { data: apiData } = useGetStores(page, pageSize, storeQuery);
     const { data: mediaApiData } = useGetMedia(1, 100);
     const { data: categoriesApiData } = useGetCategories(1, 100);
     const { mutateAsync: createStoreMutation } = useCreateStore();
@@ -581,11 +601,15 @@ export default function StoresAdminPage() {
         });
     }, [storeOverrides, storesResponse]);
 
-    const filteredStores = useMemo(() => {
+    // Safety-net client filter on the page rows so local overrides still respect
+    // the active search/filter. Server owns pagination + counts via meta.
+    const visibleStores = useMemo(() => {
         return stores.filter(store => {
+            const term = debouncedSearch.toLowerCase().trim();
             const matchesSearch =
-                store.name.toLowerCase().includes(search.toLowerCase()) ||
-                store.slug.toLowerCase().includes(search.toLowerCase());
+                !term ||
+                store.name.toLowerCase().includes(term) ||
+                store.slug.toLowerCase().includes(term);
             const matchesStatus = statusFilter === 'all' || store.status === statusFilter;
             const matchesFeatured =
                 featuredFilter === 'all' ||
@@ -604,10 +628,10 @@ export default function StoresAdminPage() {
                 matchesVerified
             );
         });
-    }, [featuredFilter, popularFilter, search, statusFilter, stores, verifiedFilter]);
+    }, [debouncedSearch, featuredFilter, popularFilter, statusFilter, stores, verifiedFilter]);
 
-    const totalPages = Math.max(1, Math.ceil(filteredStores.length / pageSize));
-    const visibleStores = filteredStores.slice((page - 1) * pageSize, page * pageSize);
+    const totalCount = storesResponse?.meta.totalCount ?? 0;
+    const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
 
     const handleSave = async (payload: StoreFormState) => {
         try {
@@ -728,11 +752,21 @@ export default function StoresAdminPage() {
 
             <div className="rounded-3xl border border-border bg-card p-4 shadow-soft">
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                    <SearchInput value={search} onChange={setSearch} placeholder="Search stores" />
+                    <SearchInput
+                        value={search}
+                        onChange={value => {
+                            setSearch(value);
+                            setPage(1);
+                        }}
+                        placeholder="Search stores"
+                    />
                     <div className="flex flex-col gap-3 sm:flex-row">
                         <FilterSelect
                             value={statusFilter}
-                            onChange={setStatusFilter}
+                            onChange={value => {
+                                setStatusFilter(value);
+                                setPage(1);
+                            }}
                             placeholder="Status"
                             options={[
                                 { value: 'all', label: 'All statuses' },
@@ -743,7 +777,10 @@ export default function StoresAdminPage() {
                         />
                         <FilterSelect
                             value={featuredFilter}
-                            onChange={setFeaturedFilter}
+                            onChange={value => {
+                                setFeaturedFilter(value);
+                                setPage(1);
+                            }}
                             placeholder="Featured"
                             options={[
                                 { value: 'all', label: 'All featured' },
@@ -753,7 +790,10 @@ export default function StoresAdminPage() {
                         />
                         <FilterSelect
                             value={popularFilter}
-                            onChange={setPopularFilter}
+                            onChange={value => {
+                                setPopularFilter(value);
+                                setPage(1);
+                            }}
                             placeholder="Popular"
                             options={[
                                 { value: 'all', label: 'All popularity' },
@@ -763,7 +803,10 @@ export default function StoresAdminPage() {
                         />
                         <FilterSelect
                             value={verifiedFilter}
-                            onChange={setVerifiedFilter}
+                            onChange={value => {
+                                setVerifiedFilter(value);
+                                setPage(1);
+                            }}
                             placeholder="Verified"
                             options={[
                                 { value: 'all', label: 'All verification' },
@@ -901,7 +944,7 @@ export default function StoresAdminPage() {
 
             <div className="mt-6 flex items-center justify-between">
                 <div className="text-[13px] text-muted-foreground">
-                    Showing {visibleStores.length} of {filteredStores.length} stores
+                    Showing {visibleStores.length} of {totalCount} stores
                 </div>
                 <div className="flex items-center gap-2">
                     <Button

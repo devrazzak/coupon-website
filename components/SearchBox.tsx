@@ -321,7 +321,6 @@ function StoreRow({ store, onClose }: { store: StoreView; onClose: () => void })
                 className="flex items-center gap-3 px-3 py-2.5 transition-colors hover:bg-surface"
             >
                 {logo ? (
-                    // eslint-disable-next-line @next/next/no-img-element
                     <img
                         src={logo}
                         alt={`${store.name} logo`}
@@ -355,7 +354,6 @@ function CouponRow({ coupon, onSelect }: { coupon: PublicCoupon; onSelect: () =>
                 className="group flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-surface"
             >
                 {logo ? (
-                    // eslint-disable-next-line @next/next/no-img-element
                     <img
                         src={logo}
                         alt={`${storeName} logo`}

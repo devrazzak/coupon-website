@@ -15,7 +15,6 @@ export function CategoryCard({ category }: { category: PublicCategory }) {
             aria-label={`View all ${category.name} coupons and offers`}
         >
             {category.image ? (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img
                     src={category.image}
                     alt={category.name}

@@ -44,10 +44,21 @@ export function useGetPublicCouponBySlug(slug?: string) {
     });
 }
 
-export function useGetCoupons(page = 1, limit = 10) {
+export function useGetCoupons(
+    page = 1,
+    limit = 10,
+    query: {
+        search?: string;
+        status?: string;
+        coupon_type?: string;
+        is_featured?: boolean;
+        is_verified?: boolean;
+        is_active?: boolean;
+    } = {},
+) {
     return useQuery({
-        queryKey: ['GetCoupons', page, limit],
-        queryFn: () => getCoupons(page, limit),
+        queryKey: ['GetCoupons', page, limit, query],
+        queryFn: () => getCoupons(page, limit, query),
         retry: false,
     });
 }
