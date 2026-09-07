@@ -103,13 +103,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             url: `/blog/${blog.slug}`,
             siteName: siteConfig.company_name,
             type: 'article',
-            ...(blog.thumbnail ? { images: [{ url: blog.thumbnail, alt: blog.title }] } : {}),
+            images: [
+                {
+                    url: blog.thumbnail || '/images/Coupola-logo-social.png',
+                    alt: blog.thumbnail ? blog.title : `${siteConfig.company_name} Logo`,
+                },
+            ],
         },
         twitter: {
             card: 'summary_large_image',
             title,
             description,
-            ...(blog.thumbnail ? { images: [blog.thumbnail] } : {}),
+            images: [blog.thumbnail || '/images/Coupola-logo-social.png'],
         },
         robots: {
             index: true,

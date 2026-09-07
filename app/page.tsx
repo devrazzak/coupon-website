@@ -28,11 +28,18 @@ export const metadata: Metadata = {
         url: '/',
         siteName: siteConfig.company_name,
         type: 'website',
+        images: [
+            {
+                url: '/images/Coupola-logo-social.png',
+                alt: `${siteConfig.company_name} Logo`,
+            },
+        ],
     },
     twitter: {
         card: 'summary_large_image',
         title: `${siteConfig.company_name} - Verified Promo Codes, Coupons & Deals`,
         description: `Discover working coupon codes, promo offers, and money-saving tips to help you pay less at your favorite online stores.`,
+        images: ['/images/Coupola-logo-social.png'],
     },
     robots: {
         index: true,

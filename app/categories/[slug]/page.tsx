@@ -71,6 +71,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             url: `/categories/${slug}`,
             siteName: siteConfig.company_name,
             type: 'website',
+            images: [
+                {
+                    url: '/images/Coupola-logo-social.png',
+                    alt: `${siteConfig.company_name} Logo`,
+                },
+            ],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title,
+            description,
+            images: ['/images/Coupola-logo-social.png'],
         },
         robots: {
             index: true,

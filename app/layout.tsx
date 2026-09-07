@@ -38,12 +38,19 @@ export const metadata: Metadata = {
         siteName: siteConfig.company_name,
         images: [
             {
-                url: ogImage.src,
+                url: '/images/Coupola-logo-social.png',
                 alt: `${siteConfig.company_name} Logo`,
             },
         ],
         locale: 'en_US',
         type: 'website',
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: `${siteConfig.company_name} - Coupons, Promo Codes & Money-Saving Deals`,
+        description:
+            'Discover working coupon codes, promo offers, and money-saving tips to help you pay less at your favorite online stores.',
+        images: ['/images/Coupola-logo-social.png'],
     },
 };
 

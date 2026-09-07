@@ -16,6 +16,12 @@ export const metadata: Metadata = {
         url: '/stores',
         siteName: siteConfig.company_name,
         type: 'website',
+        images: [
+            {
+                url: '/images/Coupola-logo-social.png',
+                alt: `${siteConfig.company_name} Logo`,
+            },
+        ],
     },
     robots: {
         index: true,
