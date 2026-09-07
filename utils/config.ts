@@ -37,11 +37,11 @@ const environmentConfigs: Record<Environment, EnvironmentConfig> = {
     },
     dev: {
         web_base_url: '',
-        api_base_url: 'https://coupon-finder-api-dev.assetvila.com',
+        api_base_url: 'https://api.coupola.com',
         booking_api_base_url: '',
         business_base_url: '',
         social_api_base_url: '',
-        bucket_base_url: 'https://coupon-finder-api-dev.assetvila.com/public/storage/',
+        bucket_base_url: 'https://api.coupola.com/public/storage/',
         cognitoUserPoolId: '',
         identityPoolId: '',
         bucket: '',
