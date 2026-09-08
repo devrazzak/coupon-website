@@ -16,6 +16,7 @@ import {
     Toast,
 } from '@/components/admin/admin-shared';
 import { MediaPicker } from '@/components/admin/media-picker';
+import { RichTextEditor } from '@/components/admin/rich-text-editor';
 import { Button } from '@/components/ui/button';
 import { type MediaRecord } from '@/utils/admin-data';
 import { type BlogCreatePayload, getPublicBlogBySlug } from '@/utils/api/blog';
@@ -363,7 +364,7 @@ function BlogModal({
                 <label className="block text-[13px] font-semibold text-foreground md:col-span-1">
                     <span className="mb-2 block">Category</span>
                     <select
-                        value={form.categoryId}
+                        value={String(form.categoryId ?? '')}
                         onChange={event =>
                             updateField(
                                 'categoryId',
@@ -447,11 +448,10 @@ function BlogModal({
 
                 <label className="block text-[13px] font-semibold text-foreground md:col-span-3">
                     <span className="mb-2 block">Post Content / Description</span>
-                    <textarea
+                    <RichTextEditor
                         value={form.description}
-                        onChange={event => updateField('description', event.target.value)}
-                        placeholder="Full blog content..."
-                        className="min-h-[140px] w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                        onChange={value => updateField('description', value)}
+                        placeholder="Write the full blog content..."
                     />
                 </label>
 
@@ -597,7 +597,11 @@ export default function BlogAdminPage() {
 
                 return {
                     id: String(item.id),
-                    categoryId: item.category_id,
+                    categoryId:
+                        item.category_id ??
+                        (typeof item.category === 'object' && item.category !== null
+                            ? item.category.id
+                            : null),
                     categoryName,
                     title: item.title,
                     slug: item.slug,

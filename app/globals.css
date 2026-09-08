@@ -157,3 +157,73 @@
         padding-inline: 1.5rem;
     }
 }
+
+@layer components {
+    .tiptap-editor .ProseMirror {
+        min-height: 14rem;
+        outline: none;
+    }
+
+    .tiptap-editor .ProseMirror p.is-editor-empty:first-child::before {
+        color: var(--color-muted-foreground);
+        content: attr(data-placeholder);
+        float: left;
+        height: 0;
+        pointer-events: none;
+    }
+
+    .tiptap-editor .ProseMirror h2,
+    .tiptap-editor .ProseMirror h3 {
+        margin: 1rem 0 0.5rem;
+        font-family: var(--font-display);
+        font-weight: 700;
+        line-height: 1.25;
+    }
+
+    .tiptap-editor .ProseMirror h2 {
+        font-size: 1.25rem;
+    }
+
+    .tiptap-editor .ProseMirror h3 {
+        font-size: 1.1rem;
+    }
+
+    .tiptap-editor .ProseMirror p {
+        margin: 0.5rem 0;
+        line-height: 1.7;
+    }
+
+    .tiptap-editor .ProseMirror ul,
+    .tiptap-editor .ProseMirror ol {
+        margin: 0.75rem 0;
+        padding-left: 1.5rem;
+    }
+
+    .tiptap-editor .ProseMirror ul {
+        list-style-type: disc;
+    }
+
+    .tiptap-editor .ProseMirror ol {
+        list-style-type: decimal;
+    }
+
+    .tiptap-editor .ProseMirror blockquote {
+        margin: 1rem 0;
+        border-left: 3px solid var(--color-primary);
+        padding-left: 1rem;
+        color: var(--color-muted-foreground);
+    }
+
+    .tiptap-editor .ProseMirror code {
+        border-radius: 0.25rem;
+        background: var(--color-muted);
+        padding: 0.125rem 0.25rem;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.875em;
+    }
+
+    .tiptap-editor button[data-active='true'] {
+        background: var(--color-primary-light);
+        color: var(--color-primary);
+    }
+}
