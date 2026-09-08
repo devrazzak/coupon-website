@@ -23,45 +23,7 @@ function formatDate(dateStr?: string): string {
 }
 
 function renderArticleContent(content: string) {
-    const lines = content.split(/\r?\n/).map(line => line.trim());
-    const blocks: React.ReactNode[] = [];
-    let listItems: string[] = [];
-
-    const flushList = () => {
-        if (listItems.length === 0) return;
-        blocks.push(
-            <ul key={`list-${blocks.length}`} className="list-disc space-y-2 pl-6">
-                {listItems.map((item, index) => (
-                    <li key={`${item}-${index}`}>{item}</li>
-                ))}
-            </ul>,
-        );
-        listItems = [];
-    };
-
-    lines.forEach((line, index) => {
-        if (!line) {
-            flushList();
-            return;
-        }
-
-        if (/^[-*]\s+/.test(line)) {
-            listItems.push(line.replace(/^[-*]\s+/, ''));
-            return;
-        }
-
-        flushList();
-        if (line.startsWith('## ')) {
-            blocks.push(<h2 key={`heading-${index}`}>{line.slice(3)}</h2>);
-        } else if (line.startsWith('### ')) {
-            blocks.push(<h3 key={`heading-${index}`}>{line.slice(4)}</h3>);
-        } else {
-            blocks.push(<p key={`paragraph-${index}`}>{line}</p>);
-        }
-    });
-
-    flushList();
-    return blocks;
+    return <div dangerouslySetInnerHTML={{ __html: content }} />;
 }
 
 async function fetchBlog(slug: string) {
