@@ -1,7 +1,7 @@
 const branch: string = 'dev';
 export const maintenance = false;
 
-type Environment = 'dev' | 'qa' | 'stage' | 'live' | 'local';
+type Environment = 'dev' | 'qa' | 'stage' | 'prod' | 'local';
 
 interface EnvironmentConfig {
     web_base_url: string;
@@ -80,13 +80,13 @@ const environmentConfigs: Record<Environment, EnvironmentConfig> = {
         GOOGLE_CLIENT_ID: '',
         ENCRYPTION_KEY: '',
     },
-    live: {
+    prod: {
         web_base_url: '',
-        api_base_url: '',
+        api_base_url: 'https://api.coupola.com',
         booking_api_base_url: '',
         business_base_url: '',
         social_api_base_url: '',
-        bucket_base_url: '',
+        bucket_base_url: 'https://api.coupola.com/public/storage/',
         cognitoUserPoolId: '',
         identityPoolId: '',
         bucket: '',
