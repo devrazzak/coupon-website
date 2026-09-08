@@ -1,4 +1,4 @@
-const branch: string = 'dev';
+const branch: string = 'prod';
 export const maintenance = false;
 
 type Environment = 'dev' | 'qa' | 'stage' | 'prod' | 'local';
