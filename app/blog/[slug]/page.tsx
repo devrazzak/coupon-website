@@ -23,7 +23,7 @@ function formatDate(dateStr?: string): string {
 }
 
 function renderArticleContent(content: string) {
-    return <div dangerouslySetInnerHTML={{ __html: content }} />;
+    return <div className="blog-content" dangerouslySetInnerHTML={{ __html: content }} />;
 }
 
 async function fetchBlog(slug: string) {
