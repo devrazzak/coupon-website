@@ -101,8 +101,23 @@ export const getPublicCouponBySlug = (slug: string) => {
     );
 };
 
-export const getCoupons = (page: number, limit: number) => {
-    return AxiosServices.get(API_END_POINTS.DASHBOARD.COUPON.GET(page, limit), {});
+export type AdminCouponQuery = {
+    search?: string;
+    status?: string;
+    coupon_type?: string;
+    is_featured?: boolean;
+    is_verified?: boolean;
+    is_active?: boolean;
+};
+export const getCoupons = (page: number, limit: number, query: AdminCouponQuery = {}) => {
+    const params: Record<string, string | number | boolean | undefined> = {};
+    if (query.search) params.search = query.search;
+    if (query.status) params.status = query.status;
+    if (query.coupon_type) params.coupon_type = query.coupon_type;
+    if (query.is_featured !== undefined) params.is_featured = query.is_featured;
+    if (query.is_verified !== undefined) params.is_verified = query.is_verified;
+    if (query.is_active !== undefined) params.is_active = query.is_active;
+    return AxiosServices.get(API_END_POINTS.DASHBOARD.COUPON.GET(page, limit, params), {});
 };
 
 export const createCoupon = (data: CouponCreatePayload) => {

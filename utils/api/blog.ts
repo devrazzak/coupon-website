@@ -90,8 +90,17 @@ export const getPublicBlogBySlug = (slug: string) => {
     );
 };
 
-export const getBlogs = (page: number, limit: number) => {
-    return AxiosServices.get(API_END_POINTS.DASHBOARD.BLOG.GET(page, limit), {});
+export type AdminBlogQuery = {
+    search?: string;
+    is_active?: boolean;
+    is_featured?: boolean;
+};
+export const getBlogs = (page: number, limit: number, query: AdminBlogQuery = {}) => {
+    const params: Record<string, string | number | boolean | undefined> = {};
+    if (query.search) params.search = query.search;
+    if (query.is_active !== undefined) params.is_active = query.is_active;
+    if (query.is_featured !== undefined) params.is_featured = query.is_featured;
+    return AxiosServices.get(API_END_POINTS.DASHBOARD.BLOG.GET(page, limit, params), {});
 };
 
 export const createBlog = (data: BlogCreatePayload) => {

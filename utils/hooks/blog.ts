@@ -29,10 +29,18 @@ export function useGetPublicBlogBySlug(slug: string) {
     });
 }
 
-export function useGetBlogs(page = 1, limit = 10) {
+export function useGetBlogs(
+    page = 1,
+    limit = 10,
+    query: {
+        search?: string;
+        is_active?: boolean;
+        is_featured?: boolean;
+    } = {},
+) {
     return useQuery({
-        queryKey: ['GetBlogs', page, limit],
-        queryFn: () => getBlogs(page, limit),
+        queryKey: ['GetBlogs', page, limit, query],
+        queryFn: () => getBlogs(page, limit, query),
         retry: false,
     });
 }

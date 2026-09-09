@@ -82,7 +82,6 @@ export function PopularStores() {
                                         aria-label={`${store.name} coupons and deals`}
                                     >
                                         {store.logo ? (
-                                            // eslint-disable-next-line @next/next/no-img-element
                                             <img
                                                 src={store.logo}
                                                 alt={`${store.name}`}

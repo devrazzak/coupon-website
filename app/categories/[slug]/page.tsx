@@ -42,11 +42,7 @@ async function resolveCategory(slug: string): Promise<ResolvedCategory | null> {
     return null;
 }
 
-export async function generateMetadata({
-    params,
-}: {
-    params: Promise<{ locale: string; slug: string }>;
-}) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
     const category = await resolveCategory(slug);
 
@@ -86,7 +82,7 @@ export async function generateMetadata({
 export default async function CategoryDetailPage({
     params,
 }: {
-    params: Promise<{ locale: string; slug: string }>;
+    params: Promise<{ slug: string }>;
 }) {
     const { slug } = await params;
     const category = await resolveCategory(slug);

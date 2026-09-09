@@ -121,7 +121,7 @@ export function CategoryDetailClient({
                                 </div>
                                 {categoryImage && (
                                     <div className="mt-5 flex h-28 items-center justify-center rounded-xl border border-border/70 bg-surface p-4">
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        {}
                                         <img
                                             src={categoryImage}
                                             alt={`${categoryName} category`}

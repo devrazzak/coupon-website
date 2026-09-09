@@ -28,10 +28,18 @@ export function useGetCategory() {
 }
 
 // Custom hook using useQuery for get categories (admin dashboard)
-export function useGetCategories(page = 1, limit = 10) {
+export function useGetCategories(
+    page = 1,
+    limit = 10,
+    query: {
+        search?: string;
+        is_active?: boolean;
+        is_featured?: boolean;
+    } = {},
+) {
     return useQuery({
-        queryKey: ['GetCategories', page, limit],
-        queryFn: () => getCategories(page, limit),
+        queryKey: ['GetCategories', page, limit, query],
+        queryFn: () => getCategories(page, limit, query),
         retry: false,
     });
 }

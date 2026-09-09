@@ -32,10 +32,19 @@ export function useInfinitePublicStores(query: PublicStoresQuery = {}) {
     });
 }
 
-export function useGetStores(page = 1, limit = 10) {
+export function useGetStores(
+    page = 1,
+    limit = 10,
+    query: {
+        search?: string;
+        status?: 'active' | 'inactive';
+        is_featured?: boolean;
+        is_active?: boolean;
+    } = {},
+) {
     return useQuery({
-        queryKey: ['GetStores', page, limit],
-        queryFn: () => getStores(page, limit),
+        queryKey: ['GetStores', page, limit, query],
+        queryFn: () => getStores(page, limit, query),
         retry: false,
     });
 }

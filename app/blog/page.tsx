@@ -141,7 +141,6 @@ function BlogPageContent() {
                                     className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:border-primary/40"
                                 >
                                     {post.thumbnail ? (
-                                        // eslint-disable-next-line @next/next/no-img-element
                                         <img
                                             src={post.thumbnail}
                                             alt={post.title}

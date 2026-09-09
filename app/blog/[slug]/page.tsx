@@ -23,45 +23,7 @@ function formatDate(dateStr?: string): string {
 }
 
 function renderArticleContent(content: string) {
-    const lines = content.split(/\r?\n/).map(line => line.trim());
-    const blocks: React.ReactNode[] = [];
-    let listItems: string[] = [];
-
-    const flushList = () => {
-        if (listItems.length === 0) return;
-        blocks.push(
-            <ul key={`list-${blocks.length}`} className="list-disc space-y-2 pl-6">
-                {listItems.map((item, index) => (
-                    <li key={`${item}-${index}`}>{item}</li>
-                ))}
-            </ul>,
-        );
-        listItems = [];
-    };
-
-    lines.forEach((line, index) => {
-        if (!line) {
-            flushList();
-            return;
-        }
-
-        if (/^[-*]\s+/.test(line)) {
-            listItems.push(line.replace(/^[-*]\s+/, ''));
-            return;
-        }
-
-        flushList();
-        if (line.startsWith('## ')) {
-            blocks.push(<h2 key={`heading-${index}`}>{line.slice(3)}</h2>);
-        } else if (line.startsWith('### ')) {
-            blocks.push(<h3 key={`heading-${index}`}>{line.slice(4)}</h3>);
-        } else {
-            blocks.push(<p key={`paragraph-${index}`}>{line}</p>);
-        }
-    });
-
-    flushList();
-    return blocks;
+    return <div className="blog-content" dangerouslySetInnerHTML={{ __html: content }} />;
 }
 
 async function fetchBlog(slug: string) {
@@ -73,11 +35,7 @@ async function fetchBlog(slug: string) {
     }
 }
 
-export async function generateMetadata({
-    params,
-}: {
-    params: Promise<{ locale: string; slug: string }>;
-}) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
     const blog = await fetchBlog(slug);
 
@@ -122,11 +80,7 @@ export async function generateMetadata({
     } satisfies Metadata;
 }
 
-export default async function BlogDetailPage({
-    params,
-}: {
-    params: Promise<{ locale: string; slug: string }>;
-}) {
+export default async function BlogDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
     const [blog, categoriesResponse] = await Promise.all([
         fetchBlog(slug),
@@ -224,14 +178,10 @@ export default async function BlogDetailPage({
 
                         <div className="overflow-hidden">
                             {blog.thumbnail ? (
-                                // eslint-disable-next-line @next/next/no-img-element
                                 <img
                                     src={blog.thumbnail}
                                     alt={blog.title}
-                                    width={1280}
-                                    height={720}
-                                    decoding="async"
-                                    className="h-70 w-full object-cover md:h-105"
+                                    className="h-full w-full object-cover"
                                 />
                             ) : (
                                 <div className="flex h-70 w-full items-center justify-center bg-muted text-4xl font-semibold text-muted-foreground md:h-105">

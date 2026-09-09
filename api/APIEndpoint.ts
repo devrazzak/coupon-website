@@ -1,4 +1,29 @@
 // import config from "../config";
+
+// Build a query string for the admin (dashboard) list endpoints. Always includes
+// page & limit and appends any additional server-side search/filter params that
+// are present. Values like 'all'/'ALL'/'' act as "no filter" and are skipped so
+// an empty (meaningless) query param is never sent.
+function buildAdminQuery(
+    base: string,
+    page: number,
+    limit: number,
+    params?: Record<string, string | number | boolean | undefined>,
+): string {
+    const searchParams = new URLSearchParams();
+    searchParams.set('page', String(page));
+    searchParams.set('limit', String(limit));
+    if (params) {
+        for (const [key, value] of Object.entries(params)) {
+            if (value === undefined || value === null || value === '') continue;
+            if (typeof value === 'string' && value.toLowerCase() === 'all') continue;
+            searchParams.set(key, String(value));
+        }
+    }
+    const query = searchParams.toString();
+    return query ? `${base}?${query}` : base;
+}
+
 export const API_END_POINTS = {
     AUTH: {
         SIGN_IN: '/auth/signin',
@@ -104,22 +129,31 @@ export const API_END_POINTS = {
             DELETE: (id: string) => `/api/v1/admin/media/${id}`,
         },
         CATEGORY: {
-            GET: (page: number, limit: number) =>
-                `/api/v1/admin/categories?page=${page}&limit=${limit}`,
+            GET: (
+                page: number,
+                limit: number,
+                params?: Record<string, string | number | boolean | undefined>,
+            ) => buildAdminQuery('/api/v1/admin/categories', page, limit, params),
             POST: '/api/v1/admin/categories',
             PUT: (id: string) => `/api/v1/admin/categories/${id}`,
             DELETE: (id: string) => `/api/v1/admin/categories/${id}`,
         },
         STORE: {
-            GET: (page: number, limit: number) =>
-                `/api/v1/admin/stores?page=${page}&limit=${limit}`,
+            GET: (
+                page: number,
+                limit: number,
+                params?: Record<string, string | number | boolean | undefined>,
+            ) => buildAdminQuery('/api/v1/admin/stores', page, limit, params),
             POST: '/api/v1/admin/stores',
             PUT: (id: string) => `/api/v1/admin/stores/${id}`,
             DELETE: (id: string) => `/api/v1/admin/stores/${id}`,
         },
         COUPON: {
-            GET: (page: number, limit: number) =>
-                `/api/v1/admin/coupons?page=${page}&limit=${limit}`,
+            GET: (
+                page: number,
+                limit: number,
+                params?: Record<string, string | number | boolean | undefined>,
+            ) => buildAdminQuery('/api/v1/admin/coupons', page, limit, params),
             POST: '/api/v1/admin/coupons',
             PUT: (id: string) => `/api/v1/admin/coupons/${id}`,
             DELETE: (id: string) => `/api/v1/admin/coupons/${id}`,
@@ -132,7 +166,11 @@ export const API_END_POINTS = {
             DELETE: (id: string) => `/api/v1/admin/blog-categories/${id}`,
         },
         BLOG: {
-            GET: (page: number, limit: number) => `/api/v1/admin/blogs?page=${page}&limit=${limit}`,
+            GET: (
+                page: number,
+                limit: number,
+                params?: Record<string, string | number | boolean | undefined>,
+            ) => buildAdminQuery('/api/v1/admin/blogs', page, limit, params),
             POST: '/api/v1/admin/blogs',
             PUT: (id: string) => `/api/v1/admin/blogs/${id}`,
             DELETE: (id: string) => `/api/v1/admin/blogs/${id}`,

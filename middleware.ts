@@ -1,15 +1,7 @@
-import createMiddleware from 'next-intl/middleware';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-import { defaultLocale, locales } from './i18n';
 import PATHS from './routes/path';
-
-const i18nMiddleware = createMiddleware({
-    locales: locales,
-    defaultLocale: defaultLocale,
-    localePrefix: 'as-needed',
-});
 
 const PUBLIC_PATHS = ['/_next', '/api', '/assets', '/favicon.ico', '/robots.txt', '/sitemap.xml'];
 
@@ -28,30 +20,9 @@ function getUserRole(request: NextRequest): string | null {
     return request.cookies.get('userRole')?.value?.toLowerCase() || null;
 }
 
-function getLocalePathname(pathname: string): {
-    locale: string;
-    pathname: string;
-} {
-    const segments = pathname.split('/');
-    const locale = locales.includes(segments[1]) ? segments[1] : defaultLocale;
-    const localizedPathname = locales.includes(segments[1])
-        ? `/${segments.slice(2).join('/')}`
-        : pathname;
-
-    return {
-        locale,
-        pathname: localizedPathname === '//' ? '/' : localizedPathname,
-    };
-}
-
-function localizedUrl(pathname: string, locale: string, request: NextRequest) {
-    return new URL(`/${locale}${pathname}`, request.url);
-}
-
 // Middleware function
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
-    const { locale, pathname: routePathname } = getLocalePathname(pathname);
     const token = request.cookies.get('token')?.value;
     const userRole = getUserRole(request);
 
@@ -60,44 +31,42 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-    if (routePathname === '/register') {
-        return NextResponse.redirect(localizedUrl(AUTH_PATHS.user, locale, request));
+    if (pathname === '/register') {
+        return NextResponse.redirect(new URL(AUTH_PATHS.user, request.url));
     }
 
-    const isAdminRoute = routePathname.startsWith('/admin');
-    const isUserRoute = routePathname.startsWith('/user');
-    const currentAuthPath = Object.values(AUTH_PATHS).find(path => routePathname === path);
+    const isAdminRoute = pathname.startsWith('/admin');
+    const isUserRoute = pathname.startsWith('/user');
+    const currentAuthPath = Object.values(AUTH_PATHS).find(path => pathname === path);
 
     // Allow unauthenticated users to access auth pages
     if (!token && currentAuthPath) {
-        return i18nMiddleware(request);
+        return NextResponse.next();
     }
 
     // Redirect unauthenticated users to their respective login pages
     if (!token) {
-        if (isAdminRoute)
-            return NextResponse.redirect(localizedUrl(AUTH_PATHS.admin, locale, request));
-        if (isUserRoute)
-            return NextResponse.redirect(localizedUrl(AUTH_PATHS.user, locale, request));
-        return i18nMiddleware(request);
+        if (isAdminRoute) return NextResponse.redirect(new URL(AUTH_PATHS.admin, request.url));
+        if (isUserRoute) return NextResponse.redirect(new URL(AUTH_PATHS.user, request.url));
+        return NextResponse.next();
     }
 
     // If token exists but userRole is missing, redirect to default login
     if (!userRole) {
-        return NextResponse.redirect(localizedUrl(AUTH_PATHS.user, locale, request));
+        return NextResponse.redirect(new URL(AUTH_PATHS.user, request.url));
     }
 
     // Redirect authenticated users from login pages to their respective dashboard
     if (currentAuthPath) {
-        return NextResponse.redirect(localizedUrl(`/${userRole}`, locale, request));
+        return NextResponse.redirect(new URL(`/${userRole}`, request.url));
     }
 
     // Prevent users from accessing other roles' pages
     if ((isAdminRoute && userRole !== 'admin') || (isUserRoute && userRole !== 'user')) {
-        return NextResponse.redirect(localizedUrl(`/${userRole}`, locale, request));
+        return NextResponse.redirect(new URL(`/${userRole}`, request.url));
     }
 
-    return i18nMiddleware(request);
+    return NextResponse.next();
 }
 
 // Apply middleware only to non-public paths

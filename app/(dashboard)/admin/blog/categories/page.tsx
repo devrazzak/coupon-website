@@ -3,7 +3,6 @@
 import Link from 'next/link';
 
 import { ArrowLeft, Edit3, Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
-import { useLocale } from 'next-intl';
 import { useMemo, useState } from 'react';
 
 import {
@@ -250,7 +249,6 @@ function BlogCategoryModal({
 }
 
 export default function BlogCategoriesAdminPage() {
-    const locale = useLocale();
     const [categoryOverrides, setCategoryOverrides] = useState<
         Record<string, BlogCategoryUiRecord | null>
     >({});
@@ -384,7 +382,7 @@ export default function BlogCategoriesAdminPage() {
         <>
             <div className="mb-4">
                 <Link
-                    href={`/${locale}/admin/blog`}
+                    href="/admin/blog"
                     className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-muted-foreground hover:text-primary transition-colors"
                 >
                     <ArrowLeft className="h-4 w-4" /> Back to Blog Posts

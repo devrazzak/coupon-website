@@ -47,7 +47,6 @@ export function MediaCard({
             {/* Image Container */}
             <div className="relative aspect-square w-full overflow-hidden bg-surface">
                 {hasImage ? (
-                    /* eslint-disable-next-line @next/next/no-img-element */
                     <img
                         src={media.url}
                         alt={media.altText || media.fileName}
