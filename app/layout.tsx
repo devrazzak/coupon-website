@@ -32,6 +32,9 @@ export const metadata: Metadata = {
         'Discover working coupon codes, promo offers, and money-saving tips to help you pay less at your favorite online stores.',
     keywords: ['promo codes', 'coupons', 'cash back', 'deals', 'discounts'],
     authors: [{ name: siteConfig.company_name }],
+    verification: {
+        google: 'QqQoSO7t8J_y3YLymtI_Jm_CIjs5dxQa-ACdOQ4izeo',
+    },
     openGraph: {
         title: `${siteConfig.company_name} - Coupons, Promo Codes & Money-Saving Deals`,
         description:
