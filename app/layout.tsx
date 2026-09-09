@@ -1,3 +1,4 @@
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { Inter } from 'next/font/google';
 
 import { Metadata } from 'next';
@@ -76,6 +77,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         <CouponQueryModal />
                     </Suspense>
                 </Providers>
+                <GoogleAnalytics gaId="G-HX9B5CBGCN" />
             </body>
         </html>
     );
