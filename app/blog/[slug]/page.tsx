@@ -181,9 +181,6 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                                 <img
                                     src={blog.thumbnail}
                                     alt={blog.title}
-                                    width="100%"
-                                    height="100%"
-                                    decoding="async"
                                     className="h-full w-full object-cover"
                                 />
                             ) : (
