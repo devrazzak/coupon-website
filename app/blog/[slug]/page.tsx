@@ -186,10 +186,10 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                                 <img
                                     src={blog.thumbnail}
                                     alt={blog.title}
-                                    width={1280}
-                                    height={720}
+                                    width="100%"
+                                    height="100%"
                                     decoding="async"
-                                    className="h-70 w-full object-cover md:h-105"
+                                    className="h-full w-full object-cover"
                                 />
                             ) : (
                                 <div className="flex h-70 w-full items-center justify-center bg-muted text-4xl font-semibold text-muted-foreground md:h-105">
